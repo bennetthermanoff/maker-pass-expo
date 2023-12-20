@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Appearance } from 'react-native';
+import { MakerspaceTheme } from '../types/makerspaceServer';
+import { getCurrentTheme } from '../util/makerspaces';
 
 const tintColorLight = '#2f95dc';
 const tintColorDark = '#fff';
@@ -21,10 +23,23 @@ const styleSheetColors = {
     },
 };
 export const useColors = () => {
-    const [theme, setTheme] = useState(tanStackColors('green','blue', Appearance.getColorScheme() === 'dark'));
+    const [makerSpaceTheme, setMakerSpaceTheme] = useState<MakerspaceTheme>({ primary:'blue',secondary:'green' });
+
+    const [theme, setTheme] = useState(tanStackColors(makerSpaceTheme.primary,makerSpaceTheme.secondary, Appearance.getColorScheme() === 'dark'));
     Appearance.addChangeListener(({ colorScheme }) => {
-        setTheme(tanStackColors('green', 'blue', colorScheme === 'dark'));
+        setTheme(tanStackColors(makerSpaceTheme.primary, makerSpaceTheme.secondary, colorScheme === 'dark'));
     });
+    useEffect(() => {
+        setTheme(tanStackColors(makerSpaceTheme.primary, makerSpaceTheme.secondary, Appearance.getColorScheme() === 'dark'));
+    }, [makerSpaceTheme]);
+    useEffect(() => {
+        getCurrentTheme().then((theme) => {
+            if (theme){
+                setMakerSpaceTheme(theme);
+            }
+        });
+    }, []);
+
     return theme;
 };
 //https://tamagui.dev/docs/intro/colors

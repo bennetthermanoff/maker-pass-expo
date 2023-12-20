@@ -2,12 +2,34 @@ import { Button, H2, Text, YStack } from 'tamagui';
 import { StyleSheet } from 'react-native';
 import * as Linking from 'expo-linking';
 import { useColors } from '../constants/Colors';
-import { router } from 'expo-router';
+import { Stack, router } from 'expo-router';
+import { MakerspaceConfig } from '../types/makerspaceServer';
+import { useEffect, useState } from 'react';
+import { getCurrentServer } from '../util/makerspaces';
+
 export default function ConnectToMakerSpace() {
+    const [makerspace, setMakerspace] = useState<MakerspaceConfig|any>(null); // TODO: type this
+    useEffect(() => {
+        const getMakerspace = async () => {
+            const makerspace = await getCurrentServer();
+            setMakerspace(makerspace);
+        };
+        getMakerspace();
+    },[]);
+    useEffect(() => {
+        if (makerspace){
+            while (router.canGoBack()){
+                router.back();
+            }
+            router.replace('/start/choose');
+        }
+    }, [makerspace]);
+
     const colors = useColors();
     const url = Linking.useURL();
 
     return (
+
         <YStack style={styles.container} backgroundColor={colors.background} >
             <H2
                 color={colors.text}

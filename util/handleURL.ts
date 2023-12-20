@@ -14,7 +14,6 @@ export const handleURL = async (url:string|null) => {
     // alert('Path: ' + path + '\nHostname: ' + hostname + '\nQuery Params: ' + JSON.stringify(queryParams));
     if (path === 'makerspace/config' ){
         try {
-            alert('Attempting to ping server...');
             const { url, port, registrationType, registrationKey } = queryParams ?? {} as { url?: string, port?: string, registrationType?: string, registrationKey?: string };
             const { data:pingResponse }:{data:PingResponse} = await axios.get('http://' + url + ':' + port + '/api/ping');
             if (pingResponse.server === null){

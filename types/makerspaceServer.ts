@@ -6,20 +6,18 @@ export interface MakerspaceConfig {
     serverPort: number,
     adminPassword: string,
     registrationPassword: string,
-    theme: {
-        light: {
-            primary: string,
-            secondary: string,
-            accent: string,
-            error: string,
-        },
-        dark: {
-            primary: string,
-            secondary: string,
-            accent: string,
-            error: string,
-        },
-    },
+    theme: MakerspaceTheme,
+    user?:{
+        userId: string,
+        userType: string,
+        token: string,
+        userName?: string,
+        userEmail?: string,
+    }
+}
+export interface MakerspaceTheme {
+    primary: string,
+    secondary: string
 }
 export interface PingResponse {
     message: string,
