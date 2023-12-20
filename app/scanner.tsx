@@ -17,7 +17,6 @@ export default function Scanner() {
     const handleBarCodeScanned = ({ type, data }:{type:string, data:string}) => {
         setScanned(true);
         if (data.startsWith('exp://')) {
-            alert(`EXP Bar code with type ${type} and data ${data} has been scanned!`);
             handleURL(data);
         } else {
             alert(`Bar code with type ${type} and data ${data} has been scanned!`);

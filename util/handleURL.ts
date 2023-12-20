@@ -16,8 +16,11 @@ export const handleURL = async (url:string|null) => {
         try {
             alert('Attempting to ping server...');
             const { url, port, registrationType, registrationKey } = queryParams ?? {} as { url?: string, port?: string, registrationType?: string, registrationKey?: string };
-            const pingResponse:PingResponse = await axios.get('http://' + url + ':' + port + '/api/ping');
-            alert('Ping response: ' + JSON.stringify(pingResponse));
+            const { data:pingResponse }:{data:PingResponse} = await axios.get('http://' + url + ':' + port + '/api/ping');
+            if (pingResponse.server === null){
+                alert('Server not found');
+                return;
+            }
             await addOrUpdateServer(pingResponse.server);
 
             while (router.canGoBack()) { // Pop from stack until one element is left, resets the stack
