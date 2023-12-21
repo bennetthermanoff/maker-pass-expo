@@ -6,6 +6,7 @@ import { Stack, router } from 'expo-router';
 import { MakerspaceConfig } from '../types/makerspaceServer';
 import { useEffect, useState } from 'react';
 import { getCurrentServer } from '../util/makerspaces';
+import { goHome } from '../util/goHome';
 
 export default function ConnectToMakerSpace() {
     const [makerspace, setMakerspace] = useState<MakerspaceConfig|any>(null); // TODO: type this
@@ -18,10 +19,7 @@ export default function ConnectToMakerSpace() {
     },[]);
     useEffect(() => {
         if (makerspace){
-            while (router.canGoBack()){
-                router.back();
-            }
-            router.replace('/start/choose');
+            goHome();
         }
     }, [makerspace]);
 
@@ -45,13 +43,18 @@ export default function ConnectToMakerSpace() {
                 color={colors.text}
                 backgroundColor={colors.accent.dark}
                 marginTop={'$4'}
+                width={'80%'}
                 marginBottom={'$2'}
                 onPress={() => {
                     router.push('/scanner');
                 }}
             >Connect with QR Code</Button>
 
-            <Button width={'auto'} color={colors.secondaryAccent.dark} backgroundColor={colors.inverseText}>Connect Manually</Button>
+            <Button
+                width={'80%'}
+                color={colors.secondaryAccent.dark}
+                backgroundColor={colors.inverseText}
+            >Connect Manually</Button>
         </YStack>
 
     );
@@ -62,5 +65,6 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent:'center',
+        width: '100%',
     },
 });

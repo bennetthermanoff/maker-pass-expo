@@ -13,6 +13,6 @@ export const goHome = async() => {
         clearStackGoTo('/start/choose');
     }
     else {
-        clearStackGoTo('/tabs/');
+        clearStackGoTo('/home/');
     }
 };

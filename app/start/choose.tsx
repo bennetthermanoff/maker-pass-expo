@@ -2,21 +2,13 @@ import { Button, H2, Text, XStack, YStack } from 'tamagui';
 import { StyleSheet } from 'react-native';
 import * as Linking from 'expo-linking';
 import { useColors } from '../../constants/Colors';
-import { Stack, router } from 'expo-router';
-import { getCurrentServer, removeServer } from '../../util/makerspaces';
-import { useEffect, useState } from 'react';
-import { MakerspaceConfig } from '../../types/makerspaceServer';
+import { router } from 'expo-router';
+import { removeServer } from '../../util/makerspaces';
+import { useMakerspace } from '../../util/useMakerspace';
 export default function LoginOrRegister() {
     const url = Linking.useURL();
-    const [makerspace, setMakerspace] = useState<null|MakerspaceConfig>(null);
     const colors = useColors();
-    useEffect(() => {
-        const getMakerspace = async () => {
-            const makerspace = await getCurrentServer();
-            setMakerspace(makerspace);
-        };
-        getMakerspace();
-    }, []);
+    const makerspace = useMakerspace();
 
     return (
         <>
@@ -36,15 +28,16 @@ export default function LoginOrRegister() {
                     backgroundColor={colors.accent.dark}
                     marginTop={'$4'}
                     marginBottom={'$2'}
+                    width={'80%'}
                     onPress={() => {
                         router.push('/start/register');
                     }}
                 >Register</Button>
 
                 <Button
-                    width={'auto'}
                     color={colors.secondaryAccent.dark}
                     backgroundColor={colors.inverseText}
+                    width={'80%'}
                     onPress={() => {
                         router.push('/start/login');
                     }}
@@ -91,5 +84,6 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent:'center',
+        width: '100%',
     },
 });

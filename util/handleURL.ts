@@ -15,7 +15,7 @@ export const handleURL = async (url:string|null) => {
     if (path === 'makerspace/config' ){
         try {
             const { url, port, registrationType, registrationKey } = queryParams ?? {} as { url?: string, port?: string, registrationType?: string, registrationKey?: string };
-            const { data:pingResponse }:{data:PingResponse} = await axios.get('http://' + url + ':' + port + '/api/ping');
+            const { data:pingResponse }:{data:PingResponse} = await axios.get( url + ':' + port + '/api/ping');
             if (pingResponse.server === null){
                 alert('Server not found');
                 return;

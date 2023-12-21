@@ -16,8 +16,8 @@ export interface MakerspaceConfig {
     }
 }
 export interface MakerspaceTheme {
-    primary: string,
-    secondary: string
+    primary: ColorName,
+    secondary: ColorName
 }
 export interface PingResponse {
     message: string,
@@ -25,4 +25,13 @@ export interface PingResponse {
 }
 export interface MakerspaceServers {
     [id:string]:MakerspaceConfig,
+}
+
+export type Color = `${Sel}${ColorName}${ColorNumber}${LightDark}`;
+type Sel = '$';
+export type ColorName = 'gray' | 'red' | 'orange' | 'yellow' | 'green' | 'blue' | 'purple' | 'pink';
+export type LightDark = 'Light' | 'Dark';
+export type ColorNumber = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8';
+export type ColorResponse ={
+    [id:string]:Color|ColorResponse
 }

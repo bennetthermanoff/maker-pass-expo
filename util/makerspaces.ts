@@ -35,7 +35,7 @@ export const clearServers = async () => {
     await SecureStore.deleteItemAsync('currentServer');
 };
 
-export const addServerCredentials = async (serverId: string, userId: string, userType: string, token: string) => {
+export const addServerCredentials = async ({ serverId, userId, userType, token }:{serverId: string, userId: string, userType: string, token: string}) => {
     const servers = await getServers();
     servers[serverId].user = {
         userId,

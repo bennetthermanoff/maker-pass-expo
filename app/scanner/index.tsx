@@ -52,7 +52,8 @@ export default function Scanner() {
                         marginBottom={'30%'}
                         size={'$5'}
                         minWidth={'40%'}
-                        backgroundColor={colors.secondaryAccent.dark}
+                        color={colors.text}
+                        backgroundColor={colors.secondaryAccent.light}
                         onPress={() => {setHasPermission(null);router.back();}}
                     >Cancel</Button>
 
