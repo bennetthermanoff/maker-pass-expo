@@ -2,7 +2,7 @@ import * as Linking from 'expo-linking';
 import { router } from 'expo-router';
 import axios from 'axios';
 import { MakerspaceConfig, PingResponse } from '../types/makerspaceServer';
-import { addOrUpdateServer } from './makerspaces';
+import { addOrUpdateServer, setAdditionalInfo } from './makerspaces';
 
 export const handleURL = async (url:string|null) => {
     if (url === null) {
@@ -20,6 +20,8 @@ export const handleURL = async (url:string|null) => {
                 alert('Server not found');
                 return;
             }
+
+            delete pingResponse.server.additionalInfoFields;
             await addOrUpdateServer(pingResponse.server);
 
             while (router.canGoBack()) { // Pop from stack until one element is left, resets the stack

@@ -14,6 +14,7 @@ export interface MakerspaceConfig {
         userName?: string,
         userEmail?: string,
     }
+    additionalInfoFields?: AdditionalInfoField[]
 }
 export interface MakerspaceTheme {
     primary: ColorName,
@@ -23,9 +24,7 @@ export interface PingResponse {
     message: string,
     server:MakerspaceConfig,
 }
-export interface MakerspaceServers {
-    [id:string]:MakerspaceConfig,
-}
+export type MakerspaceServers = string [];
 
 export type Color = `${Sel}${ColorName}${ColorNumber}${LightDark}`;
 type Sel = '$';
@@ -35,3 +34,11 @@ export type ColorNumber = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8';
 export type ColorResponse ={
     [id:string]:Color|ColorResponse
 }
+export type AdditionalInfoField = {
+    name: string,
+    description?:string,
+    type: 'text' | 'number' | 'tel' | 'checkbox' | 'dropdown' | 'date',
+    options?: string[],
+    regEx?: string,
+    required?: boolean
+};

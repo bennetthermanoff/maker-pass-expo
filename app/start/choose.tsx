@@ -30,7 +30,7 @@ export default function LoginOrRegister() {
                     marginBottom={'$2'}
                     width={'80%'}
                     onPress={() => {
-                        router.push('/start/register');
+                        router.push('/start/register/');
                     }}
                 >Register</Button>
 

@@ -9,6 +9,7 @@ import config from '../tamagui.config';
 import { useLoadFonts } from './fontLoader';
 import { MakerspaceConfig } from '../types/makerspaceServer';
 import { getCurrentServer } from '../util/makerspaces';
+import { useColors } from '../constants/Colors';
 
 export {
     // Catch any errors thrown by the Layout component.
@@ -65,7 +66,7 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
     const colorScheme = useColorScheme();
-
+    const colors = useColors();
     return (
         <TamaguiProvider config={config}>
             <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
@@ -73,6 +74,7 @@ function RootLayoutNav() {
                     screenOptions={{
                         headerShown: false,
                     }}
+
                 />
             </ThemeProvider>
         </TamaguiProvider>

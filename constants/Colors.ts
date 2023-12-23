@@ -3,7 +3,8 @@ import { Appearance } from 'react-native';
 import { ColorName, ColorResponse, MakerspaceTheme } from '../types/makerspaceServer';
 import { getCurrentTheme } from '../util/makerspaces';
 import { getTokens } from 'tamagui';
-
+import { router, useGlobalSearchParams, useRootNavigationState } from 'expo-router';
+import  { GLOBAL } from '../global';
 const tintColorLight = '#2f95dc';
 const tintColorDark = '#fff';
 
@@ -24,14 +25,16 @@ const styleSheetColors = {
     },
 };
 export const useColors = () => {
-    const [makerSpaceTheme, setMakerSpaceTheme] = useState<MakerspaceTheme>({ primary:'blue',secondary:'green' });
 
+    const [makerSpaceTheme, setMakerSpaceTheme] = useState<MakerspaceTheme>(GLOBAL.theme as MakerspaceTheme);
+    const rootNavigationState = useRootNavigationState();
     const [theme, setTheme] = useState(tanStackColors(makerSpaceTheme.primary,makerSpaceTheme.secondary, Appearance.getColorScheme() === 'dark'));
     Appearance.addChangeListener(({ colorScheme }) => {
         setTheme(tanStackColors(makerSpaceTheme.primary, makerSpaceTheme.secondary, colorScheme === 'dark'));
     });
     useEffect(() => {
         setTheme(tanStackColors(makerSpaceTheme.primary, makerSpaceTheme.secondary, Appearance.getColorScheme() === 'dark'));
+        GLOBAL.theme = makerSpaceTheme;
     }, [makerSpaceTheme]);
     useEffect(() => {
         getCurrentTheme().then((theme) => {

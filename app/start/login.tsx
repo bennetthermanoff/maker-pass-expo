@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, H2, H4, Input, Spinner, Text, XStack, YStack } from 'tamagui';
+import { Button, H2, H4, Input, Spinner, Text, XStack, YStack, getTokens } from 'tamagui';
 import { useColors } from '../../constants/Colors';
 import { useMakerspace } from '../../util/useMakerspace';
 import { router } from 'expo-router';
@@ -7,6 +7,9 @@ import axios from 'axios';
 import { handleError } from '../../util/handleError';
 import { addServerCredentials } from '../../util/makerspaces';
 import { goHome } from '../../util/goHome';
+import { KeyboardAvoidingView } from 'react-native';
+import { Color } from '../../types/makerspaceServer';
+import { GLOBAL } from '../../global';
 
 export default function LoginScreen() {
 
@@ -16,7 +19,6 @@ export default function LoginScreen() {
     }>({});
     const colors = useColors();
     const makerspace = useMakerspace();
-    const [inputInFocus, setInputInFocus] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string>('');
 
@@ -44,14 +46,9 @@ export default function LoginScreen() {
     return (
         <>
 
-            <YStack
-                style={{ flex: 1,
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: 20,
-                }}
-                backgroundColor={colors.background}
+            <KeyboardAvoidingView
+                behavior={'padding'}
+                style={{ flex: 1 , justifyContent: 'center', alignItems: 'center', backgroundColor: getTokens().color[colors.background as Color].val }}
 
             >
                 <Button
@@ -72,9 +69,6 @@ export default function LoginScreen() {
                         alignItems: 'center',
                         width: '100%',
                     }}
-                    y={inputInFocus ? -100 : 0}
-                    animation={'medium'}
-                    animateOnly={['transform']}
                 >
 
                     <YStack
@@ -94,7 +88,7 @@ export default function LoginScreen() {
                         <H2
                             color={colors.text}
                             padding={'$0'}
-                        >{makerspace?.name}</H2>
+                        >{GLOBAL.serverName}</H2>
                     </YStack>
                     <Input
                         placeholder={'Email'}
@@ -106,9 +100,7 @@ export default function LoginScreen() {
                         onChangeText={(text) => {
                             setFormData({ ...formData, email: text });
                         }}
-                        onFocus={() => {
-                            setInputInFocus(true);
-                        }}
+
                     />
                     <Input
                         placeholder={'Password'}
@@ -121,9 +113,7 @@ export default function LoginScreen() {
                         onChangeText={(text) => {
                             setFormData({ ...formData, password: text });
                         }}
-                        onFocus={() => {
-                            setInputInFocus(true);
-                        }}
+
                     />
                     {!loading ?
                         <Button
@@ -150,7 +140,7 @@ export default function LoginScreen() {
                         fontWeight={'100'}
                     >{error}</Text>}
                 </YStack>
-            </YStack>
+            </KeyboardAvoidingView>
             {/* Back Button */}
             <YStack
                 style={{ position: 'absolute', bottom: 0, left: 0, right: 0  ,justifyContent: '', alignItems: 'left' }}
