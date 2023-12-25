@@ -15,19 +15,7 @@ export const handleURL = async (url:string|null) => {
     if (path === 'makerspace/config' ){
         try {
             const { url, port, registrationType, registrationKey } = queryParams ?? {} as { url?: string, port?: string, registrationType?: string, registrationKey?: string };
-            const { data:pingResponse }:{data:PingResponse} = await axios.get( url + ':' + port + '/api/ping');
-            if (pingResponse.server === null){
-                alert('Server not found');
-                return;
-            }
-
-            delete pingResponse.server.additionalInfoFields;
-            await addOrUpdateServer(pingResponse.server);
-
-            while (router.canGoBack()) { // Pop from stack until one element is left, resets the stack
-                router.back();
-            }
-            router.replace('/start/choose');
+            handleConnect(url as string, port as string, registrationType as string, registrationKey as string);
         }
         catch (err){
             alert('Error: ' + err);
@@ -36,3 +24,24 @@ export const handleURL = async (url:string|null) => {
     }
 };
 
+export const handleConnect = async (url?:string, port?:string, registrationType?:string, registrationKey?:string) => {
+    if (!url || !port || !registrationType || !registrationKey){
+        alert('Invalid config');
+        return;
+    }
+    const { data:pingResponse }:{data:PingResponse} = await axios.post( url + ':' + port + '/api/ping', { registrationType, registrationKey })
+        .then((response) => response)
+        .catch((err) => ({ data: { message: err.message, server: null } as PingResponse }));
+    if (pingResponse.server === null){
+        alert(pingResponse.message);
+        return;
+    }
+
+    delete pingResponse.server.additionalInfoFields;
+    await addOrUpdateServer({ ...pingResponse.server, registrationKey:registrationKey as string, registrationType: registrationType as string });
+
+    while (router.canGoBack()) { // Pop from stack until one element is left, resets the stack
+        router.back();
+    }
+    router.replace('/start/choose');
+};

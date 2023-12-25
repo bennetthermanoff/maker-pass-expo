@@ -54,6 +54,9 @@ export default function ConnectToMakerSpace() {
                 width={'80%'}
                 color={colors.secondaryAccent.dark}
                 backgroundColor={colors.inverseText}
+                onPress={() => {
+                    router.push('start/connectManually');
+                }}
             >Connect Manually</Button>
         </YStack>
 

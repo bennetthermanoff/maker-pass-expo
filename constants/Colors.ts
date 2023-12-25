@@ -15,6 +15,7 @@ const styleSheetColors = {
         tint: tintColorLight,
         tabIconDefault: '#ccc',
         tabIconSelected: tintColorLight,
+        blurTint:'light',
     },
     dark: {
         text: '#fff',
@@ -22,6 +23,7 @@ const styleSheetColors = {
         tint: tintColorDark,
         tabIconDefault: '#ccc',
         tabIconSelected: tintColorDark,
+        blurTint:'dark',
     },
 };
 export const useColors = () => {
@@ -68,6 +70,8 @@ const tanStackColors = (themeBase: ColorName, secondary:ColorName, darkMode:bool
             dark: `$${secondary}8${darkMode ? 'Light' : 'Dark'}`,
             light: `$${secondary}7${darkMode ? 'Dark' : 'Light'}`,
         },
+        blurTintColor: `${darkMode ? 'dark' : 'light'}`,
+
     }
 );
 

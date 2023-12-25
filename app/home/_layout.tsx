@@ -6,6 +6,7 @@ import Colors, { useColors } from '../../constants/Colors';
 import { useMakerspace } from '../../util/useMakerspace';
 import { YStack, getTokens } from 'tamagui';
 import { Color } from '../../types/makerspaceServer';
+import { BlurView } from 'expo-blur';
 
 /**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
@@ -43,34 +44,32 @@ export default function TabLayout() {
                 options={{
                     title: 'Machines',
                     tabBarIcon: ({ color }) => <TabBarIcon name='wrench' color={color} />,
-                    //diable label at top
                     headerShown: false,
 
                 }}
             />
-            {
-                makerspace?.user?.userType === 'admin' &&
-                    <Tabs.Screen
-                        name="admin/index"
-                        options={{
-                            title: 'Admin',
-                            tabBarIcon: ({ color }) => <TabBarIcon name="briefcase" color={color} />,
-                            headerShown: false,
-                        }}
 
-                    />
-            }
-            {
-                makerspace?.user?.userType !== 'user' &&
-                    <Tabs.Screen
-                        name="train/index"
-                        options={{
-                            title: 'Train',
-                            tabBarIcon: ({ color }) => <TabBarIcon name="graduation-cap" color={color} />,
-                            headerShown: false,
-                        }}
-                    />
-            }
+            <Tabs.Screen
+                name="admin/index"
+                options={{
+                    title: 'Admin',
+                    tabBarIcon: ({ color }) => <TabBarIcon name="briefcase" color={color} />,
+                    headerShown: false,
+                    href: makerspace?.user?.userType === 'admin' ? 'admin/index' : null,
+                }}
+
+            />
+
+            <Tabs.Screen
+                name="train/index"
+                options={{
+                    title: 'Train',
+                    tabBarIcon: ({ color }) => <TabBarIcon name="graduation-cap" color={color} />,
+                    headerShown: false,
+                    href: makerspace?.user?.userType === 'user' ? null : 'train/index',
+                }}
+            />
+
             <Tabs.Screen
                 name="settings/index"
                 options={{

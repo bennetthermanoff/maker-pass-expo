@@ -1,47 +1,30 @@
 import { useState } from 'react';
-import { Button, H2, H4, Input, Spinner, Text, XStack, YStack, getTokens } from 'tamagui';
+import { Button, H4, Input, Spinner, Text, YStack, getTokens } from 'tamagui';
 import { useColors } from '../../constants/Colors';
 import { useMakerspace } from '../../util/useMakerspace';
 import { router } from 'expo-router';
-import axios from 'axios';
-import { handleError } from '../../util/handleError';
-import { addServerCredentials } from '../../util/makerspaces';
-import { goHome } from '../../util/goHome';
 import { KeyboardAvoidingView } from 'react-native';
 import { Color } from '../../types/makerspaceServer';
-import { GLOBAL } from '../../global';
+import React from 'react';
+import { handleConnect } from '../../util/handleURL';
 
-export default function LoginScreen() {
+export default function ConnectManually() {
 
     const [formData, setFormData] = useState<{
-        email?: string;
-        password?: string;
-    }>({});
+        URL: string;
+        PORT: string;
+        registrationKey: string;
+        registrationType: 'admin' | 'user';
+    }>({
+        URL:'',
+        PORT:'',
+        registrationKey:'',
+        registrationType:'user',
+    });
     const colors = useColors();
     const makerspace = useMakerspace();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string>('');
-
-    const handleLogin = async () => {
-        if (!formData.email || !formData.password) {
-            setError('Error: Missing email or password');
-            return;
-        }
-        else if (!makerspace) goHome();
-        else {
-            setLoading(true);
-            axios.post(`${makerspace?.serverAddress}:${makerspace?.serverPort}/api/user/login`, { ...formData })
-                .then(async(res) => {
-                    const { userId,token,userType } = res.data;
-                    await addServerCredentials({ serverId:makerspace.id, userId, userType, token });
-                    goHome();
-                }).catch((err) => {
-                    handleError(err);
-                    setLoading(false);
-                });
-        }
-
-    };
 
     return (
         <>
@@ -83,50 +66,61 @@ export default function LoginScreen() {
                             color={colors.text}
                             marginBottom={'$-2'}
                             fontWeight={'100'}
-                        >Logging into </H4>
-
-                        <H2
-                            color={colors.text}
-                            padding={'$0'}
-                        >{GLOBAL.serverName}</H2>
+                        >Connect Manually </H4>
                     </YStack>
                     <Input
-                        placeholder={'Email'}
-                        value={formData.email}
+                        placeholder={'http://192.168.0.1'}
+                        value={formData.URL}
                         width={'95%'}
+                        keyboardType={'url'}
                         marginTop={'$4'}
                         backgroundColor={colors.inputBackground}
                         color={colors.text}
                         onChangeText={(text) => {
-                            setFormData({ ...formData, email: text });
+                            setFormData({ ...formData, URL: text });
                         }}
 
                     />
                     <Input
-                        placeholder={'Password'}
-                        value={formData.password}
+                        placeholder={'PORT'}
+                        value={formData.PORT}
+                        width={'95%'}
+                        marginTop={'$4'}
+                        keyboardType={'number-pad'}
+                        backgroundColor={colors.inputBackground}
+                        color={colors.text}
+                        onChangeText={(text) => {
+                            setFormData({ ...formData, PORT: text });
+                        }}
+
+                    />
+                    <Input
+                        placeholder={'Registration Key'}
+                        value={formData.registrationKey}
                         width={'95%'}
                         marginTop={'$4'}
                         backgroundColor={colors.inputBackground}
                         color={colors.text}
-                        secureTextEntry={true}
                         onChangeText={(text) => {
-                            setFormData({ ...formData, password: text });
+                            setFormData({ ...formData, registrationKey: text });
                         }}
-
                     />
+
                     {!loading ?
                         <Button
                             width={'95%'}
                             color={colors.text}
-                            backgroundColor={colors.accent.dark}
+                            backgroundColor={formData.registrationType === 'user' ? colors.accent.dark : colors.secondaryAccent.light}
                             marginTop={'$4'}
                             marginBottom={'$2'}
                             onPress={() => {
-                                handleLogin();
+                                handleConnect(formData.URL.toLowerCase(), formData.PORT, formData.registrationKey, formData.registrationType);
+                            }}
+                            onLongPress={() => {
+                                setFormData({ ...formData, registrationType: formData.registrationType === 'user' ? 'admin' : 'user' });
                             }}
                         >
-                            Login
+                            {formData.registrationType === 'user' ? 'Connect' : 'Connect as Admin'}
                         </Button> :
                         <Spinner
                             size={'large'}

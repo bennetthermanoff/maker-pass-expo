@@ -4,9 +4,10 @@ export interface MakerspaceConfig {
     website?: string,
     serverAddress: string,
     serverPort: number,
-    adminPassword: string,
-    registrationPassword: string,
+    registrationKey?: string,
+    registrationType?: string,
     theme: MakerspaceTheme,
+    hasGeoFences?: boolean,
     user?:{
         userId: string,
         userType: string,
@@ -22,7 +23,7 @@ export interface MakerspaceTheme {
 }
 export interface PingResponse {
     message: string,
-    server:MakerspaceConfig,
+    server:MakerspaceConfig|null,
 }
 export type MakerspaceServers = string [];
 
