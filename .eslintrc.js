@@ -47,7 +47,6 @@ module.exports = {
         'react/jsx-pascal-case': ['error', { allowAllCaps: true }],
         'react/jsx-uses-react': 'error',
         'react/jsx-uses-vars': 'error',
-        'react/jsx-wrap-multilines': ['error', { declaration: true, assignment: true, return: true }],
         'react/no-deprecated': 'error',
 
     },

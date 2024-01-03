@@ -1,49 +1,51 @@
-import { StyleSheet } from 'react-native';
-
-import EditScreenInfo from '../../../components/EditScreenInfo';
-import { Text, View } from '../../../components/Themed';
-import { Button } from 'tamagui';
+import { Text } from '../../../components/Themed';
+import { Button, H3, YStack } from 'tamagui';
 import { useColors } from '../../../constants/Colors';
 import { removeServer } from '../../../util/makerspaces';
 import { useMakerspace } from '../../../util/useMakerspace';
 import { router } from 'expo-router';
+import BlurHeader from '../../../components/BlurHeader';
 
 export default function Machines() {
     const color = useColors();
     const makerspace = useMakerspace();
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Tab One</Text>
-            <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-            <EditScreenInfo path="app/home/settings/index.tsx" />
-            <Button
-                size={'$4'}
-                backgroundColor={color.accent.dark}
-                onPress={async() => {
-                    if (makerspace?.id){
-                        await removeServer(makerspace?.id);
-                    }
-                    router.replace('/');
-                }}
-            >Logout
-            </Button>
-        </View>
+        <BlurHeader title="Settings">
+            <YStack
+                style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+            >
+
+                <H3>Server Address</H3>
+                <Text>{makerspace?.serverAddress}</Text>
+
+                <Button
+                    marginTop={'30%'}
+                    width={'50%'}
+                    size={'$4'}
+                    backgroundColor={color.accent.dark}
+                    onPress={async() => {
+                        if (makerspace?.id){
+                            await removeServer(makerspace?.id);
+                        }
+                        router.replace('/');
+                    }}
+                >Logout
+                </Button>
+                <Button
+                    marginTop={'30%'}
+                    width={'50%'}
+                    size={'$4'}
+                    backgroundColor={color.accent.dark}
+                    onPress={async() => {
+                        if (makerspace?.id){
+                            await removeServer(makerspace?.id);
+                        }
+                        router.push('/scanner/enabling/a824e269-414b-4f00-820b-2d7da3592d88');
+                    }}
+                >Show Enabling Test Screen
+                </Button>
+            </YStack>
+        </BlurHeader>
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    title: {
-        fontSize: 20,
-        fontWeight: 'bold',
-    },
-    separator: {
-        marginVertical: 30,
-        height: 1,
-        width: '80%',
-    },
-});

@@ -29,7 +29,6 @@ const styleSheetColors = {
 export const useColors = () => {
 
     const [makerSpaceTheme, setMakerSpaceTheme] = useState<MakerspaceTheme>(GLOBAL.theme as MakerspaceTheme);
-    const rootNavigationState = useRootNavigationState();
     const [theme, setTheme] = useState(tanStackColors(makerSpaceTheme.primary,makerSpaceTheme.secondary, Appearance.getColorScheme() === 'dark'));
     Appearance.addChangeListener(({ colorScheme }) => {
         setTheme(tanStackColors(makerSpaceTheme.primary, makerSpaceTheme.secondary, colorScheme === 'dark'));

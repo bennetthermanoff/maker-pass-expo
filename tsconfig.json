@@ -8,6 +8,7 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
-    "global.js"
+    "global.js",
+    "tamagui.config.js"
   ]
 }

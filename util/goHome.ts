@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { clearStackGoTo } from './clearStackGoTo';
 import { getCurrentServer } from './makerspaces';
 
@@ -15,4 +16,9 @@ export const goHome = async() => {
     else {
         clearStackGoTo('/home/');
     }
+};
+export const handleUserLoginError = () => {
+    alert('Session expired. Please log in again.');
+    clearStackGoTo('/start/choose');
+    router.push('/start/login');
 };

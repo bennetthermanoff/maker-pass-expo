@@ -55,7 +55,7 @@ export default function TabLayout() {
                     title: 'Admin',
                     tabBarIcon: ({ color }) => <TabBarIcon name="briefcase" color={color} />,
                     headerShown: false,
-                    href: makerspace?.user?.userType === 'admin' ? 'admin/index' : null,
+                    href: makerspace?.user?.userType === 'admin' ? undefined : null,
                 }}
 
             />
@@ -66,7 +66,7 @@ export default function TabLayout() {
                     title: 'Train',
                     tabBarIcon: ({ color }) => <TabBarIcon name="graduation-cap" color={color} />,
                     headerShown: false,
-                    href: makerspace?.user?.userType === 'user' ? null : 'train/index',
+                    href: makerspace?.user?.userType === 'user' ? null : undefined,
                 }}
             />
 

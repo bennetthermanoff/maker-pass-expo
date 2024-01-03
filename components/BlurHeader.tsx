@@ -1,15 +1,21 @@
 
-import { H1, H3, ScrollView, YStack, getTokens } from 'tamagui';
+import { Circle, H1, H3, ScrollView, YStack, getTokens } from 'tamagui';
 import { Color } from '../types/makerspaceServer';
 import { BlurView } from 'expo-blur';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Animated,{ useAnimatedProps, interpolate, Extrapolation } from 'react-native-reanimated';
 import { useColors } from '../constants/Colors';
 
-export default function BlurHeader({ title, children }: { title: string, children?: React.ReactNode }) {
+export default function BlurHeader({ title, children, debouncedPullToRefresh }: { title: string, children?: React.ReactNode, debouncedPullToRefresh?: () => void }) {
     const colors = useColors();
     const [scrollY, setScrollY] = useState(0);
     const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
+
+    useEffect(() => {
+        if (debouncedPullToRefresh && scrollY < -170) {
+            debouncedPullToRefresh();
+        }
+    }, [scrollY, debouncedPullToRefresh ]);
 
     const animatedProps = useAnimatedProps(() => {
         const intensity = interpolate(
@@ -59,6 +65,7 @@ export default function BlurHeader({ title, children }: { title: string, childre
                     }}
                 >{title}</H3>
             </AnimatedBlurView>
+
             <ScrollView
                 backgroundColor={colors.background}
                 onScroll={(event) => {
@@ -66,6 +73,41 @@ export default function BlurHeader({ title, children }: { title: string, childre
                 }}
                 scrollEventThrottle={30}
             >
+                {debouncedPullToRefresh &&
+                    <YStack
+                        style={{
+                            flex: 0,
+                            flexDirection: 'column',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            transform: [
+                                { translateY: -140 },
+                            ],
+                            width: '100%',
+                            height: 140,
+                            marginBottom:-140,
+                        }}
+                    >
+                        <H3
+                            style={{
+                                color: colors.text,
+                                fontSize: 20,
+                                marginTop: 50,
+                                fontWeight: '900',
+                            }}
+                        >Pull to refresh</H3>
+                        <Circle
+                            size={interpolate(
+                                -scrollY,
+                                [0, 70, 170],
+                                [0, 0, 50],
+                                Extrapolation.CLAMP,
+                            )}
+                            backgroundColor={colors.secondaryAccent.dark}
+                        ></Circle>
+
+                    </YStack>
+                }
 
                 <YStack
                     backgroundColor={colors.background}

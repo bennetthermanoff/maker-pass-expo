@@ -1,10 +1,14 @@
 import * as Linking from 'expo-linking';
 import { router } from 'expo-router';
 import axios from 'axios';
-import { MakerspaceConfig, PingResponse } from '../types/makerspaceServer';
-import { addOrUpdateServer, setAdditionalInfo } from './makerspaces';
+import { MakerspaceConfig, MakerspaceServers, PingResponse } from '../types/makerspaceServer';
+import { addOrUpdateServer, getCurrentServer, getServer, getServers, setCurrentServer } from './makerspaces';
+import { Machine } from '../types/machine';
+import { getAuthHeaders } from './authRoutes';
+import { goHome, handleUserLoginError } from './goHome';
+import { GLOBAL } from '../global';
 
-export const handleURL = async (url:string|null) => {
+export const handleURL =  (url:string|null) => {
     if (url === null) {
         return;
     }
@@ -16,11 +20,22 @@ export const handleURL = async (url:string|null) => {
         try {
             const { url, port, registrationType, registrationKey } = queryParams ?? {} as { url?: string, port?: string, registrationType?: string, registrationKey?: string };
             handleConnect(url as string, port as string, registrationType as string, registrationKey as string);
+            return 'Connecting...';
         }
         catch (err){
             alert('Error: ' + err);
         }
 
+    }
+    if (path ===  'makerspace/machine/enable'){
+        try {
+            const { serverId, machineId, enableKey, locationRequired } = queryParams ?? {} as {serverId: string, machineId:string, enableKey?:string, locationRequired?:string};
+            handleEnableMachine({ serverId:serverId as string, machineId:machineId as string, enableKey: enableKey as string|undefined, locationRequired: locationRequired as string });
+            return 'Enabling...';
+        }
+        catch (err){
+            alert('Error: ' + err);
+        }
     }
 };
 
@@ -44,4 +59,50 @@ export const handleConnect = async (url?:string, port?:string, registrationType?
         router.back();
     }
     router.replace('/start/choose');
+};
+const handleEnableMachine = async ({ serverId, machineId, enableKey, locationRequired }:{ serverId: string, machineId:string, enableKey?:string, locationRequired:string}) => {
+    const makerspaces = await getServers();
+    if (!makerspaces.find((makerspaceId) => makerspaceId === serverId)){
+        throw 'Not Signed Into This Makerspace!';
+        return;
+    }
+    const makerspace = await getServer(serverId);
+    if (!makerspace){
+        throw 'Makerspace Not Found!';
+        return;
+    }
+    await setCurrentServer(serverId);
+    router.replace('/scanner/enabling/:machineId');
+    if (locationRequired === 'true'){
+        // TODO: Location
+        //const coords =
+        throw 'Location not implemented';
+        return;
+    }
+    try {
+        const { data }:{data:{message:string, machine:Machine }} = await axios.post(
+            `${makerspace.serverAddress}:${makerspace.serverPort}/api/machine/enable/single/${machineId}`,
+            { enableKey, location:locationRequired ? { lat:0,lng:0 } : undefined },
+            getAuthHeaders(makerspace),
+        );
+        if (!router.canGoBack()){ //if user is on home screen already, we should trigger a refresh to show the new status
+            goHomeOnBarAndCallFinished();
+        }
+    } catch (err:any){
+        if (err.response.status === 401){
+            handleUserLoginError();
+        } else {
+            alert(err);
+        }
+    }
+
+};
+
+export const goHomeOnBarAndCallFinished = () => {
+    if (GLOBAL.barRaceCondition === 0 ){
+        GLOBAL.barRaceCondition = 1;
+    } else {
+        GLOBAL.barRaceCondition = 0;
+        goHome();
+    }
 };
