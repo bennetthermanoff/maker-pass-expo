@@ -3,6 +3,7 @@ module.exports = {
         theme: { primary:'blue',secondary:'green' },
         serverName: '',
         barRaceCondition: 0,
+        getMachines:async () => {},
     },
 };
 

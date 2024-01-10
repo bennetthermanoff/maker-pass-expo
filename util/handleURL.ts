@@ -6,6 +6,7 @@ import { addOrUpdateServer, getCurrentServer, getServer, getServers, setCurrentS
 import { Machine } from '../types/machine';
 import { getAuthHeaders } from './authRoutes';
 import { goHome, handleUserLoginError } from './goHome';
+import * as Location from 'expo-location';
 import { GLOBAL } from '../global';
 
 export const handleURL =  (url:string|null) => {
@@ -63,36 +64,40 @@ export const handleConnect = async (url?:string, port?:string, registrationType?
 const handleEnableMachine = async ({ serverId, machineId, enableKey, locationRequired }:{ serverId: string, machineId:string, enableKey?:string, locationRequired:string}) => {
     const makerspaces = await getServers();
     if (!makerspaces.find((makerspaceId) => makerspaceId === serverId)){
-        throw 'Not Signed Into This Makerspace!';
-        return;
+        throw new Error('Not Signed Into This Makerspace!');
+
     }
     const makerspace = await getServer(serverId);
     if (!makerspace){
-        throw 'Makerspace Not Found!';
-        return;
+        throw new Error( 'Makerspace Not Found!');
     }
     await setCurrentServer(serverId);
-    router.replace('/scanner/enabling/:machineId');
+
+    let location:{lat:number, lng:number}|undefined = undefined;
     if (locationRequired === 'true'){
-        // TODO: Location
-        //const coords =
-        throw 'Location not implemented';
-        return;
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+            alert('Permission to access location was denied');
+            return;
+        }
+
+        const locationRaw = await Location.getCurrentPositionAsync({});
+        location = { lat:locationRaw.coords.latitude, lng:locationRaw.coords.longitude };
     }
     try {
         const { data }:{data:{message:string, machine:Machine }} = await axios.post(
             `${makerspace.serverAddress}:${makerspace.serverPort}/api/machine/enable/single/${machineId}`,
-            { enableKey, location:locationRequired ? { lat:0,lng:0 } : undefined },
+            { enableKey, location },
             getAuthHeaders(makerspace),
         );
-        if (!router.canGoBack()){ //if user is on home screen already, we should trigger a refresh to show the new status
-            goHomeOnBarAndCallFinished();
-        }
+        GLOBAL.getMachines();
+        goHomeOnBarAndCallFinished();
     } catch (err:any){
         if (err.response.status === 401){
             handleUserLoginError();
+
         } else {
-            alert(err);
+            alert(JSON.stringify(err));
         }
     }
 

@@ -1,10 +1,11 @@
-import { Text } from '../../../components/Themed';
-import { Button, H3, YStack } from 'tamagui';
+
+import { Button, H3, H2, Text, YStack, XStack } from 'tamagui';
 import { useColors } from '../../../constants/Colors';
 import { removeServer } from '../../../util/makerspaces';
 import { useMakerspace } from '../../../util/useMakerspace';
 import { router } from 'expo-router';
 import BlurHeader from '../../../components/BlurHeader';
+import { clearImages } from '../../../util/machineImageCache';
 
 export default function Machines() {
     const color = useColors();
@@ -14,15 +15,27 @@ export default function Machines() {
             <YStack
                 style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
             >
+                <H2
+                    color={color.text}
+                    padding={'$0'}
+                >Welcome to MakerPass!</H2>
+                <Text
+                    color={color.text}
+                    padding={'$0'}
+                    paddingBottom={'$4'}
+                >Connected to the {makerspace?.name}</Text>
+                <XStack
+                    alignItems={'center'}
+                >
 
-                <H3>Server Address</H3>
-                <Text>{makerspace?.serverAddress}</Text>
-
+                    <Text color={color.text}>{'Server Address: ' + makerspace?.serverAddress}</Text>
+                </XStack>
                 <Button
                     marginTop={'30%'}
                     width={'50%'}
                     size={'$4'}
                     backgroundColor={color.accent.dark}
+                    color={color.text}
                     onPress={async() => {
                         if (makerspace?.id){
                             await removeServer(makerspace?.id);
@@ -36,13 +49,11 @@ export default function Machines() {
                     width={'50%'}
                     size={'$4'}
                     backgroundColor={color.accent.dark}
-                    onPress={async() => {
-                        if (makerspace?.id){
-                            await removeServer(makerspace?.id);
-                        }
-                        router.push('/scanner/enabling/a824e269-414b-4f00-820b-2d7da3592d88');
+                    color={color.text}
+                    onPress={() => {
+                        clearImages();
                     }}
-                >Show Enabling Test Screen
+                >Clear Image Cache
                 </Button>
             </YStack>
         </BlurHeader>

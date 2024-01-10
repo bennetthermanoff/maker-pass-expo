@@ -38,7 +38,19 @@
     },
     "plugins": [
       "expo-router",
-      "expo-barcode-scanner"
+      "expo-barcode-scanner",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermisison": "Allow $(PRODUCT_NAME) to use your location"
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you pick machine images."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

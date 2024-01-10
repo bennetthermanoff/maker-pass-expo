@@ -45,7 +45,24 @@ export const useColors = () => {
         });
     }, []);
 
-    return theme;
+    return theme as Colors;
+};
+export type Colors = {
+    background: string,
+    text: string,
+    subText?: string,
+    inverseText: string,
+    tint: string,
+    inputBackground: string,
+    accent: {
+        dark: string,
+        light: string,
+    },
+    secondaryAccent: {
+        dark: string,
+        light: string,
+    },
+    blurTintColor: 'dark'|'light',
 };
 
 export const useUnTokenizedColor = (token:string) => {
@@ -58,6 +75,7 @@ const tanStackColors = (themeBase: ColorName, secondary:ColorName, darkMode:bool
     {
         background: `$${themeBase}4${darkMode ? 'Dark' : 'Light'}`,
         text: `${darkMode ? 'white' : 'black'}`,
+        subText: darkMode ? 'rgba(178, 178, 178, 1)' : 'rgba(77, 77, 77, 1)',
         inverseText: `${darkMode ? 'black' : 'white'}`,
         tint: `$${themeBase}3${darkMode ? 'Dark' : 'Light'}`,
         inputBackground: `$${themeBase}2${darkMode ? 'Dark' : 'Light'}`,

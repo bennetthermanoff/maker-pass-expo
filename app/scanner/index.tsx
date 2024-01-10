@@ -13,26 +13,27 @@ import { GLOBAL } from '../../global';
 
 export default function Scanner() {
     const [hasPermission, setHasPermission] = useState<null|Boolean>(null);
+    const [header, setHeader] = useState('Scan QR');
     const [scanned, setScanned] = useState(false);
     const colors = useColors();
 
     const [animateTime,setAnimateTime] = useState(0);
 
+    const DELAY = 1000 / 60;
+    const timeIncrement = async () => {
+        await new Promise((res) => setTimeout(res,DELAY));
+        if (animateTime <= 1000 ){
+            setAnimateTime(animateTime + DELAY);
+        } else {
+            goHomeOnBarAndCallFinished();
+        }
+
+    };
+
     useEffect(() => {
-        const DELAY = 1000 / 60; //60fps
-        const timeIncrement = async () => {
-            await new Promise((res) => setTimeout(res,DELAY));
-            if (animateTime <= 1000 ){
-                setAnimateTime(animateTime + DELAY);
-            } else {
-                goHomeOnBarAndCallFinished();
-            }
-
-        };
-        // if (scanned){
-        timeIncrement();
-        // }
-
+        if (scanned) {
+            timeIncrement();
+        }
     },[animateTime, scanned]);
 
     useEffect(() => {
@@ -45,9 +46,11 @@ export default function Scanner() {
     const handleBarCodeScanned = async ({ type, data }:{type:string, data:string}) => {
         GLOBAL.barRaceCondition = 0; //reset race condition
         setScanned(true);
-        setHasPermission(null);
         if (data.startsWith('exp://')) {
             const newText = handleURL(data);
+            if (newText){
+                setHeader(newText);
+            }
         } else {
             alert(`Bar code with type ${type} and data ${data} has been scanned!`);
         }
@@ -68,15 +71,15 @@ export default function Scanner() {
                 paddingTop={'$15'}
                 backgroundColor={colors.background}
             >
-                Scan QR
+                {header}
             </H1>
             <XStack
                 height={0}
                 width={`${interpolate(animateTime, [0,1000],[0,100])}%`}
                 borderColor={colors.secondaryAccent.dark}
-                borderWidth={5}
+                borderWidth={scanned ? 5 : 0}
             />
-            {hasPermission ? <YStack>
+            <YStack>
                 <BarCodeScanner
                     onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
                     style={{ height:'90%' }}
@@ -99,24 +102,7 @@ export default function Scanner() {
                     >Cancel</Button>
 
                 </XStack>
-            </YStack> : <XStack
-                style={{
-                    flex: 1,
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                }}
-            >
-                <Spinner
-                    size='large'
-                    color={colors.accent.dark}
-                />
-                <H3
-                    color={colors.text}
-                    padding={'$0'}
-                >Contacting Makerspace...</H3>
-            </XStack>
-            }
+            </YStack>
 
         </YStack>
 

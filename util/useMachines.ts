@@ -8,6 +8,8 @@ import { clearStackGoTo } from './clearStackGoTo';
 import { router } from 'expo-router';
 import { handleUserLoginError } from './goHome';
 import { getAuthHeaders } from './authRoutes';
+import { getImage, getImageIDs, setImage } from './machineImageCache';
+import { GLOBAL } from '../global';
 
 export const useMachines = () => {
     const [machines, setMachines] = useState<null|Machine[]>(null);
@@ -20,7 +22,24 @@ export const useMachines = () => {
         setLoading(true);
         try {
             if (makerspace?.user){
-                const machines = await getMachinesFromServer(makerspace);
+                let machines = await getMachinesFromServer(makerspace,false);
+                const cachedImageIds = await getImageIDs();
+                const allMachinesHaveImages = machines.every((machine) => !machine.photoHash || cachedImageIds.includes(machine.photoHash));
+                if (!allMachinesHaveImages){
+                    machines = await getMachinesFromServer(makerspace,true);
+                    machines.forEach((machine) => {
+                        if (machine.photo && machine.photoHash){
+                            setImage(machine.photoHash, machine.photo);
+                        }
+                    });
+                } else {
+                    machines = await Promise.all(machines.map(async (machine) => {
+                        if (machine.photoHash){
+                            const image = await getImage(machine.photoHash);
+                            return { ...machine, photo: image };
+                        }
+                        return machine;
+                    }));}
                 setMachines(machines);
             }
         }
@@ -65,14 +84,16 @@ export const useMachines = () => {
 
     useEffect(() => {
         getMachines();
+        GLOBAL.getMachines = getMachines;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [makerspace]);
 
     return { machines, loading, error, debouncedGetMachines, disableMachine };
 };
 
-export const getMachinesFromServer = async (makerspace:MakerspaceConfig) => {
+export const getMachinesFromServer = async (makerspace:MakerspaceConfig, withImages?:boolean) => {
     const response = await axios.get(
-        `${makerspace.serverAddress}:${makerspace.serverPort}/api/machine/all`,
+        `${makerspace.serverAddress}:${makerspace.serverPort}/api/machine/all${withImages ? '/photos' : ''}`,
         getAuthHeaders(makerspace),
     );
     return response.data.machines as Machine[];

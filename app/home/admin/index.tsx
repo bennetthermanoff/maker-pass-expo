@@ -18,6 +18,7 @@ export default function Admin() {
                 style={buttonStyle}
                 iconAfter={Wrench}
                 backgroundColor={colors.secondaryAccent.light}
+                color={colors.text}
             >Manage Machine Groups</Button>
             <Button
                 spaceFlex
@@ -27,6 +28,7 @@ export default function Admin() {
                 style={buttonStyle}
                 iconAfter={Wrench}
                 backgroundColor={colors.secondaryAccent.light}
+                color={colors.text}
             >Manage Permission Groups</Button>
         </BlurHeader>
 
