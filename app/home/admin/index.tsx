@@ -4,6 +4,7 @@ import BlurHeader from '../../../components/BlurHeader';
 import { Button } from 'tamagui';
 import { Wrench } from '@tamagui/lucide-icons';
 import { useColors } from '../../../constants/Colors';
+import { router } from 'expo-router';
 
 export default function Admin() {
     const colors = useColors();
@@ -19,6 +20,7 @@ export default function Admin() {
                 iconAfter={Wrench}
                 backgroundColor={colors.secondaryAccent.light}
                 color={colors.text}
+                onPress={() => {router.push('/machineGroups/');}}
             >Manage Machine Groups</Button>
             <Button
                 spaceFlex

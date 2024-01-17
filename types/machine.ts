@@ -10,3 +10,18 @@ export type Machine = {
     lastUsedBy: string|null;
     latestTagOutId: string|null;
 }
+
+export type MachineGroupMap={
+    [key: string]: MachineGroupBody
+}
+export type MachineGroupBody={
+    name: string;
+    machineIds: string[];
+    geoFences: GeoFence[];
+}
+export type MachineGroupArray = Array<MachineGroupBody & {id:string}>
+export type GeoFence = {
+    lat: number,
+    lng: number,
+    radius: number,
+};

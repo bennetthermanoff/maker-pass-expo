@@ -4,15 +4,15 @@ import { debounce } from 'lodash';
 import axios from 'axios';
 import { useMakerspace } from './useMakerspace';
 import { MakerspaceConfig } from '../types/makerspaceServer';
-import { clearStackGoTo } from './clearStackGoTo';
+import { clearStackGoTo } from '../util/clearStackGoTo';
 import { router } from 'expo-router';
-import { handleUserLoginError } from './goHome';
-import { getAuthHeaders } from './authRoutes';
-import { getImage, getImageIDs, setImage } from './machineImageCache';
+import { handleUserLoginError } from '../util/goHome';
+import { getAuthHeaders } from '../util/authRoutes';
+import { getImage, getImageIDs, setImage } from '../util/machineImageCache';
 import { GLOBAL } from '../global';
 
 export const useMachines = () => {
-    const [machines, setMachines] = useState<null|Machine[]>(null);
+    const [machines, setMachines] = useState<Machine[]>([]);
     const makerspace = useMakerspace();
     // const [machineGroups, setMachineGroups] = useState<null|MachineGroup[]>(null);
     const [loading, setLoading] = useState(true);
@@ -47,13 +47,13 @@ export const useMachines = () => {
             if (err.response.status === 401){
                 handleUserLoginError();
             }
-            setError(JSON.stringify(err));
+            setError(JSON.stringify(err.response.data));
         }
         finally {
             setLoading(false);
         }
     };
-    const debouncedGetMachines = debounce(getMachines, 1000);
+    const debouncedGetMachines = debounce(getMachines, 200);
 
     const disableMachine = async (machineId:string) => {
         setLoading(true);
@@ -88,7 +88,7 @@ export const useMachines = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [makerspace]);
 
-    return { machines, loading, error, debouncedGetMachines, disableMachine };
+    return { machines, loading, error, debouncedGetMachines, disableMachine, makerspace };
 };
 
 export const getMachinesFromServer = async (makerspace:MakerspaceConfig, withImages?:boolean) => {

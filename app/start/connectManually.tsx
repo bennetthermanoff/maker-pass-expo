@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button, H4, Input, Spinner, Text, YStack, getTokens } from 'tamagui';
 import { useColors } from '../../constants/Colors';
-import { useMakerspace } from '../../util/useMakerspace';
+import { useMakerspace } from '../../hooks/useMakerspace';
 import { router } from 'expo-router';
 import { KeyboardAvoidingView } from 'react-native';
 import { Color } from '../../types/makerspaceServer';
@@ -73,6 +73,7 @@ export default function ConnectManually() {
                         value={formData.URL}
                         width={'95%'}
                         keyboardType={'url'}
+                        autoCapitalize='none'
                         marginTop={'$4'}
                         backgroundColor={colors.inputBackground}
                         color={colors.text}
@@ -86,6 +87,7 @@ export default function ConnectManually() {
                         value={formData.PORT}
                         width={'95%'}
                         marginTop={'$4'}
+                        autoCapitalize='none'
                         keyboardType={'number-pad'}
                         backgroundColor={colors.inputBackground}
                         color={colors.text}
@@ -98,6 +100,7 @@ export default function ConnectManually() {
                         placeholder={'Registration Key'}
                         value={formData.registrationKey}
                         width={'95%'}
+                        autoCapitalize='none'
                         marginTop={'$4'}
                         backgroundColor={colors.inputBackground}
                         color={colors.text}

@@ -2,7 +2,7 @@
 import { Button, H3, H2, Text, YStack, XStack } from 'tamagui';
 import { useColors } from '../../../constants/Colors';
 import { removeServer } from '../../../util/makerspaces';
-import { useMakerspace } from '../../../util/useMakerspace';
+import { useMakerspace } from '../../../hooks/useMakerspace';
 import { router } from 'expo-router';
 import BlurHeader from '../../../components/BlurHeader';
 import { clearImages } from '../../../util/machineImageCache';

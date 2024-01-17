@@ -3,7 +3,7 @@ import { Link, Tabs } from 'expo-router';
 import { Pressable, View, useColorScheme } from 'react-native';
 
 import Colors, { useColors } from '../../constants/Colors';
-import { useMakerspace } from '../../util/useMakerspace';
+import { useMakerspace } from '../../hooks/useMakerspace';
 import { YStack, getTokens } from 'tamagui';
 import { Color } from '../../types/makerspaceServer';
 import { BlurView } from 'expo-blur';

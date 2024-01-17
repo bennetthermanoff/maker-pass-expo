@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button, H2, H4, Input, Spinner, Text, XStack, YStack, getTokens } from 'tamagui';
 import { useColors } from '../../constants/Colors';
-import { useMakerspace } from '../../util/useMakerspace';
+import { useMakerspace } from '../../hooks/useMakerspace';
 import { router } from 'expo-router';
 import axios from 'axios';
 import { handleError } from '../../util/handleError';

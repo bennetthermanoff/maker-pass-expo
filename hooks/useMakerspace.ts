@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { MakerspaceConfig } from '../types/makerspaceServer';
-import { getCurrentServer } from './makerspaces';
+import { getCurrentServer } from '../util/makerspaces';
 import { GLOBAL } from '../global';
 
 export const useMakerspace = () => {

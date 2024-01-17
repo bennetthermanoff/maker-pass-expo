@@ -1,7 +1,7 @@
 import { Button, H2, H4, Input, Label, ScrollView, Spinner, XStack, YStack, getTokens } from 'tamagui';
 import DropdownSelect from 'react-native-input-select';
 import { useColors } from '../../constants/Colors';
-import { useMakerspace } from '../../util/useMakerspace';
+import { useMakerspace } from '../../hooks/useMakerspace';
 import { useEffect, useState } from 'react';
 import { router, useGlobalSearchParams } from 'expo-router';
 import { AdditionalInfoField, Color, MakerspaceTheme } from '../../types/makerspaceServer';
@@ -192,7 +192,7 @@ export default function Register(){
 
                     />
                     {errors.name && <Label color={colors.secondaryAccent.dark}>{errors.name}</Label>}
-                    {additionalInfo.map((field) => {
+                    {additionalInfo.map((field,index) => {
                         if (field.type === 'text'){
                             return (
                                 <>
@@ -201,6 +201,7 @@ export default function Register(){
                                         value={formData[field.name] as string}
                                         width={'95%'}
                                         marginTop={'$4'}
+                                        key={index}
                                         backgroundColor={colors.inputBackground}
                                         color={colors.text}
                                         onChangeText={(text) => {
@@ -220,6 +221,7 @@ export default function Register(){
                                         value={formData[field.name] as string}
                                         width={'95%'}
                                         marginTop={'$4'}
+                                        key={index}
                                         backgroundColor={colors.inputBackground}
                                         color={colors.text}
                                         keyboardType={'number-pad'}
@@ -240,6 +242,7 @@ export default function Register(){
                                         value={formData[field.name] as string}
                                         width={'95%'}
                                         marginTop={'$4'}
+                                        key={index}
                                         backgroundColor={colors.inputBackground}
                                         color={colors.text}
                                         keyboardType={'phone-pad'}
@@ -255,7 +258,7 @@ export default function Register(){
                         if (field.type === 'checkbox'){
                             return (
                                 <>
-                                    <XStack alignItems="center" space="$4" marginTop='$4'>
+                                    <XStack key={index} alignItems="center" space="$4" marginTop='$4'>
                                         <Checkbox
                                             style={{ width: 30, height: 30 }}
                                             value={formData[field.name] as boolean}
@@ -281,6 +284,7 @@ export default function Register(){
                                 return (
                                     <>
                                         <XStack
+                                            key={index}
                                             flexDirection="row"
                                             alignItems="center"
                                             space="$4"
@@ -313,7 +317,7 @@ export default function Register(){
                             } else {
                                 return (
                                     <>
-                                        <XStack  marginTop='$4'>
+                                        <XStack key={index} marginTop='$4'>
                                             <H4
                                                 color={colors.text}
                                                 fontWeight={'100'}
@@ -336,7 +340,7 @@ export default function Register(){
                         if (field.type === 'dropdown' && field.options){
                             return (
                                 <>
-                                    <XStack marginTop='$4' marginBottom='$-4'>
+                                    <XStack key={index} marginTop='$4' marginBottom='$-4'>
                                         <DropdownSelect
                                             label={field.name}
                                             labelStyle={{ color: colors.text }}

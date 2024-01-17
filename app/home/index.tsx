@@ -2,19 +2,19 @@ import { Button, Card, Paragraph, Image, XStack, H2, CardProps, YStack, Circle, 
 import { Plus } from '@tamagui/lucide-icons';
 import  BlurHeader  from '../../components/BlurHeader';
 import { useColors, Colors } from '../../constants/Colors';
-import { useMakerspace } from '../../util/useMakerspace';
+import { useMakerspace } from '../../hooks/useMakerspace';
 import { router } from 'expo-router';
-import { useMachines } from '../../util/useMachines';
+import { useMachines } from '../../hooks/useMachines';
 import { Machine } from '../../types/machine';
 import { LinearGradient } from '@tamagui/linear-gradient';
 import { QrCode } from '@tamagui/lucide-icons';
 import React, { useEffect, useState } from 'react';
 import { interpolate } from 'react-native-reanimated';
 import defaultImage from '../../assets/images/adaptive-icon.png';
+import { ImageSourcePropType } from 'react-native';
 export default function Machines() {
     const colors = useColors();
-    const makerspace = useMakerspace();
-    const { machines, loading, error, debouncedGetMachines, disableMachine } = useMachines();
+    const { machines, loading, error, debouncedGetMachines, disableMachine, makerspace } = useMachines();
     return (
         <>
             <BlurHeader title="Machines" debouncedPullToRefresh={debouncedGetMachines}>
@@ -189,7 +189,7 @@ export const MachineCard = (props: {machine:Machine, uri?:string, cardProps?:Car
                                 borderRadius: 7,
                             }}
                             zIndex={-1}
-                            source={props.machine.photo ? { uri:'data:image/png;base64,' + props.machine.photo  } : defaultImage}
+                            source={props.machine.photo ? { uri:'data:image/png;base64,' + props.machine.photo  } : defaultImage as ImageSourcePropType}
                             boxShadow='0px 0px 10px 0px rgba(0,0,0,0.75)'
                         />
 

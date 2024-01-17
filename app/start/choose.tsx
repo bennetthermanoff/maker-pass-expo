@@ -4,7 +4,7 @@ import * as Linking from 'expo-linking';
 import { useColors } from '../../constants/Colors';
 import { router } from 'expo-router';
 import { removeServer } from '../../util/makerspaces';
-import { useMakerspace } from '../../util/useMakerspace';
+import { useMakerspace } from '../../hooks/useMakerspace';
 export default function LoginOrRegister() {
     const url = Linking.useURL();
     const colors = useColors();

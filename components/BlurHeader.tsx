@@ -5,6 +5,7 @@ import { BlurView } from 'expo-blur';
 import { useEffect, useState } from 'react';
 import Animated,{ useAnimatedProps, interpolate, Extrapolation } from 'react-native-reanimated';
 import { useColors } from '../constants/Colors';
+import { Platform } from 'react-native';
 
 export default function BlurHeader({ title, children, debouncedPullToRefresh }: { title: string, children?: React.ReactNode, debouncedPullToRefresh?: () => void }) {
     const colors = useColors();
@@ -25,9 +26,13 @@ export default function BlurHeader({ title, children, debouncedPullToRefresh }: 
             Extrapolation.EXTEND,
         );
 
-        return {
-            intensity,
-        };
+        if (Platform.OS === 'ios'){
+            return {
+                intensity,
+            };
+        } else {
+            return { };
+        }
     });
 
     return (
@@ -46,9 +51,10 @@ export default function BlurHeader({ title, children, debouncedPullToRefresh }: 
                     flexDirection: 'row',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    backgroundColor: scrollY < 50 ? getTokens().color[colors.background as Color].val : 'transparent',
+                    backgroundColor: Platform.OS === 'ios' ? scrollY < 50 ? getTokens().color[colors.background as Color].val : 'transparent' : getTokens().color[colors.background as Color].val ,
                 }}
                 tint={colors.blurTintColor as 'light' | 'dark'}
+                blurReductionFactor={2}
             >
                 <H3
                     style={{
@@ -69,8 +75,13 @@ export default function BlurHeader({ title, children, debouncedPullToRefresh }: 
             <ScrollView
                 backgroundColor={colors.background}
                 onScroll={(event) => {
-                    setScrollY(event.nativeEvent.contentOffset.y);
+                    if (event.nativeEvent.contentOffset.y < 80){
+                        setScrollY(event.nativeEvent.contentOffset.y);
+                    } else if (scrollY < 80 && scrollY !== 80){
+                        setScrollY(80);
+                    }
                 }}
+                overScrollMode='always'
                 scrollEventThrottle={30}
             >
                 {debouncedPullToRefresh &&

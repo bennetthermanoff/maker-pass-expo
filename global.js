@@ -4,6 +4,7 @@ module.exports = {
         serverName: '',
         barRaceCondition: 0,
         getMachines:async () => {},
+        getMachineGroups:async () => {},
     },
 };
 
