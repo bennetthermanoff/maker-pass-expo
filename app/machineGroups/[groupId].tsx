@@ -14,7 +14,7 @@ import axios from 'axios';
 import { getAuthHeaders } from '../../util/authRoutes';
 import { GLOBAL } from '../../global';
 
-export default function EditGroup(){
+export default function EditMachineGroup(){
     const local = useLocalSearchParams();
     const colors = useColors();
     const { machines, loading, debouncedGetMachines, makerspace } = useMachines();
@@ -105,6 +105,22 @@ export default function EditGroup(){
             );
             router.back();
             alert('Machine group updated successfully!');
+            GLOBAL.getMachines();
+        } catch (e:any) {
+            alert(JSON.stringify(e.response.data));
+        }
+    };
+    const deleteMachineGroup = async () => {
+        if (!makerspace?.serverAddress || !makerspace?.serverPort){
+            return alert('Unknown Makerspace.');
+        }
+        try {
+            const response = await axios.delete(
+                `${makerspace?.serverAddress}:${makerspace?.serverPort}/api/machineGroup/single/${local.groupId}`,
+                getAuthHeaders(makerspace),
+            );
+            router.back();
+            alert('Machine group deleted successfully!');
             GLOBAL.getMachines();
         } catch (e:any) {
             alert(JSON.stringify(e.response.data));
@@ -327,14 +343,25 @@ export default function EditGroup(){
                         opacity={.2}
                         borderColor={colors.text}
                     />
+
                     <Button
                         color={colors.text}
                         backgroundColor={colors.accent.dark}
                         width={'95%'}
                         marginTop={'$3'}
-                        marginBottom={100}
+                        marginBottom={local.groupId === 'new' ? 100 : 20}
                         onPress={handleSubmit}
                     >{local.groupId === 'new' ? 'Add Machine Group' : 'Update Machine Group'}</Button>
+                    {local.groupId !== 'new' ?
+                        <Button
+                            color={colors.text}
+                            backgroundColor={colors.secondaryAccent.light}
+                            width={'auto'}
+                            marginTop={'$3'}
+                            marginBottom={100}
+                            onPress={deleteMachineGroup}
+                        >Delete Machine Group</Button>
+                        : null}
                 </YStack>
 
             </BlurHeader>

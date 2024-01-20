@@ -31,6 +31,7 @@ export default function Admin() {
                 iconAfter={Wrench}
                 backgroundColor={colors.secondaryAccent.light}
                 color={colors.text}
+                onPress={() => {router.push('/permissionGroups/');}}
             >Manage Permission Groups</Button>
         </BlurHeader>
 

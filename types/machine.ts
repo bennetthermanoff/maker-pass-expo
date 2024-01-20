@@ -25,3 +25,16 @@ export type GeoFence = {
     lng: number,
     radius: number,
 };
+
+export type PermissionGroup = {
+    name: string;
+    machineIds: string[];
+};
+export type PermissionGroupObject = {
+    [groupId:string]:{
+        name:string;
+        machineIds:string[];
+    }
+}
+export type PermissionGroupArray = Array<PermissionGroup & {id:string}>
+
