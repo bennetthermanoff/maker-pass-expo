@@ -45,7 +45,7 @@ export const usePermissionGroups = () => {
         GLOBAL.getMachineGroups = getMachineGroups;
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[makerspace]);
-    return { permissionGroups, loading, error,  debouncedGetPermissionGroups, machines };
+    return { permissionGroups, loading, error,  debouncedGetPermissionGroups, machines, makerspace };
 };
 
 export const getMachineGroupsFromServer = async (makerspace:MakerspaceConfig) => {

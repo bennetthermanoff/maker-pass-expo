@@ -2,7 +2,7 @@
 import { Circle, H1, H3, ScrollView, YStack, getTokens } from 'tamagui';
 import { Color } from '../types/makerspaceServer';
 import { BlurView } from 'expo-blur';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Animated,{ useAnimatedProps, interpolate, Extrapolation } from 'react-native-reanimated';
 import { useColors } from '../constants/Colors';
 import { Platform } from 'react-native';
