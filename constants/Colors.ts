@@ -58,6 +58,7 @@ export type Colors = {
         dark: string,
         light: string,
     },
+    blurBackground: string,
     secondaryAccent: {
         dark: string,
         light: string,
@@ -83,6 +84,7 @@ const tanStackColors = (themeBase: ColorName, secondary:ColorName, darkMode:bool
             dark: `$${themeBase}10${darkMode ? 'Light' : 'Dark'}`,
             light: `$${themeBase}3${darkMode ? 'Dark' : 'Light'}`,
         },
+        blurBackground:`$${themeBase}5${darkMode ? 'Dark' : 'Light'}`,
         secondaryAccent: {
             dark: `$${secondary}8${darkMode ? 'Light' : 'Dark'}`,
             light: `$${secondary}7${darkMode ? 'Dark' : 'Light'}`,

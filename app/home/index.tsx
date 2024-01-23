@@ -3,21 +3,35 @@ import { Plus } from '@tamagui/lucide-icons';
 import  BlurHeader  from '../../components/BlurHeader';
 import { useColors, Colors } from '../../constants/Colors';
 import { useMakerspace } from '../../hooks/useMakerspace';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { useMachines } from '../../hooks/useMachines';
 import { Machine } from '../../types/machine';
 import { LinearGradient } from '@tamagui/linear-gradient';
 import { QrCode } from '@tamagui/lucide-icons';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { interpolate } from 'react-native-reanimated';
 import defaultImage from '../../assets/images/adaptive-icon.png';
-import { ImageSourcePropType } from 'react-native';
+import { AppState, ImageSourcePropType } from 'react-native';
 export default function Machines() {
     const colors = useColors();
-    const { machines, loading, error, debouncedGetMachines, disableMachine, makerspace } = useMachines();
+    const { machines, loading, error, getMachines, disableMachine, makerspace } = useMachines();
+    useFocusEffect(useCallback(() => {
+        getMachines();
+    },[]));
+    // get machines on app state change
+
+    useEffect(() => {
+        const handleAppStateChange = (nextAppState: string) => {
+            if (nextAppState === 'active') {
+                getMachines();
+            }
+        };
+        AppState.addEventListener('change', handleAppStateChange);
+    },[]);
+
     return (
         <>
-            <BlurHeader title="Machines" debouncedPullToRefresh={debouncedGetMachines}>
+            <BlurHeader title="Machines" pullToRefresh={getMachines} refreshing={loading}>
                 {makerspace?.user?.userType === 'admin' && <Button
                     iconAfter={Plus}
                     scaleIcon={1.5}
@@ -46,7 +60,6 @@ export default function Machines() {
                         },
                         }}
                 />)}
-                {loading && <Paragraph>Loading...</Paragraph>}
                 {error && <Paragraph>{error}</Paragraph>}
 
             </BlurHeader>

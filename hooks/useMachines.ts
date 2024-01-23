@@ -53,8 +53,6 @@ export const useMachines = () => {
             setLoading(false);
         }
     };
-    const debouncedGetMachines = debounce(getMachines, 200);
-
     const disableMachine = async (machineId:string) => {
         setLoading(true);
         try {
@@ -88,7 +86,7 @@ export const useMachines = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [makerspace]);
 
-    return { machines, loading, error, debouncedGetMachines, disableMachine, makerspace };
+    return { machines, loading, error, getMachines, disableMachine, makerspace };
 };
 
 export const getMachinesFromServer = async (makerspace:MakerspaceConfig, withImages?:boolean) => {

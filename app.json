@@ -50,6 +50,15 @@
         {
           "photosPermission": "The app accesses your photos to let you pick machine images."
         }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "@tamagui/font-inter/otf/Inter-Medium.otf",
+            "@tamagui/font-inter/otf/Inter-Regular.otf"
+          ]
+        }
       ]
     ],
     "experiments": {

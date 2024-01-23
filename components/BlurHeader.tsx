@@ -5,18 +5,12 @@ import { BlurView } from 'expo-blur';
 import React, { useEffect, useState } from 'react';
 import Animated,{ useAnimatedProps, interpolate, Extrapolation } from 'react-native-reanimated';
 import { useColors } from '../constants/Colors';
-import { Platform } from 'react-native';
+import { Platform, RefreshControl } from 'react-native';
 
-export default function BlurHeader({ title, children, debouncedPullToRefresh }: { title: string, children?: React.ReactNode, debouncedPullToRefresh?: () => void }) {
+export default function BlurHeader({ title, children, pullToRefresh, refreshing }: { title: string, children?: React.ReactNode, pullToRefresh?: () => void| Promise<void> , refreshing?: boolean}) {
     const colors = useColors();
     const [scrollY, setScrollY] = useState(0);
     const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
-
-    useEffect(() => {
-        if (debouncedPullToRefresh && scrollY < -170) {
-            debouncedPullToRefresh();
-        }
-    }, [scrollY, debouncedPullToRefresh ]);
 
     const animatedProps = useAnimatedProps(() => {
         const intensity = interpolate(
@@ -46,15 +40,17 @@ export default function BlurHeader({ title, children, debouncedPullToRefresh }: 
                     bottom: 0,
                     right: 0,
                     height: 100,
-                    zIndex: 100,
+                    zIndex: 1,
                     display: 'flex',
                     flexDirection: 'row',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    backgroundColor: Platform.OS === 'ios' ? scrollY < 50 ? getTokens().color[colors.background as Color].val : 'transparent' : getTokens().color[colors.background as Color].val ,
+                    opacity: scrollY <= 0 ? 0 : 1,
+                    backgroundColor: scrollY < 50 ? getTokens().color[colors[ Platform.OS === 'android' ? 'blurBackground' : 'background'] as Color].val  : 'transparent',
                 }}
                 tint={colors.blurTintColor as 'light' | 'dark'}
-                blurReductionFactor={2}
+                blurReductionFactor={1}
+
             >
                 <H3
                     style={{
@@ -81,44 +77,18 @@ export default function BlurHeader({ title, children, debouncedPullToRefresh }: 
                         setScrollY(80);
                     }
                 }}
-                overScrollMode='always'
+                overScrollMode='auto'
                 scrollEventThrottle={30}
+                refreshControl={pullToRefresh && refreshing !== undefined ? <RefreshControl
+                    refreshing={refreshing}
+                    style={{ zIndex:2, elevation:2  }}
+                    onRefresh={pullToRefresh}
+                    progressViewOffset={40}
+                    progressBackgroundColor={getTokens().color[colors.accent.light as Color].val}
+                    tintColor={getTokens().color[colors.secondaryAccent.dark as Color].val}
+                    colors={[getTokens().color[colors.secondaryAccent.dark as Color].val]}
+                /> : undefined}
             >
-                {debouncedPullToRefresh &&
-                    <YStack
-                        style={{
-                            flex: 0,
-                            flexDirection: 'column',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            transform: [
-                                { translateY: -140 },
-                            ],
-                            width: '100%',
-                            height: 140,
-                            marginBottom:-140,
-                        }}
-                    >
-                        <H3
-                            style={{
-                                color: colors.text,
-                                fontSize: 20,
-                                marginTop: 50,
-                                fontWeight: '900',
-                            }}
-                        >Pull to refresh</H3>
-                        <Circle
-                            size={interpolate(
-                                -scrollY,
-                                [0, 70, 170],
-                                [0, 0, 50],
-                                Extrapolation.CLAMP,
-                            )}
-                            backgroundColor={colors.secondaryAccent.dark}
-                        ></Circle>
-
-                    </YStack>
-                }
 
                 <YStack
                     backgroundColor={colors.background}

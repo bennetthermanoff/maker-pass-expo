@@ -109,6 +109,7 @@ export default function LoginScreen() {
                         marginTop={'$4'}
                         backgroundColor={colors.inputBackground}
                         color={colors.text}
+                        autoCapitalize='none'
                         secureTextEntry={true}
                         onChangeText={(text) => {
                             setFormData({ ...formData, password: text });

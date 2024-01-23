@@ -7,6 +7,7 @@ import { MakerspaceConfig } from '../types/makerspaceServer';
 import { useEffect, useState } from 'react';
 import { getCurrentServer } from '../util/makerspaces';
 import { goHome } from '../util/goHome';
+import { Redirect } from 'expo-router';
 
 export default function ConnectToMakerSpace() {
     const [makerspace, setMakerspace] = useState<MakerspaceConfig|any>(null); // TODO: type this
@@ -17,15 +18,12 @@ export default function ConnectToMakerSpace() {
         };
         getMakerspace();
     },[]);
-    useEffect(() => {
-        if (makerspace){
-            goHome();
-        }
-    }, [makerspace]);
-
     const colors = useColors();
     const url = Linking.useURL();
 
+    if (makerspace){
+        return <Redirect href='/home' />;
+    }
     return (
 
         <YStack style={styles.container} backgroundColor={colors.background} >

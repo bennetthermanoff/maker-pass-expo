@@ -10,6 +10,7 @@ import { useLoadFonts } from './fontLoader';
 import { MakerspaceConfig } from '../types/makerspaceServer';
 import { getCurrentServer } from '../util/makerspaces';
 import { useColors } from '../constants/Colors';
+import { View } from '../components/Themed';
 
 export {
     // Catch any errors thrown by the Layout component.
@@ -25,7 +26,6 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-    const fontsLoaded = useLoadFonts();
 
     // const [makerspace, setMakerspace] = useState<MakerspaceConfig|any>(null); // TODO: type this
     // useEffect(() => {
@@ -43,6 +43,8 @@ export default function RootLayout() {
 
     const [loaded, error] = useFonts({
         SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+        Inter: require('@tamagui/font-inter/otf/Inter-Medium.otf'),
+        InterBold: require('@tamagui/font-inter/otf/Inter-Bold.otf'),
         ...FontAwesome.font,
     });
 
@@ -58,7 +60,8 @@ export default function RootLayout() {
     }, [loaded]);
 
     if (!loaded) {
-        return null;
+
+        return;
     }
 
     return <RootLayoutNav />;
@@ -66,7 +69,6 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
     const colorScheme = useColorScheme();
-    const colors = useColors();
     return (
         <TamaguiProvider config={config}>
             <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
