@@ -57,6 +57,7 @@ export default function SearchUser() {
         if (!makerspace?.serverAddress || !makerspace?.serverPort){
             return alert('Unknown Makerspace.');
         }
+        // alert(JSON.stringify(user.permissionObject));
         axios.post(`${makerspace?.serverAddress}:${makerspace?.serverPort}/api/userPermissions/${user.id}`, user.permissionObject, getAuthHeaders(makerspace))
             .then((response) => {
                 alert('Permissions updated successfully!');

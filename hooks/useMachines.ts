@@ -42,12 +42,15 @@ export const useMachines = () => {
                     }));}
                 setMachines(machines);
             }
+
         }
         catch (err:any){
             if (err.response.status === 401){
                 handleUserLoginError();
             }
             setError(JSON.stringify(err.response.data));
+            setLoading(false);
+
         }
         finally {
             setLoading(false);

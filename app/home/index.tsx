@@ -12,22 +12,26 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { interpolate } from 'react-native-reanimated';
 import defaultImage from '../../assets/images/adaptive-icon.png';
 import { AppState, ImageSourcePropType } from 'react-native';
+import { GLOBAL } from '../../global';
 export default function Machines() {
     const colors = useColors();
     const { machines, loading, error, getMachines, disableMachine, makerspace } = useMachines();
-    useFocusEffect(useCallback(() => {
-        getMachines();
-    },[]));
     // get machines on app state change
 
+    useFocusEffect(useCallback(() => {
+        GLOBAL.getMachines();
+    }, []));
     useEffect(() => {
-        const handleAppStateChange = (nextAppState: string) => {
-            if (nextAppState === 'active') {
-                getMachines();
-            }
-        };
+
         AppState.addEventListener('change', handleAppStateChange);
-    },[]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const handleAppStateChange = (nextAppState: string) => {
+        if (nextAppState === 'active') {
+            GLOBAL.getMachines();
+        }
+    };
 
     return (
         <>
@@ -203,7 +207,6 @@ export const MachineCard = (props: {machine:Machine, uri?:string, cardProps?:Car
                             }}
                             zIndex={-1}
                             source={props.machine.photo ? { uri:'data:image/png;base64,' + props.machine.photo  } : defaultImage as ImageSourcePropType}
-                            boxShadow='0px 0px 10px 0px rgba(0,0,0,0.75)'
                         />
 
                     </YStack>

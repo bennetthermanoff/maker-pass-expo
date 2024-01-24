@@ -2,15 +2,14 @@ import { Button, H2, Text, YStack } from 'tamagui';
 import { StyleSheet } from 'react-native';
 import * as Linking from 'expo-linking';
 import { useColors } from '../constants/Colors';
-import { Stack, router } from 'expo-router';
+import { SplashScreen, Stack, router } from 'expo-router';
 import { MakerspaceConfig } from '../types/makerspaceServer';
 import { useEffect, useState } from 'react';
 import { getCurrentServer } from '../util/makerspaces';
 import { goHome } from '../util/goHome';
-import { Redirect } from 'expo-router';
 
 export default function ConnectToMakerSpace() {
-    const [makerspace, setMakerspace] = useState<MakerspaceConfig|any>(null); // TODO: type this
+    const [makerspace, setMakerspace] = useState<MakerspaceConfig|null|undefined>(undefined); // TODO: type this
     useEffect(() => {
         const getMakerspace = async () => {
             const makerspace = await getCurrentServer();
@@ -18,12 +17,24 @@ export default function ConnectToMakerSpace() {
         };
         getMakerspace();
     },[]);
+    useEffect(() => {
+        if (makerspace){
+            goHome();
+            // after home is loaded, hide the splash screen
+            new Promise((resolve) => setTimeout(resolve, 500)).then(() => {            SplashScreen.hideAsync();
+                SplashScreen.hideAsync();
+            });
+        } else if (makerspace === null){
+            new Promise((resolve) => setTimeout(resolve, 500)).then(() => {            SplashScreen.hideAsync();
+                SplashScreen.hideAsync();
+            });
+
+        }
+    }, [makerspace]);
+
     const colors = useColors();
     const url = Linking.useURL();
 
-    if (makerspace){
-        return <Redirect href='/home' />;
-    }
     return (
 
         <YStack style={styles.container} backgroundColor={colors.background} >
