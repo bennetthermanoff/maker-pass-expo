@@ -1,11 +1,11 @@
 import { Button, Card, Paragraph, Image, XStack, H2, CardProps, YStack, Circle, Spacer } from 'tamagui';
-import { Plus } from '@tamagui/lucide-icons';
+import { AlertOctagon, AlertTriangle, Clock10, Plus } from '@tamagui/lucide-icons';
 import  BlurHeader  from '../../components/BlurHeader';
 import { useColors, Colors } from '../../constants/Colors';
 import { useMakerspace } from '../../hooks/useMakerspace';
 import { router, useFocusEffect } from 'expo-router';
 import { useMachines } from '../../hooks/useMachines';
-import { Machine } from '../../types/machine';
+import { Machine, MachineGroupArray, MachineGroupMap } from '../../types/machine';
 import { LinearGradient } from '@tamagui/linear-gradient';
 import { QrCode } from '@tamagui/lucide-icons';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -13,19 +13,76 @@ import { interpolate } from 'react-native-reanimated';
 import defaultImage from '../../assets/images/adaptive-icon.png';
 import { AppState, ImageSourcePropType } from 'react-native';
 import { GLOBAL } from '../../global';
+import PagerView from 'react-native-pager-view';
+import { getMachineGroupsFromServer } from '../../hooks/useMachineGroups';
+export type Page = {
+    name:string;
+    machines:Array<Machine & { lastUsedByName:string|null }>;
+    type:'group'|'user'|'taggedOut'|'inUse';
+};
 export default function Machines() {
     const colors = useColors();
     const { machines, loading, error, getMachines, disableMachine, makerspace } = useMachines();
-    // get machines on app state change
+    const [machineGroupMap, setMachineGroupMap] = useState<MachineGroupMap>({});
+    const [pages, setPages] = useState<Page[]>([{ name:'Machines', type:'group', machines:[] }]);
+    const [currentPage, setCurrentPage] = useState(0);
 
     useFocusEffect(useCallback(() => {
         GLOBAL.getMachines();
     }, []));
     useEffect(() => {
-
         AppState.addEventListener('change', handleAppStateChange);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+    useEffect(() => {
+        if (makerspace){
+            getMachineGroupsFromServer(makerspace).then((machineGroups) => {
+                setMachineGroupMap(machineGroups);
+            });
+        }
+    },[makerspace]);
+
+    // Machine Pages
+    // (if any) Machines that are enabled by current user
+    // (if admin or technician) Machines that are enabled by other users
+    // (if admin or technician) machines that are tagged out
+    // MAP(machine groups) -> Machines
+    // ungrouped machines
+    useEffect(() => {
+        if (machineGroupMap && machines){
+            const pages:Page[] = [];
+            const machineGroups = Object.keys(machineGroupMap);
+            const groupedMachineIds:string[] = [];
+            if (machines.filter((machine) => machine.enabled && machine.lastUsedBy === makerspace?.user?.userId).length > 0){
+                pages.push({ type:'user', name:'Your Machines', machines:machines.filter((machine) => machine.enabled && machine.lastUsedBy === makerspace?.user?.userId) });
+            }
+            if (makerspace?.user?.userType === 'admin' || makerspace?.user?.userType === 'technician'){
+                if (machines.filter((machine) => machine.enabled && machine.lastUsedBy !== makerspace?.user?.userId).length > 0){
+                    pages.push({ name:'In Use', type:'inUse', machines:machines.filter((machine) => machine.enabled && machine.lastUsedBy !== makerspace?.user?.userId) });
+                }
+                if (machines.filter((machine) => machine.latestTagOutId).length > 0){
+                    pages.push({ name:'Tagged Out', type:'taggedOut', machines:machines.filter((machine) => machine.latestTagOutId) });
+                }
+            }
+            machineGroups.forEach((machineGroup) => {
+                const foundMachines = machineGroupMap[machineGroup].machineIds.map((machineId) => {
+                    groupedMachineIds.push(machineId);
+                    return machines.find((machine) => machine.id === machineId);
+                })
+                    .filter((machine) => machine !== undefined) as Array<Machine & { lastUsedByName:string|null }>;
+                pages.push({ name:machineGroupMap[machineGroup].name, type:'group', machines:foundMachines });
+            });
+            if (machines.length > groupedMachineIds.length){
+                pages.push({ name:'Ungrouped', type:'group', machines:machines.filter((machine) => !groupedMachineIds.includes(machine.id)) });
+            }
+
+            if (pages.length === 0){
+                pages.push({ name:'', type:'group', machines:[] });
+            }
+            //verify no machines are undefined
+            setPages(pages);
+        }
+    }, [machineGroupMap, machines, makerspace]);
 
     const handleAppStateChange = (nextAppState: string) => {
         if (nextAppState === 'active') {
@@ -35,61 +92,111 @@ export default function Machines() {
 
     return (
         <>
-            <BlurHeader title="Machines" pullToRefresh={getMachines} refreshing={loading}>
-                {makerspace?.user?.userType === 'admin' && <Button
-                    iconAfter={Plus}
-                    scaleIcon={1.5}
-                    fontSize={'$5'}
-                    textAlign="left"
-                    color={colors.text}
-                    backgroundColor={colors.accent.dark}
-                    width={140}
-                    alignSelf='flex-end'
-                    margin={'$4'}
-                    onPress={() => {
-                        router.push({ pathname: '/addMachine/new', params: {} });
-                    }}
-                >Machine</Button>}
+            <PagerView
+                style={{ flex:1 }}
+                onPageSelected={(event) => {setCurrentPage(event.nativeEvent.position);}}
+            >
+                {pages.map((page, index) =>
+                    <BlurHeader key={index} title={page.name} pullToRefresh={getMachines} refreshing={loading}>
+                        {page.machines.map((machine) => <MachineCard
+                            machine={machine}
+                            colors={colors}
+                            disableMachine={disableMachine}
+                            key={index}
+                            cardProps={
+                                { onLongPress:() => {
+                                    if (makerspace?.user?.userType === 'admin'){
+                                        router.push({ pathname: `/addMachine/${machine.id}`, params: { machine:JSON.stringify(machine) } });
+                                    }
+                                },
+                                }}
+                        />)}
+                        {error && <Paragraph>{error}</Paragraph>}
+                    </BlurHeader>)}
+            </PagerView>
 
-                {machines?.map((machine) => <MachineCard
-                    machine={machine}
-                    colors={colors}
-                    disableMachine={disableMachine}
-                    key={machine.id}
-                    cardProps={
-                        { onLongPress:() => {
-                            if (makerspace?.user?.userType === 'admin'){
-                                router.push({ pathname: `/addMachine/${machine.id}`, params: { machine:JSON.stringify(machine) } });
-                            }
-                        },
-                        }}
-                />)}
-                {error && <Paragraph>{error}</Paragraph>}
-
-            </BlurHeader>
             <YStack
                 position='absolute'
                 bottom={0}
                 right={0}
+                width={'100%'}
                 backgroundColor={'transparent'}
             >
+
                 <Button
                     color={colors.text}
                     iconAfter={QrCode}
-                    margin={'$4'}
+                    margin={'$3'}
+                    marginBottom={'$-3'}
                     scaleIcon={2}
+                    alignSelf='flex-end'
                     fontSize={'$7'}
                     backgroundColor={colors.accent.dark}
                     onPress={() => {
                         router.push('/scanner');
                     }}
                 >Scan QR</Button>
+
+                <XStack
+                    minWidth={'$4'}
+                    height={'$1'}
+                    backgroundColor={colors.inverseText}
+                    borderRadius={'$5'}
+                    justifyContent="center"
+                    alignSelf="center"
+                    marginTop={'$-5'}
+                    margin={'$4'}
+                    padding={'$1'}
+                >
+                    {pages.map((page, index) => {
+                        if (page.type === 'group'){
+                            return <Circle
+                                key={index}
+                                backgroundColor={index === currentPage ? colors.secondaryAccent.dark : 'grey'}
+                                size={10}
+                                alignSelf="center"
+                                margin={'$1'}
+                            />;
+                        }
+                        if (page.type === 'user'){
+                            return <Clock10
+                                key={index}
+                                color={index === currentPage ? colors.text : 'grey'}
+                                size={11}
+                                style={{ alignSelf:'center',margin:1.5 }}
+                                strokeWidth={3.5}
+                            />;
+                        }
+                        if (page.type === 'inUse'){
+                            return <AlertTriangle
+                                key={index}
+                                color={index === currentPage ? 'yellow' : 'grey'}
+                                size={11}
+                                style={{ alignSelf:'center',margin:1.5 }}
+                                strokeWidth={3.5}
+                            />;
+                        }
+                        if (page.type === 'taggedOut'){
+                            return <AlertOctagon
+                                key={index}
+                                color={index === currentPage ? 'red' : 'grey'}
+                                size={11}
+                                style={{ alignSelf:'center',margin:1.5 }}
+                                strokeWidth={3.5}
+                            />;
+                        }
+                    })
+
+                    }
+
+                </XStack>
+
             </YStack>
         </>
     );
 }
 
-export const MachineCard = (props: {machine:Machine, uri?:string, cardProps?:CardProps, colors:Colors, disableMachine:(machineId:string)=>void }) => {
+export const MachineCard = (props: {machine:Machine&{lastUsedByName:string|null}, uri?:string, cardProps?:CardProps, colors:Colors, disableMachine:(machineId:string)=>void }) => {
     const [animateTime,setAnimateTime] = useState(0);
 
     useEffect(() => {
@@ -123,7 +230,7 @@ export const MachineCard = (props: {machine:Machine, uri?:string, cardProps?:Car
         if (props.machine.enabled){
             out.statusLightColor = '$green8';
             out.topLine = 'Active';
-            out.bottomLine = `Enabled By ${props.machine.lastUsedBy}`;
+            out.bottomLine = `Enabled By ${props.machine.lastUsedByName}`;
         }
         else {
             out.statusLightColor = '$red4';

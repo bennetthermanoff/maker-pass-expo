@@ -21,15 +21,24 @@
         "usesNonExemptEncryption": false
       },
       "infoPlist": {
-        "NSCameraUsageDescription": "This app uses the camera to scan QR codes around your MakerSpace."
-      }
+        "NSCameraUsageDescription": "This app uses the camera to scan QR codes around your MakerSpace.",
+        "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
+      },
+      "bundleIdentifier": "com.benentthermanoff.makerpass"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "softwareKeyboardLayoutMode": "pan"
+      "softwareKeyboardLayoutMode": "pan",
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -55,14 +64,22 @@
         "expo-font",
         {
           "fonts": [
-            "@tamagui/font-inter/otf/Inter-Medium.otf",
-            "@tamagui/font-inter/otf/Inter-Regular.otf"
+            "node_modules/@tamagui/font-inter/otf/Inter-Medium.otf",
+            "node_modules/@tamagui/font-inter/otf/Inter-Regular.otf"
           ]
         }
       ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "3899c4fa-3b7d-4bb4-84f7-99ecb448e6c8"
+      }
     }
   }
 }

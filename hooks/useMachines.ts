@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Machine } from '../types/machine';
+import { Machine, MachineGroupArray } from '../types/machine';
 import { debounce } from 'lodash';
 import axios from 'axios';
 import { useMakerspace } from './useMakerspace';
@@ -12,9 +12,8 @@ import { getImage, getImageIDs, setImage } from '../util/machineImageCache';
 import { GLOBAL } from '../global';
 
 export const useMachines = () => {
-    const [machines, setMachines] = useState<Machine[]>([]);
+    const [machines, setMachines] = useState <Array<Machine&{lastUsedByName:string|null}>>([]);
     const makerspace = useMakerspace();
-    // const [machineGroups, setMachineGroups] = useState<null|MachineGroup[]>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<null|string>(null);
 
@@ -56,6 +55,7 @@ export const useMachines = () => {
             setLoading(false);
         }
     };
+
     const disableMachine = async (machineId:string) => {
         setLoading(true);
         try {
@@ -63,7 +63,7 @@ export const useMachines = () => {
                 const { machine:updatedMachine, message } = await disableMachineRoute(machineId, makerspace);
                 const updatedMachines = machines?.map((machine) => {
                     if (machine.id === machineId){
-                        return updatedMachine;
+                        return { ...machine, ...updatedMachine };
                     }
                     return machine;
                 });
@@ -97,7 +97,7 @@ export const getMachinesFromServer = async (makerspace:MakerspaceConfig, withIma
         `${makerspace.serverAddress}:${makerspace.serverPort}/api/machine/all${withImages ? '/photos' : ''}`,
         getAuthHeaders(makerspace),
     );
-    return response.data.machines as Machine[];
+    return response.data.machines as Array<Machine & {lastUsedByName:string|null}>;
 };
 
 export const disableMachineRoute = async (machineId:string, makerspace:MakerspaceConfig) => {

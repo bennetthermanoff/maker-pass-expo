@@ -15,7 +15,7 @@ export default function ManageMachineGroups(){
 
     return (
         <>
-            <BlurHeader title="Machine Groups" debouncedPullToRefresh={debouncedGetMachineGroups}>
+            <BlurHeader title="Machine Groups" pullToRefresh={debouncedGetMachineGroups}>
                 <Button
                     iconAfter={Plus}
                     scaleIcon={1.5}
