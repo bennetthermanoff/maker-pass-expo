@@ -34,8 +34,7 @@ export default function ManageMachineGroups(){
                 {machineGroups?.map((machineGroup) => <MachineGroupCard
 
                     childProps={{ key:machineGroup.id,
-                        onLongPress:() => router.push({ pathname: `/machineGroups/${machineGroup.id}`, params: { machineGroup:JSON.stringify(machineGroup),
-                        } }) }}
+                        onLongPress:() => router.push({ pathname: `/machineGroups/${machineGroup.id}`, params: { machineGroup:JSON.stringify(machineGroup) } }) }}
                     machineGroup={machineGroup}
                     colors={colors}
                     machines={machines}

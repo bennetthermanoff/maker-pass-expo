@@ -8,6 +8,7 @@ import { getAuthHeaders } from './authRoutes';
 import { goHome, handleUserLoginError } from './goHome';
 import * as Location from 'expo-location';
 import { GLOBAL } from '../global';
+import { Alert } from 'react-native';
 
 export const handleURL =  (url:string|null) => {
     if (url === null) {
@@ -83,6 +84,8 @@ const handleEnableMachine = async ({ serverId, machineId, enableKey, locationReq
 
         const locationRaw = await Location.getCurrentPositionAsync({});
         location = { lat:locationRaw.coords.latitude, lng:locationRaw.coords.longitude };
+        console.log('Location: ' + JSON.stringify(location));
+
     }
     try {
         const { data }:{data:{message:string, machine:Machine }} = await axios.post(
@@ -96,7 +99,12 @@ const handleEnableMachine = async ({ serverId, machineId, enableKey, locationReq
         if (err.response.status === 401){
             handleUserLoginError();
 
-        } else {
+        }
+        else if (err.response.data.message){
+            Alert.alert('Cannot Enable Machine',err.response.data.message);
+            goHomeOnBarAndCallFinished();
+        }
+        else {
             alert(JSON.stringify(err));
         }
     }

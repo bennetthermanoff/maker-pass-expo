@@ -57,7 +57,7 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermisison": "Allow $(PRODUCT_NAME) to use your location"
+          "locationWhenInUsePermisison": "Allow $(PRODUCT_NAME) to use your location to verify your machine access."
         }
       ],
       [

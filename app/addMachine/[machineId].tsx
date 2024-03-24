@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useColors } from '../../constants/Colors';
 import { Machine } from '../../types/machine';
 import { useMakerspace } from '../../hooks/useMakerspace';
-import { Button, H4, Input, Label, Switch, View, XStack, YStack } from 'tamagui';
+import { Button, H4, Input, Label, Switch, View, XStack, YStack, getTokens } from 'tamagui';
 import { Image, Plus, Trash } from '@tamagui/lucide-icons';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
@@ -10,11 +10,13 @@ import { router, useLocalSearchParams } from 'expo-router';
 import BlurHeader from '../../components/BlurHeader';
 import { getAuthHeaders } from '../../util/authRoutes';
 import { GLOBAL } from '../../global';
-import { QRCode } from 'react-native-custom-qr-codes-expo';
+import QRCode from 'react-native-qrcode-svg';
 import { CancelButton } from '../../components/CancelButton';
-import { Alert } from 'react-native';
+import { Alert, ImageSourcePropType } from 'react-native';
 import { goHome } from '../../util/goHome';
 import { useMachineGroups } from '../../hooks/useMachineGroups';
+import { Color } from '../../types/makerspaceServer';
+import keyLogo from '../../assets/images/key.png';
 
 export default function AddMachine() {
     const local = useLocalSearchParams();
@@ -133,6 +135,8 @@ export default function AddMachine() {
         }
 
     };
+
+    const getQR = () => `makerpass://qr/--/makerspace/machine/enable?serverId=${makerspace?.id}&machineId=${local.machineId}&enableKey=${formData.machine.enableKey}&locationRequired=${groups.machineGroups.find((group) => group.machineIds.includes(local.machineId as string))?.geoFences.length !== 0}`;
 
     return (
         <>
@@ -258,7 +262,14 @@ export default function AddMachine() {
                     >
                         {/* queryparams: serverId, machineId, enableKey, locationRequired  */}
                         {makerspace?.id && groups.machineGroups &&
-                        <QRCode  content={`makerpass://qr/--/makerspace/machine/enable?serverId=${makerspace?.id}&machineId=${local.machineId}&enableKey=${formData.machine.enableKey}&locationRequired=${groups.machineGroups.find((group) => group.machineIds.includes(local.machineId as string))?.geoFences.length !== 0}`} />
+                        <QRCode
+                            value={getQR()}
+                            color={getTokens().color[ colors.accent.dark as Color].val}
+                            size={250}
+                            logo={keyLogo as ImageSourcePropType}
+                            logoSize={85}
+                            logoBackgroundColor='transparent'
+                        />
                         }
                     </View>}
 

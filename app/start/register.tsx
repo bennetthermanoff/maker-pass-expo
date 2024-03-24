@@ -7,6 +7,7 @@ import { router, useGlobalSearchParams } from 'expo-router';
 import { AdditionalInfoField, Color, MakerspaceTheme } from '../../types/makerspaceServer';
 import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { KeyboardAvoidingView, Platform } from 'react-native';
+import * as Location from 'expo-location';
 import Checkbox from 'expo-checkbox';
 
 import axios from 'axios';
@@ -50,7 +51,18 @@ export default function Register(){
             return registrationType === 'user' ? 'Register as Normal User' : 'Register as Admin';
         }
     };
-
+    type RegisterBody = {
+        name: string;
+        email: string;
+        password: string;
+        location?:{
+            lat: number;
+            lng: number;
+        }
+        registrationType: 'admin' | 'user';
+        registrationKey?: string;
+        additionalInfo?: object;
+    };
     const handleRegister = async () => {
         const newErrors:{[key:string]:string} = {};
         if (!formData.email) newErrors.email = 'Missing email';
@@ -69,9 +81,24 @@ export default function Register(){
         setLoading(true);
         const { name, email, password } = formData;
         const additionalFilteredInfo = Object.keys(formData).filter((key) => key !== 'name' && key !== 'email' && key !== 'password' && key !== 'confirmPassword').map((key) => ({ name: key, value: formData[key] }));
+        let location = undefined;
+        if (makerspace?.hasGeoFences){
+            const { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                alert('Location permission required');
+                setLoading(false);
+                return;
+            }
+            const position = await Location.getCurrentPositionAsync({});
+            location = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+            };
+        }
+
         axios.post(
             `${makerspace?.serverAddress}:${makerspace?.serverPort}/api/user/register`,
-            { name, email, password, registrationType, registrationKey:makerspace?.registrationKey, additionalInfo:additionalFilteredInfo },
+            { name, email, password, registrationType, registrationKey:makerspace?.registrationKey, additionalInfo:additionalFilteredInfo, location } as RegisterBody,
         )
             .then((response) => {
             //if 200
@@ -81,6 +108,7 @@ export default function Register(){
             })
             .catch((error) => {
                 setLoading(false);
+                console.log(error.response.data);
                 alert('Registration failed: ' + error.response.data.message);
             });
 

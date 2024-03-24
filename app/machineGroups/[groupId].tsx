@@ -9,15 +9,16 @@ import { Color } from '../../types/makerspaceServer';
 import { useMachines } from '../../hooks/useMachines';
 import { CancelButton } from '../../components/CancelButton';
 import { Minus, Plus } from '@tamagui/lucide-icons';
-import { KeyboardAvoidingView, Platform, ViewStyle } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, ViewStyle } from 'react-native';
 import axios from 'axios';
+import * as Location from 'expo-location';
 import { getAuthHeaders } from '../../util/authRoutes';
 import { GLOBAL } from '../../global';
 
 export default function EditMachineGroup(){
     const local = useLocalSearchParams();
     const colors = useColors();
-    const { machines, loading, debouncedGetMachines, makerspace } = useMachines();
+    const { machines, loading, makerspace } = useMachines();
     const getMachineGroupInitialData = () => {
         if (local.groupId === 'new'){
             return { name:'',machineIds:[],geoFences:[] };
@@ -38,11 +39,17 @@ export default function EditMachineGroup(){
         }
     });
 
-    const handleAddLocation = () => {
+    const handleAddLocation = async () => {
         const geoFences = formData.geoFences ? formData.geoFences : [];
-        geoFences.push({ lat:0,lng:0,radius:0 });
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted'){
+            alert('Permission to access location was denied');
+            return;
+        }
+        const location = await Location.getCurrentPositionAsync({});
+        geoFences.push({ lat:location.coords.latitude,lng:location.coords.longitude,radius:0 });
         setFormData({ ...formData, geoFences });
-    }; //TODO
+    };
 
     const machineDropDownSelectedText = () => {
         if (formData.machineIds?.length === 0){
@@ -125,6 +132,24 @@ export default function EditMachineGroup(){
         } catch (e:any) {
             alert(JSON.stringify(e.response.data));
         }
+    };
+    const handleDeleteGeoFence = (index:number) => {
+        Alert.alert('Delete GeoFence','Are you sure you want to delete this GeoFence?',[
+            {
+                text:'Delete',
+                onPress:() => {
+                    const geoFences = formData.geoFences;
+                    if (geoFences){
+                        geoFences.splice(index,1);
+                        setFormData({ ...formData, geoFences });
+                    }
+                },
+            },
+            {
+                text:'Cancel',
+                style:'cancel',
+            },
+        ]);
     };
 
     return (
@@ -265,6 +290,7 @@ export default function EditMachineGroup(){
                                 margin={'$1'}
                                 padding={'$1'}
                                 key={index}
+                                onLongPress={() => handleDeleteGeoFence(index)}
                             >
                                 <Text
                                     fontSize={'$6'}
@@ -272,13 +298,13 @@ export default function EditMachineGroup(){
                                     color={colors.text}
                                     marginLeft={'$2'}
                                     marginBottom={'$1'}
-                                >{`Latitude: ${geoFence.lat}°`}</Text>
+                                >{`Latitude: ${geoFence.lat?.toFixed(5)}°`}</Text>
                                 <Text
                                     fontSize={'$6'}
                                     color={colors.text}
                                     marginLeft={'$2'}
                                     marginBottom={'$1'}
-                                >{`Longitude: ${geoFence.lng}°`}</Text>
+                                >{`Longitude: ${geoFence.lng?.toFixed(5)}°`}</Text>
                                 <XStack
                                     marginLeft={'$2'}
                                     marginBottom={'$1'}
@@ -312,7 +338,7 @@ export default function EditMachineGroup(){
                                         color={colors.text}
                                         width={70}
                                         textAlign='center'
-                                    >{`${geoFence.radius.toFixed(1)} km`}</Text>
+                                    >{`${geoFence.radius?.toFixed(1)} km`}</Text>
 
                                     <Button
                                         height={0}
