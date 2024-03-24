@@ -9,7 +9,7 @@ export const goHome = async() => {
     //if logged in, dashboard
     const currentMakerspace = await getCurrentServer();
     if (currentMakerspace === null){
-        clearStackGoTo('/');
+        clearStackGoTo('/welcome');
     }
     else if (currentMakerspace.user === undefined){
         clearStackGoTo('/start/choose');

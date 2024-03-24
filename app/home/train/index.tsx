@@ -1,11 +1,11 @@
 import { Input, YStack, Text, XStack, getTokens, Button } from 'tamagui';
 import BlurHeader from '../../../components/BlurHeader';
 import React, { useEffect, useState } from 'react';
-import { PermissionObject, User } from '../../../types/user';
+import { PermissionObject, User, UserType } from '../../../types/user';
 import { useColors } from '../../../constants/Colors';
 import { getAuthHeaders } from '../../../util/authRoutes';
 import axios from 'axios';
-import { KeyboardAvoidingView, NativeSyntheticEvent, Platform, TextInputChangeEventData, ViewStyle } from 'react-native';
+import { Alert, KeyboardAvoidingView, NativeSyntheticEvent, Platform, TextInputChangeEventData, ViewStyle } from 'react-native';
 import { router } from 'expo-router';
 import DropdownSelect from 'react-native-input-select';
 import { Color } from '../../../types/makerspaceServer';
@@ -68,6 +68,45 @@ export default function SearchUser() {
             });
     };
 
+    const handleUserTypeChange = (userid:string) => {
+        if (makerspace?.user?.userType !== 'admin'){
+            return;
+        }
+        Alert.alert(
+            'Change User Type', 'Change user type to:',
+            [{
+                text: 'Admin',
+                onPress: () => changeUserType(userid, 'admin'),
+            },
+            {
+                text: 'Technician',
+                onPress: () => changeUserType(userid, 'technician'),
+            },
+            {
+                text: 'User',
+                onPress: () => changeUserType(userid, 'user'),
+            },
+            {
+                text: 'Cancel',
+                onPress: () => {},
+                style: 'cancel',
+            }],
+        );
+    };
+    const changeUserType = (userid:string, userType:UserType) => {
+        if (!makerspace?.serverAddress || !makerspace?.serverPort){
+            return alert('Unknown Makerspace.');
+        }
+        axios.post(`${makerspace?.serverAddress}:${makerspace?.serverPort}/api/user/promote/${userid}/${userType}`, {}, getAuthHeaders(makerspace))
+            .then((response) => {
+                alert('User type updated successfully!');
+                searchForUser({ nativeEvent:{ text:'@' } } as NativeSyntheticEvent<TextInputChangeEventData>);
+            })
+            .catch((error) => {
+                alert(JSON.stringify(error.response.data));
+            });
+    };
+
     return (
         <KeyboardAvoidingView
             style={{ backgroundColor:getTokens().color[colors.background as Color].val , minHeight:'100%' }}
@@ -88,6 +127,7 @@ export default function SearchUser() {
                         user={user}
                         colors={colors}
                         key={user.id}
+                        changeUserType={handleUserTypeChange}
                         children={<DropdownSelect
                             isMultiple
                             isSearchable
@@ -182,7 +222,7 @@ export default function SearchUser() {
     );
 }
 
-export const UserCard = ({ user, colors, children }: { user:User, colors:ReturnType<typeof useColors>, children?:React.ReactNode }) =>
+export const UserCard = ({ user, colors, changeUserType, children }: { user:User, colors:ReturnType<typeof useColors>, changeUserType:(userid:string)=>void, children?:React.ReactNode }) =>
     <YStack
         backgroundColor={colors.accent.dark}
         padding={'$2'}
@@ -196,6 +236,7 @@ export const UserCard = ({ user, colors, children }: { user:User, colors:ReturnT
         >
             <Text color={colors.text}>{user.name}</Text>
             <Text
+                onLongPress={() => changeUserType(user.id)}
                 alignSelf='flex-end'
                 color={colors.text}
             >{user.userType}</Text>

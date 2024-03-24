@@ -102,11 +102,11 @@ export default function Machines() {
                             machine={machine}
                             colors={colors}
                             disableMachine={disableMachine}
-                            key={index}
+                            key={index + machine.id}
                             cardProps={
                                 { onLongPress:() => {
                                     if (makerspace?.user?.userType === 'admin'){
-                                        router.push({ pathname: `/addMachine/${machine.id}`, params: { machine:JSON.stringify(machine) } });
+                                        router.push({ pathname: `/tagoutMachine/${machine.id}`, params: { machine:JSON.stringify(machine) } });
                                     }
                                 },
                                 }}

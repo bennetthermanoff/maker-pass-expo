@@ -2,20 +2,25 @@ import { useState } from 'react';
 import { useColors } from '../../constants/Colors';
 import { Machine } from '../../types/machine';
 import { useMakerspace } from '../../hooks/useMakerspace';
-import { Button, H4, Input, Label, Switch, XStack, YStack } from 'tamagui';
-import { Image, Plus } from '@tamagui/lucide-icons';
+import { Button, H4, Input, Label, Switch, View, XStack, YStack } from 'tamagui';
+import { Image, Plus, Trash } from '@tamagui/lucide-icons';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 import { router, useLocalSearchParams } from 'expo-router';
 import BlurHeader from '../../components/BlurHeader';
 import { getAuthHeaders } from '../../util/authRoutes';
 import { GLOBAL } from '../../global';
+import { QRCode } from 'react-native-custom-qr-codes-expo';
 import { CancelButton } from '../../components/CancelButton';
+import { Alert } from 'react-native';
+import { goHome } from '../../util/goHome';
+import { useMachineGroups } from '../../hooks/useMachineGroups';
 
 export default function AddMachine() {
     const local = useLocalSearchParams();
     const colors = useColors();
     const makerspace = useMakerspace();
+    const groups = useMachineGroups();
 
     const getMachineInitialData = () => {
         if (local.machineId === 'new'){
@@ -87,6 +92,29 @@ export default function AddMachine() {
         catch (e:any) {
             alert(JSON.stringify(e.response.data));
         }
+    };
+    const handleDeleteMachine = async () => {
+        Alert.alert('Are you sure you want to delete this machine?', 'This action cannot be undone.', [
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'Delete', onPress: async () => {
+                if (!makerspace?.serverAddress || !makerspace?.serverPort){
+                    return alert('Unknown Makerspace.');
+                }
+                try {
+                    const response = await axios.delete(`${makerspace?.serverAddress}:${makerspace?.serverPort}/api/machine/single/${local.machineId}`, getAuthHeaders(makerspace));
+                    router.back();
+                    alert('Machine deleted successfully!');
+                    setTimeout(() => {
+                        GLOBAL.getMachines();
+                    }, 200);
+                    goHome();
+
+                }
+                catch (e:any) {
+                    alert(JSON.stringify(e.response.data));
+                }
+            } },
+        ]);
     };
 
     const pickImage = async () => {
@@ -210,6 +238,30 @@ export default function AddMachine() {
                         marginTop={'$4'}
                         onPress={handleSubmit}
                     >{local.machineId === 'new' ? 'Add Machine' : 'Update Machine'}</Button>
+                    <Button
+                        iconAfter={Trash}
+                        scaleIcon={1.5}
+                        fontSize={'$5'}
+                        marginTop={'$4'}
+                        textAlign="left"
+                        color={colors.text}
+                        backgroundColor={colors.accent.light}
+                        width={'95%'}
+                        onPress={handleDeleteMachine}
+                    >Delete Machine</Button>
+                    {local.machineId !== 'new' &&
+                    <View
+                        marginBottom={'$15'}
+                        marginTop={'$4'}
+                        padding={'$2'}
+                        backgroundColor={'white'}
+                    >
+                        {/* queryparams: serverId, machineId, enableKey, locationRequired  */}
+                        {makerspace?.id && groups.machineGroups &&
+                        <QRCode  content={`makerpass://qr/--/makerspace/machine/enable?serverId=${makerspace?.id}&machineId=${local.machineId}&enableKey=${formData.machine.enableKey}&locationRequired=${groups.machineGroups.find((group) => group.machineIds.includes(local.machineId as string))?.geoFences.length !== 0}`} />
+                        }
+                    </View>}
+
                 </YStack>
             </BlurHeader>
             <CancelButton colors={colors} />

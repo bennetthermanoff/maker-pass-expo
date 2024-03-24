@@ -1,82 +1,56 @@
-import { Button, H2, Text, YStack } from 'tamagui';
-import { StyleSheet } from 'react-native';
-import * as Linking from 'expo-linking';
 import { useColors } from '../constants/Colors';
-import { SplashScreen, Stack, router } from 'expo-router';
-import { MakerspaceConfig } from '../types/makerspaceServer';
+import splash from '../assets/images/splash.png';
+import splashDark from '../assets/images/splash-dark.png';
 import { useEffect, useState } from 'react';
-import { getCurrentServer } from '../util/makerspaces';
+import Animated, { interpolate, interpolateColor, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import {  Image, getTokens } from 'tamagui';
+import { ImageSourcePropType } from 'react-native';
+import { SplashScreen, router, useLocalSearchParams } from 'expo-router';
 import { goHome } from '../util/goHome';
+import { Color } from '../types/makerspaceServer';
 
-export default function ConnectToMakerSpace() {
-    const [makerspace, setMakerspace] = useState<MakerspaceConfig|null|undefined>(undefined); // TODO: type this
-    useEffect(() => {
-        const getMakerspace = async () => {
-            const makerspace = await getCurrentServer();
-            setMakerspace(makerspace);
-        };
-        getMakerspace();
-    },[]);
-    useEffect(() => {
-        if (makerspace){
-            goHome();
-            // after home is loaded, hide the splash screen
-            new Promise((resolve) => setTimeout(resolve, 500)).then(() => {            SplashScreen.hideAsync();
-                SplashScreen.hideAsync();
-            });
-        } else if (makerspace === null){
-            new Promise((resolve) => setTimeout(resolve, 500)).then(() => {            SplashScreen.hideAsync();
-                SplashScreen.hideAsync();
-            });
-
-        }
-    }, [makerspace]);
-
+export default function Splash() {
+    const local = useLocalSearchParams();
     const colors = useColors();
-    const url = Linking.useURL();
+    const [endColor, setEndColor] = useState<string>('black');
+    const [once, setOnce] = useState(false);
+    const interp  = useSharedValue(0);
+    useEffect(() => {
+        if (colors.background){
+            if (once){
+                return;
+            }
+            setOnce(true);
+            new Promise((resolve) => setTimeout(resolve, 300)).then(() => {
+                SplashScreen.hideAsync();
+                interp.value = withTiming(1, { duration: 1200 });
+                new Promise((resolve) => setTimeout(resolve, 1200)).then(() => {
+                    goHome();
+                });
+            });
+        }
+    }, [interp, colors]);
 
-    return (
+    useEffect(() => {
+        if (colors.background){
+            setEndColor(getTokens().color[colors.background as Color].val);
+        }
+    }, [colors]);
 
-        <YStack style={styles.container} backgroundColor={colors.background} >
-            <H2
-                color={colors.text}
-                padding={'$0'}
-            >Welcome to MakerPass!</H2>
-            <Text
-                color={colors.text}
-                padding={'$0'}
-            >Let's get you connected to your MakerSpace.</Text>
-
-            <Button
-                size={'$6'}
-                color={colors.text}
-                backgroundColor={colors.accent.dark}
-                marginTop={'$4'}
-                width={'80%'}
-                marginBottom={'$2'}
-                onPress={() => {
-                    router.push('/scanner');
-                }}
-            >Connect with QR Code</Button>
-
-            <Button
-                width={'80%'}
-                color={colors.secondaryAccent.dark}
-                backgroundColor={colors.inverseText}
-                onPress={() => {
-                    router.push('/start/connectManually');
-                }}
-            >Connect Manually</Button>
-        </YStack>
-
-    );
-}
-
-const styles = StyleSheet.create({
-    container: {
+    const backgroundColor = useAnimatedStyle(() => ({
         flex: 1,
+        justifyContent: 'center',
         alignItems: 'center',
-        justifyContent:'center',
-        width: '100%',
-    },
-});
+        backgroundColor:  interpolateColor(interp.value, [0, 1], [colors.inverseText, endColor ], 'HSV'),
+    }), [colors]);
+    return (
+        <Animated.View style={backgroundColor}>
+            <Image
+                source={(colors.inverseText === 'white' ? splash : splashDark) as ImageSourcePropType}
+                width={'100%'}
+                resizeMode='contain'
+            />
+        </Animated.View>
+    );
+
+}

@@ -26,6 +26,18 @@ export type GeoFence = {
     radius: number,
 };
 
+export type TagOut = {
+    id: string;
+    machineId: string;
+    userId: string;
+    reason: string;
+    removedDate: Date|null;
+    removedBy: string|null;
+    removedReason: string|null;
+    createdAt: string;
+}
+export type TagOutWithName = TagOut & { userName: string , removedByName?:string|null};
+
 export type PermissionGroup = {
     name: string;
     machineIds: string[];

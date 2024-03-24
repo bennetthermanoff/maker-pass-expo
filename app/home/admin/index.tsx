@@ -33,6 +33,17 @@ export default function Admin() {
                 color={colors.text}
                 onPress={() => {router.push('/permissionGroups/');}}
             >Manage Permission Groups</Button>
+            <Button
+                spaceFlex
+                scaleIcon={2}
+                fontSize={'$6'}
+                textAlign="left"
+                style={buttonStyle}
+                iconAfter={Wrench}
+                backgroundColor={colors.secondaryAccent.light}
+                color={colors.text}
+                onPress={() => {router.push('/addMachine/new');}}
+            >Add Machine</Button>
         </BlurHeader>
 
     );

@@ -46,7 +46,7 @@ export default function Scanner() {
     const handleBarCodeScanned = async ({ type, data }:{type:string, data:string}) => {
         GLOBAL.barRaceCondition = 0; //reset race condition
         setScanned(true);
-        if (data.startsWith('exp://')) {
+        if (data.startsWith('makerpass://')) {
             const newText = handleURL(data);
             if (newText){
                 setHeader(newText);

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Machine, MachineGroupArray } from '../types/machine';
+import { Machine, MachineGroupArray, TagOut } from '../types/machine';
 import { debounce } from 'lodash';
 import axios from 'axios';
 import { useMakerspace } from './useMakerspace';
