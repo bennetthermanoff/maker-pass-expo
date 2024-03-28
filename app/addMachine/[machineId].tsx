@@ -126,6 +126,7 @@ export default function AddMachine() {
             allowsEditing: true,
             aspect: [ 2, 1 ],
             base64: true,
+            quality:0,
 
         });
         if (result.assets?.[0]?.base64){

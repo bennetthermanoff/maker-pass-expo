@@ -15,7 +15,7 @@ export default function ManageMachineGroups(){
     const { permissionGroups, loading, error, debouncedGetPermissionGroups, machines } = usePermissionGroups();
     return (
         <>
-            <BlurHeader title="Permisison Groups" debouncedPullToRefresh={debouncedGetPermissionGroups}>
+            <BlurHeader title="Permisison Groups" pullToRefresh={debouncedGetPermissionGroups} refreshing={loading}>
                 <Button
                     iconAfter={Plus}
                     scaleIcon={1.5}
@@ -32,7 +32,7 @@ export default function ManageMachineGroups(){
                     }}
                 >Group</Button>
                 {permissionGroups?.map((permissionGroup) => <PermissionGroupCard
-
+                    key={permissionGroup.id}
                     childProps={{ key:permissionGroup.id,
                         onLongPress:() => router.push({ pathname: `/permissionGroups/${permissionGroup.id}`, params: { permissionGroup:JSON.stringify(permissionGroup),
                         } }) }}

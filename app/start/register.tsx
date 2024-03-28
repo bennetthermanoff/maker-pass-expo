@@ -23,8 +23,8 @@ export default function Register(){
     const [loading, setLoading] = useState(false);
     const [additionalInfo, setAdditionalInfo] = useState<AdditionalInfoField[]>([]);
     const [formData, setFormData] = useState<{[key:string]:string|boolean}>({});
-    const [registrationType, setRegistrationType] = useState<'admin'|'user'>('user');
     const [canRegisterAsAdmin, setCanRegisterAsAdmin] = useState(false);
+    const [registrationType, setRegistrationType] = useState<'admin'|'user'>('user');
     const [errors, setErrors] = useState<{[key:string]:string}>({});
 
     useEffect(() => {
@@ -38,6 +38,7 @@ export default function Register(){
             const { additionalInfoFields } = pingResponse.server;
             if (pingResponse.registrationType === 'admin'){
                 setCanRegisterAsAdmin(true);
+                setRegistrationType('admin');
             }
             setAdditionalInfo(additionalInfoFields);
         };

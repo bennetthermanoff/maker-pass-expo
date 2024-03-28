@@ -10,7 +10,7 @@ import { LinearGradient } from '@tamagui/linear-gradient';
 import { QrCode } from '@tamagui/lucide-icons';
 import React, { useCallback, useEffect, useState } from 'react';
 import { interpolate } from 'react-native-reanimated';
-import defaultImage from '../../assets/images/adaptive-icon.png';
+import defaultImage from '../../assets/images/icon.png';
 import { AppState, ImageSourcePropType } from 'react-native';
 import { GLOBAL } from '../../global';
 import PagerView from 'react-native-pager-view';

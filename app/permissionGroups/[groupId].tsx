@@ -17,7 +17,7 @@ import { GLOBAL } from '../../global';
 export default function EditPermissionGroup(){
     const local = useLocalSearchParams();
     const colors = useColors();
-    const { machines, loading, debouncedGetMachines, makerspace } = useMachines();
+    const { machines, loading, makerspace } = useMachines();
     const getPermissionGroupInitialData = () => {
         if (local.groupId === 'new'){
             return { name:'',machineIds:[] };

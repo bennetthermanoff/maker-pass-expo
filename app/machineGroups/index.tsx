@@ -15,7 +15,7 @@ export default function ManageMachineGroups(){
 
     return (
         <>
-            <BlurHeader title="Machine Groups" pullToRefresh={debouncedGetMachineGroups}>
+            <BlurHeader title="Machine Groups" pullToRefresh={debouncedGetMachineGroups} refreshing={loading}>
                 <Button
                     iconAfter={Plus}
                     scaleIcon={1.5}
@@ -32,7 +32,7 @@ export default function ManageMachineGroups(){
                     }}
                 >Group</Button>
                 {machineGroups?.map((machineGroup) => <MachineGroupCard
-
+                    key={machineGroup.id}
                     childProps={{ key:machineGroup.id,
                         onLongPress:() => router.push({ pathname: `/machineGroups/${machineGroup.id}`, params: { machineGroup:JSON.stringify(machineGroup) } }) }}
                     machineGroup={machineGroup}
