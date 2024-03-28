@@ -5,6 +5,7 @@ import { getCurrentTheme } from '../util/makerspaces';
 import { getTokens } from 'tamagui';
 import { router, useGlobalSearchParams, useRootNavigationState } from 'expo-router';
 import  { GLOBAL } from '../global';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 const tintColorLight = '#2f95dc';
 const tintColorDark = '#fff';
 
@@ -47,6 +48,20 @@ export const useColors = () => {
 
     return theme as Colors;
 };
+
+export const useAsyncColors = () => {
+    const [colors, setColors] = useState<null|Colors>(null);
+    useEffect(() => {
+        const theme = getCurrentTheme().then((theme) => {
+            console.log('theme', theme);
+
+            if (theme){
+                setColors(tanStackColors(theme.primary, theme.secondary, Appearance.getColorScheme() === 'dark') as Colors);
+            }
+        });
+    }, []);
+    return colors;
+};
 export type Colors = {
     background: string,
     text: string,
@@ -72,7 +87,7 @@ export const useUnTokenizedColor = (token:string) => {
 };
 
 //https://tamagui.dev/docs/intro/colors
-const tanStackColors = (themeBase: ColorName, secondary:ColorName, darkMode:boolean) => (
+export const tanStackColors = (themeBase: ColorName, secondary:ColorName, darkMode:boolean) => (
     {
         background: `$${themeBase}4${darkMode ? 'Dark' : 'Light'}`,
         text: `${darkMode ? 'white' : 'black'}`,

@@ -108,7 +108,6 @@ export default function Register(){
             })
             .catch((error) => {
                 setLoading(false);
-                console.log(error.response.data);
                 alert('Registration failed: ' + error.response.data.message);
             });
 

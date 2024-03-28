@@ -84,7 +84,6 @@ const handleEnableMachine = async ({ serverId, machineId, enableKey, locationReq
 
         const locationRaw = await Location.getCurrentPositionAsync({});
         location = { lat:locationRaw.coords.latitude, lng:locationRaw.coords.longitude };
-        console.log('Location: ' + JSON.stringify(location));
 
     }
     try {
