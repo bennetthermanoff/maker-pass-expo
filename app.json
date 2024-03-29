@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "maker-pass-expo",
-    "slug": "maker-pass-expo",
+    "name": "MakerPass",
+    "slug": "MakerPass",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -29,7 +29,8 @@
         "NSCameraUsageDescription": "This app uses the camera to scan QR codes around your MakerSpace.",
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
       },
-      "bundleIdentifier": "com.benentthermanoff.makerpass"
+      "bundleIdentifier": "com.bennetthermanoff.makerpass",
+      "buildNumber": "2"
     },
     "android": {
       "softwareKeyboardLayoutMode": "pan",
@@ -40,7 +41,7 @@
         "android.permission.FOREGROUND_SERVICE",
         "android.permission.RECORD_AUDIO"
       ],
-      "package": "com.benentthermanoff.makerpass"
+      "package": "com.bennetthermanoff.makerpass"
     },
     "web": {
       "bundler": "metro",

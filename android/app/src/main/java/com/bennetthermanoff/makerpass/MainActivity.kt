@@ -1,4 +1,4 @@
-package com.benentthermanoff.makerpass
+package com.bennetthermanoff.makerpass
 
 import android.os.Build
 import android.os.Bundle

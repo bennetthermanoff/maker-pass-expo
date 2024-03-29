@@ -32,6 +32,7 @@
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="maker-pass"/>
         <data android:scheme="com.benentthermanoff.makerpass"/>
+        <data android:scheme="com.bennetthermanoff.makerpass"/>
       </intent-filter>
     </activity>
     <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" android:exported="false"/>
