@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "MakerPass",
-    "slug": "MakerPass",
+    "slug": "maker-pass-expo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -30,7 +30,7 @@
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
       },
       "bundleIdentifier": "com.bennetthermanoff.makerpass",
-      "buildNumber": "2"
+      "buildNumber": "3"
     },
     "android": {
       "softwareKeyboardLayoutMode": "pan",
@@ -41,7 +41,8 @@
         "android.permission.FOREGROUND_SERVICE",
         "android.permission.RECORD_AUDIO"
       ],
-      "package": "com.bennetthermanoff.makerpass"
+      "package": "com.bennetthermanoff.makerpass",
+      "versionCode": 2
     },
     "web": {
       "bundler": "metro",
