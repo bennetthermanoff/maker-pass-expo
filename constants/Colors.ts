@@ -53,8 +53,6 @@ export const useAsyncColors = () => {
     const [colors, setColors] = useState<null|Colors>(null);
     useEffect(() => {
         const theme = getCurrentTheme().then((theme) => {
-            console.log('theme', theme);
-
             if (theme){
                 setColors(tanStackColors(theme.primary, theme.secondary, Appearance.getColorScheme() === 'dark') as Colors);
             }

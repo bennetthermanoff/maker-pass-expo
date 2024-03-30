@@ -60,7 +60,6 @@ export default function ConnectManually() {
                             justifyContent: 'center',
                             alignItems: 'left',
                         }}
-                    // paddingTop={inputInFocus ? '30%' : '0%'}
                     >
                         <H4
                             color={colors.text}
@@ -117,7 +116,7 @@ export default function ConnectManually() {
                             marginTop={'$4'}
                             marginBottom={'$2'}
                             onPress={() => {
-                                handleConnect(formData.URL.toLowerCase(), formData.PORT, formData.registrationKey, formData.registrationType);
+                                handleConnect(formData.URL.toLowerCase(), formData.PORT, formData.registrationType, formData.registrationKey);
                             }}
                             onLongPress={() => {
                                 setFormData({ ...formData, registrationType: formData.registrationType === 'user' ? 'admin' : 'user' });

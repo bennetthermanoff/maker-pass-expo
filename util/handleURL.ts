@@ -46,16 +46,18 @@ export const handleConnect = async (url?:string, port?:string, registrationType?
         alert('Invalid config');
         return;
     }
-    const { data:pingResponse }:{data:PingResponse} = await axios.post( url + ':' + port + '/api/ping', { registrationType, registrationKey })
+    const ping = await axios.post( url + ':' + port + '/api/ping', { registrationType, registrationKey })
         .then((response) => response)
-        .catch((err) => ({ data: { message: err.message, server: null } as PingResponse }));
-    if (pingResponse.server === null){
-        alert(pingResponse.message);
+        .catch((err) => {
+            alert(JSON.stringify(err.response.data));
+            return;
+        });
+    if (!ping){
         return;
     }
 
-    delete pingResponse.server.additionalInfoFields;
-    await addOrUpdateServer({ ...pingResponse.server, registrationKey:registrationKey as string, registrationType: registrationType as string });
+    delete ping.data.server.additionalInfoFields;
+    await addOrUpdateServer({ ...ping.data.server, registrationKey:registrationKey as string, registrationType: registrationType as string });
 
     while (router.canGoBack()) { // Pop from stack until one element is left, resets the stack
         router.back();
