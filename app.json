@@ -30,7 +30,7 @@
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
       },
       "bundleIdentifier": "com.bennetthermanoff.makerpass",
-      "buildNumber": "3",
+      "buildNumber": "4",
       "splash": {
         "image": "./assets/images/splash.png",
         "resizeMode": "contain",
@@ -52,7 +52,7 @@
         "android.permission.RECORD_AUDIO"
       ],
       "package": "com.bennetthermanoff.makerpass",
-      "versionCode": 2
+      "versionCode": 3
     },
     "web": {
       "bundler": "metro",

@@ -1,5 +1,5 @@
-import { Button, H2, Text, YStack } from 'tamagui';
-import { StyleSheet } from 'react-native';
+import { Button, H2, Text, YStack, Image, View } from 'tamagui';
+import { ImageSourcePropType, StyleSheet } from 'react-native';
 import * as Linking from 'expo-linking';
 import { useColors } from '../constants/Colors';
 import { SplashScreen, Stack, router } from 'expo-router';
@@ -7,6 +7,8 @@ import { MakerspaceConfig } from '../types/makerspaceServer';
 import { useEffect, useState } from 'react';
 import { getCurrentServer } from '../util/makerspaces';
 import { goHome } from '../util/goHome';
+import Banner from '../assets/images/banner.png';
+import BannerDark from '../assets/images/banner-dark.png';
 
 export default function ConnectToMakerSpace() {
     const [makerspace, setMakerspace] = useState<MakerspaceConfig|null|undefined>(undefined); // TODO: type this
@@ -24,10 +26,17 @@ export default function ConnectToMakerSpace() {
     return (
 
         <YStack style={styles.container} backgroundColor={colors.background} >
-            <H2
-                color={colors.text}
-                padding={'$0'}
-            >Welcome to MakerPass!</H2>
+            <View
+                width={'90%'}
+                height={'10%'}
+            >
+                <Image
+                    source={(colors.text === 'white' ? BannerDark : Banner) as ImageSourcePropType}
+                    resizeMode='contain'
+                    width={'100%'}
+                    height={'100%'}
+                />
+            </View>
             <Text
                 color={colors.text}
                 padding={'$0'}
