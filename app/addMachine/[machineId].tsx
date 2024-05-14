@@ -137,7 +137,7 @@ export default function AddMachine() {
 
     };
 
-    const getQR = () => `makerpass://qr/--/makerspace/machine/enable?serverId=${makerspace?.id}&machineId=${local.machineId}&enableKey=${formData.machine.enableKey}&locationRequired=${groups.machineGroups.find((group) => group.machineIds.includes(local.machineId as string))?.geoFences.length !== 0}`;
+    const getQR = () => `makerpass://--/makerspace/machine/enable?serverId=${makerspace?.id}&machineId=${local.machineId}&enableKey=${formData.machine.enableKey}&locationRequired=${groups.machineGroups.find((group) => group.machineIds.includes(local.machineId as string))?.geoFences.length !== 0}`;
 
     return (
         <>
