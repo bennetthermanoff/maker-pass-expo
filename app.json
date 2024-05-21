@@ -22,9 +22,6 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "config": {
-        "usesNonExemptEncryption": false
-      },
       "infoPlist": {
         "NSCameraUsageDescription": "This app uses the camera to scan QR codes around your MakerSpace.",
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
@@ -81,7 +78,8 @@
             "node_modules/@tamagui/font-inter/otf/Inter-Regular.otf"
           ]
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true
@@ -93,6 +91,10 @@
       "eas": {
         "projectId": "3899c4fa-3b7d-4bb4-84f7-99ecb448e6c8"
       }
+    },
+    "runtimeVersion": "1.0.0",
+    "updates": {
+      "url": "https://u.expo.dev/3899c4fa-3b7d-4bb4-84f7-99ecb448e6c8"
     }
   }
 }

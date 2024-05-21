@@ -23,23 +23,25 @@ export const useMachines = () => {
             if (makerspace?.user){
                 let machines = await getMachinesFromServer(makerspace,false);
                 const cachedImageIds = await getImageIDs();
+                machines = await Promise.all(machines.map(async (machine) => {
+                    if (machine.photoHash){
+                        const image = await getImage(machine.photoHash);
+                        return { ...machine, photo: image };
+                    }
+                    return machine;
+                }));
+                setMachines(machines);
+
                 const allMachinesHaveImages = machines.every((machine) => !machine.photoHash || cachedImageIds.includes(machine.photoHash));
                 if (!allMachinesHaveImages){
                     machines = await getMachinesFromServer(makerspace,true);
-                    machines.forEach((machine) => {
+                    setMachines(machines);
+                    for (const machine of machines){
                         if (machine.photo && machine.photoHash){
-                            setImage(machine.photoHash, machine.photo);
+                            await setImage(machine.photoHash, machine.photo);
                         }
-                    });
-                } else {
-                    machines = await Promise.all(machines.map(async (machine) => {
-                        if (machine.photoHash){
-                            const image = await getImage(machine.photoHash);
-                            return { ...machine, photo: image };
-                        }
-                        return machine;
-                    }));}
-                setMachines(machines);
+                    }
+                }
             }
 
         }
