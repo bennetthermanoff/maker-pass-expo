@@ -10,6 +10,7 @@ import { handleUserLoginError } from '../util/goHome';
 import { getAuthHeaders } from '../util/authRoutes';
 import { getImage, getImageIDs, setImage } from '../util/machineImageCache';
 import { GLOBAL } from '../global';
+import { cacheCurrentLocation } from '../util/locationCache';
 
 export const useMachines = () => {
     const [machines, setMachines] = useState <Array<Machine&{lastUsedByName:string|null}>>([]);
@@ -31,7 +32,9 @@ export const useMachines = () => {
                     return machine;
                 }));
                 setMachines(machines);
-
+                if (makerspace.hasGeoFences){
+                    cacheCurrentLocation();
+                }
                 const allMachinesHaveImages = machines.every((machine) => !machine.photoHash || cachedImageIds.includes(machine.photoHash));
                 if (!allMachinesHaveImages){
                     machines = await getMachinesFromServer(makerspace,true);

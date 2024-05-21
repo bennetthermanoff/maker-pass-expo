@@ -109,7 +109,7 @@ export default function Register(){
             })
             .catch((error) => {
                 setLoading(false);
-                alert('Registration failed: ' + error.response.data.message);
+                alert('Registration failed: ' + JSON.stringify(error.response.data.message));
             });
 
     };

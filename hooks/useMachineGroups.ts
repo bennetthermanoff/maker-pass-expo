@@ -7,6 +7,7 @@ import axios from 'axios';
 import { debounce } from 'lodash';
 import { GLOBAL } from '../global';
 import { getMachinesFromServer } from './useMachines';
+import { addOrUpdateServer } from '../util/makerspaces';
 
 export const useMachineGroups = () => {
     const [machineGroups,setMachineGroups] = useState<MachineGroupArray>([]);
@@ -49,9 +50,14 @@ export const useMachineGroups = () => {
 };
 
 export const getMachineGroupsFromServer = async (makerspace:MakerspaceConfig) => {
-    const response = await axios.get(
+    const { data }:{data:MachineGroupMap} = await axios.get(
         `${makerspace.serverAddress}:${makerspace.serverPort}/api/machineGroup/all`,
         getAuthHeaders(makerspace),
     );
-    return response.data as MachineGroupMap;
+    const hasGeoFences = Object.values(data).some((group) => group.geoFences.length > 0);
+    if (hasGeoFences !== makerspace.hasGeoFences){
+        addOrUpdateServer({ ...makerspace, hasGeoFences });
+    }
+
+    return data;
 };

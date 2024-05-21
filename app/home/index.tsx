@@ -42,6 +42,14 @@ export default function Machines() {
         }
     },[makerspace]);
 
+    const handleRefresh = () => {
+        if (makerspace){
+            getMachines();
+            getMachineGroupsFromServer(makerspace).then((machineGroups) => {
+                setMachineGroupMap(machineGroups);
+            });
+        }};
+
     // Machine Pages
     // (if any) Machines that are enabled by current user
     // (if admin or technician) Machines that are enabled by other users
@@ -97,7 +105,7 @@ export default function Machines() {
                 onPageSelected={(event) => {setCurrentPage(event.nativeEvent.position);}}
             >
                 {pages.map((page, index) =>
-                    <BlurHeader key={index} title={page.name} pullToRefresh={getMachines} refreshing={loading}>
+                    <BlurHeader key={index} title={page.name} pullToRefresh={handleRefresh} refreshing={loading}>
                         {page.machines.map((machine) => <MachineCard
                             machine={machine}
                             colors={colors}

@@ -9,6 +9,7 @@ import { goHome, handleUserLoginError } from './goHome';
 import * as Location from 'expo-location';
 import { GLOBAL } from '../global';
 import { Alert } from 'react-native';
+import { clearLocationCache, getLocation } from './locationCache';
 
 export const handleURL =  (url:string|null) => {
     if (url === null) {
@@ -62,7 +63,14 @@ export const handleConnect = async (url?:string, port?:string, registrationType?
     while (router.canGoBack()) { // Pop from stack until one element is left, resets the stack
         router.back();
     }
-    router.replace('/start/choose');
+    const { status } = await Location.getForegroundPermissionsAsync();
+    console.log('status', status, ping.data.server.hasGeoFences);
+
+    if (ping.data.server.hasGeoFences && status !== 'granted'){
+        router.replace('/start/locationHeadsup');
+    } else {
+        router.replace('/start/choose');
+    }
 };
 const handleEnableMachine = async ({ serverId, machineId, enableKey, locationRequired }:{ serverId: string, machineId:string, enableKey?:string, locationRequired:string}) => {
     const makerspaces = await getServers();
@@ -76,19 +84,17 @@ const handleEnableMachine = async ({ serverId, machineId, enableKey, locationReq
     }
     await setCurrentServer(serverId);
 
-    let location:{lat:number, lng:number}|undefined = undefined;
-    if (locationRequired === 'true'){
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted') {
-            alert('Permission to access location was denied');
-            return;
-        }
-
-        const locationRaw = await Location.getCurrentPositionAsync({});
-        location = { lat:locationRaw.coords.latitude, lng:locationRaw.coords.longitude };
-
-    }
     try {
+        let location:{lat:number, lng:number}|undefined = undefined;
+        if (locationRequired === 'true'){
+            const newLocation = await getLocation();
+            if (!newLocation){
+                throw new Error('Location Permission Required');
+            } else {
+                location = newLocation;
+            }
+
+        }
         const { data }:{data:{message:string, machine:Machine }} = await axios.post(
             `${makerspace.serverAddress}:${makerspace.serverPort}/api/machine/enable/single/${machineId}`,
             { enableKey, location },
@@ -104,6 +110,9 @@ const handleEnableMachine = async ({ serverId, machineId, enableKey, locationReq
         else if (err.response.data.message){
             Alert.alert('Cannot Enable Machine',err.response.data.message);
             goHomeOnBarAndCallFinished();
+            if (err.response.data.message === 'Invalid location'){
+                clearLocationCache();
+            }
         }
         else {
             alert(JSON.stringify(err));

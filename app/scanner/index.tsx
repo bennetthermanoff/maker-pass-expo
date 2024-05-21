@@ -80,10 +80,13 @@ export default function Scanner() {
                 borderWidth={scanned ? 5 : 0}
             />
             <YStack>
-                <BarCodeScanner
-                    onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-                    style={{ height:'90%' }}
-                />
+                {hasPermission ?
+                    <BarCodeScanner
+                        onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+                        style={{ height:'90%' }}
+                    /> :
+                    <Spinner backgroundColor={colors.background} color={colors.text} width="100%" height="90%" />
+                }
                 <XStack
                     style={{
                         flex: 1,

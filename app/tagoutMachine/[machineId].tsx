@@ -89,7 +89,7 @@ export default function TagOutMachine(){
                         height={'100%'}
                         onPress={handleSubmitTagOutAndIn}
                         backgroundColor={machine.latestTagOutId ? colors.secondaryAccent.dark : colors.accent.dark}
-                        color={colors.text}
+                        color={machine.latestTagOutId ? 'white' : colors.text}
                     >{machine.latestTagOutId ? 'Tag In' : 'Tag Out'}</Button>
                 </View>
                 {makerspace?.user?.userType === 'admin' &&
