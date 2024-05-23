@@ -1,5 +1,5 @@
 import { Button, H2, Text, View, XStack, YStack,Image } from 'tamagui';
-import { ImageSourcePropType, StyleSheet } from 'react-native';
+import { Alert, ImageSourcePropType, StyleSheet } from 'react-native';
 import * as Linking from 'expo-linking';
 import { useColors } from '../../constants/Colors';
 import { router } from 'expo-router';
@@ -60,18 +60,42 @@ export default function LoginOrRegister() {
                 backgroundColor={colors.background}
             >
                 <XStack
+                    marginBottom={'$8'}
                     style={{
                         flex: 1,
-                        flexDirection: 'column',
-                        justifyContent: 'flex-end',
+                        flexDirection: 'row',
+                        justifyContent: 'center',
                         alignItems: 'center',
                     }}
                 >
                     <Button
+                        color={colors.secondaryAccent.dark}
+                        backgroundColor={colors.inverseText}
+                        width={'auto'}
+                        marginRight={'$4'}
+                        onPress={() => {
+                            Alert.alert(
+                                'One Time Login','Please contact an admin to provide a One Time Login QR Code',
+                                [
+                                    {
+                                        text: 'Cancel',
+                                        onPress: () => {},
+                                        style: 'cancel',
+                                    },
+                                    {
+                                        text: 'Scan QR',
+                                        onPress: () => {router.push('/scanner');},
+                                    },
+
+                                ],
+
+                            );
+                        }}
+                    >Forgot Password</Button>
+                    <Button
                         width={'auto'}
                         color={colors.secondaryAccent.dark}
                         backgroundColor={colors.inverseText}
-                        marginBottom={'$8'}
                         onPress={async() => {
                             if (makerspace){
                                 await removeServer(makerspace.id);

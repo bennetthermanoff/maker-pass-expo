@@ -14,7 +14,9 @@ import defaultImage from '../../assets/images/icon.png';
 import { AppState, ImageSourcePropType } from 'react-native';
 import { GLOBAL } from '../../global';
 import PagerView from 'react-native-pager-view';
+import * as Haptics from 'expo-haptics';
 import { getMachineGroupsFromServer } from '../../hooks/useMachineGroups';
+import { debounce, omit } from 'lodash';
 export type Page = {
     name:string;
     machines:Array<Machine & { lastUsedByName:string|null }>;
@@ -113,8 +115,9 @@ export default function Machines() {
                             key={index + machine.id}
                             cardProps={
                                 { onLongPress:() => {
-                                    if (makerspace?.user?.userType === 'admin'){
-                                        router.push({ pathname: `/tagoutMachine/${machine.id}`, params: { machine:JSON.stringify(machine) } });
+                                    if (makerspace?.user?.userType === 'admin' || makerspace?.user?.userType === 'technician'){
+                                        Haptics.selectionAsync();
+                                        router.push({ pathname: `/tagoutMachine/${machine.id}`, params: { machine:JSON.stringify(omit(machine, ['photo'])) } });
                                     }
                                 },
                                 }}
@@ -130,7 +133,7 @@ export default function Machines() {
                 width={'100%'}
                 backgroundColor={'transparent'}
             >
-
+                {machines.length > 0 &&
                 <Button
                     color={colors.text}
                     iconAfter={QrCode}
@@ -143,7 +146,7 @@ export default function Machines() {
                     onPress={() => {
                         router.push('/scanner');
                     }}
-                >Scan QR</Button>
+                >Scan QR</Button>}
 
                 <XStack
                     minWidth={'$4'}

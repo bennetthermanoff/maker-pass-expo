@@ -2,11 +2,12 @@ import * as Linking from 'expo-linking';
 import { router } from 'expo-router';
 import axios from 'axios';
 import { MakerspaceConfig, MakerspaceServers, PingResponse } from '../types/makerspaceServer';
-import { addOrUpdateServer, getCurrentServer, getServer, getServers, setCurrentServer } from './makerspaces';
+import { addOrUpdateServer, addServerCredentials, getCurrentServer, getServer, getServers, setCurrentServer } from './makerspaces';
 import { Machine } from '../types/machine';
 import { getAuthHeaders } from './authRoutes';
 import { goHome, handleUserLoginError } from './goHome';
 import * as Location from 'expo-location';
+import * as Haptics from 'expo-haptics';
 import { GLOBAL } from '../global';
 import { Alert } from 'react-native';
 import { clearLocationCache, getLocation } from './locationCache';
@@ -40,6 +41,28 @@ export const handleURL =  (url:string|null) => {
             alert('Error: ' + err);
         }
     }
+    if (path === 'makerspace/login'){
+        try {
+            const { token, userId, userType, serverId } = queryParams ?? {} as { token?: string, userId?: string, userType?: string, serverId?: string };
+            if (!token || !userId || !userType || !serverId){
+                throw new Error('Invalid Login Parameters');
+            }
+            addServerCredentials({ serverId:serverId as string, userId:userId as string, userType:userType as string, token:token as string }).then(() => {
+                goHome();
+                Alert.alert(
+                    'Logged In', 'Please reset your password',
+                    [{ text: 'Reset Password', onPress: () => router.push('/resetPassword') }],
+                );
+            }).catch((err) => {
+                alert('Error: ' + err);
+            });
+            return 'Logging In...';
+        }
+        catch (err){
+            alert('Error: ' + err);
+        }
+    }
+
 };
 
 export const handleConnect = async (url?:string, port?:string, registrationType?:string, registrationKey?:string) => {
@@ -56,7 +79,7 @@ export const handleConnect = async (url?:string, port?:string, registrationType?
     if (!ping){
         return;
     }
-
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     delete ping.data.server.additionalInfoFields;
     await addOrUpdateServer({ ...ping.data.server, registrationKey:registrationKey as string, registrationType: registrationType as string });
 
@@ -64,7 +87,6 @@ export const handleConnect = async (url?:string, port?:string, registrationType?
         router.back();
     }
     const { status } = await Location.getForegroundPermissionsAsync();
-    console.log('status', status, ping.data.server.hasGeoFences);
 
     if (ping.data.server.hasGeoFences && status !== 'granted'){
         router.replace('/start/locationHeadsup');
@@ -100,8 +122,10 @@ const handleEnableMachine = async ({ serverId, machineId, enableKey, locationReq
             { enableKey, location },
             getAuthHeaders(makerspace),
         );
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
         GLOBAL.getMachines();
         goHomeOnBarAndCallFinished();
+        GLOBAL.getMachines();
     } catch (err:any){
         if (err.response.status === 401){
             handleUserLoginError();

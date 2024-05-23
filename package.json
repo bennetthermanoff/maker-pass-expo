@@ -25,11 +25,11 @@
     "@react-native-community/datetimepicker": "8.0.1",
     "@react-navigation/native": "^6.0.2",
     "@shopify/react-native-skia": "1.2.3",
-    "@tamagui/animations-css": "^1.79.12",
+    "@tamagui/animations-css": "1.79.19",
     "@tamagui/config": "1.79.19",
     "@tamagui/create-theme": "1.79.19",
-    "@tamagui/font-inter": "^1.88.19",
-    "@tamagui/linear-gradient": "^1.79.19",
+    "@tamagui/font-inter": "1.79.19",
+    "@tamagui/linear-gradient": "1.79.19",
     "@tamagui/lucide-icons": "1.79.19",
     "axios": "^1.6.2",
     "babel-preset-expo": "~11.0.0",
@@ -65,7 +65,8 @@
     "react-native-screens": "3.31.1",
     "react-native-svg": "15.2.0",
     "react-native-web": "~0.19.6",
-    "tamagui": "1.79.19"
+    "tamagui": "1.79.19",
+    "expo-haptics": "~13.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",

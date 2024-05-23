@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useColors } from '../../constants/Colors';
 import { Machine } from '../../types/machine';
 import { useMakerspace } from '../../hooks/useMakerspace';
@@ -31,10 +31,10 @@ export default function AddMachine() {
             },
             requireEnableKey: true };}
         else {
-            const machine = JSON.parse(local.machine as string);
+            const machine = JSON.parse(local.machine as string) as Omit<Machine, 'photo'>;
             return {
-                machine: { ...machine, solenoidMode:machine.solenoidMode ? true : false },
-                requireEnableKey: machine ? true : false,
+                machine,
+                requireEnableKey: machine.enableKey ? true : false,
             };
         }
     };
@@ -196,8 +196,8 @@ export default function AddMachine() {
                         color={colors.text}
                         width={'95%'}
                         lineHeight={'$2'}
-
-                    >A unique key will be generated for unlocking your machine, for use with encrypted RFID cards.</Label>
+                        pressStyle={{ color: colors.text }}
+                    >A unique key will be generated for unlocking your machine and embedded in its QR code.</Label>
                     <XStack
                         width={'95%'}
 
@@ -221,10 +221,11 @@ export default function AddMachine() {
                     <Label
                         flexWrap='wrap'
                         color={colors.text}
+                        pressStyle={{ color: colors.text }}
                         lineHeight={'$2'}
                         width={'95%'}
                         marginBottom={'$8'}
-                    >Solenoid mode will disable the machine after a set amount of time, great for KeyBoxes, and logging machine use on uncontrolled machines.</Label>
+                    >Solenoid mode will disable the machine after 5 seconds. Great for KeyBoxes, and logging machine use on uncontrolled machines.</Label>
 
                     <Button
                         iconAfter={formData.machine?.photo ? Image : Plus}
@@ -254,25 +255,33 @@ export default function AddMachine() {
                         width={'95%'}
                         onPress={handleDeleteMachine}
                     >Delete Machine</Button>
-                    {local.machineId !== 'new' &&
-                    <View
-                        marginBottom={'$15'}
-                        marginTop={'$4'}
-                        padding={'$2'}
-                        backgroundColor={'white'}
-                    >
-                        {/* queryparams: serverId, machineId, enableKey, locationRequired  */}
-                        {makerspace?.id && groups.machineGroups &&
-                        <QRCode
-                            value={getQR()}
-                            color={getTokens().color[ colors.accent.dark as Color].val}
-                            size={250}
-                            logo={keyLogo as ImageSourcePropType}
-                            logoSize={85}
-                            logoBackgroundColor='transparent'
-                        />
-                        }
-                    </View>}
+                    {local.machineId !== 'new' && makerspace && !groups.loading &&
+                    <>
+                        <Label
+                            color={colors.text}
+                            marginTop={'$4'}
+                            marginBottom={'$2'}
+                            lineHeight={'$2'}
+                            width={'95%'}
+                            pressStyle={{ color: colors.text }}
+                        >Note: QR will need to be replaced in the future if this machine's Machine Group changes to require a GeoFence. </Label>
+                        <View
+                            marginBottom={'$15'}
+                            padding={'$2'}
+                            backgroundColor={'white'}
+                        >
+                            {/* queryparams: serverId, machineId, enableKey, locationRequired  */}
+
+                            <QRCode
+                                value={getQR()}
+                                color={getTokens().color[ colors.accent.dark as Color].val}
+                                size={250}
+                                logo={keyLogo as ImageSourcePropType}
+                                logoSize={85}
+                                logoBackgroundColor='transparent'
+                            />
+                        </View>
+                    </>}
 
                 </YStack>
             </BlurHeader>

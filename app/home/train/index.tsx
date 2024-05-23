@@ -106,6 +106,71 @@ export default function SearchUser() {
                 alert(JSON.stringify(error.response.data));
             });
     };
+    const issueOneTimeLogin = (userId:string,userType:string) => {
+        if (makerspace?.user?.userType !== 'admin'){
+            return;
+        }
+        if (!makerspace?.serverAddress || !makerspace?.serverPort){
+            return alert('Unknown Makerspace.');
+        }
+        axios.get(`${makerspace?.serverAddress}:${makerspace?.serverPort}/api/user/token/${userId}`,  getAuthHeaders(makerspace)).then((response) => {
+            const { accessToken }:{accessToken:string} = response.data;
+            // router.push(`/home/admin/oneTimeLogin/${accessToken}`, { userid, userType });
+            router.push({ pathname:`/oneTimeLogin/${accessToken}`, params:{ userId, userType } });
+        }).catch((error) => {
+            alert(JSON.stringify(error.response.data));
+        });
+    };
+    const deleteUser = (userid:string) => {
+        if (makerspace?.user?.userType !== 'admin'){
+            return;
+        }
+        if (!makerspace?.serverAddress || !makerspace?.serverPort){
+            return alert('Unknown Makerspace.');
+        }
+        Alert.alert(
+            'Delete User', 'Are you sure you want to delete this user?',
+            [{
+                text: 'Delete User',
+                onPress: () => {
+                    axios.delete(`${makerspace?.serverAddress}:${makerspace?.serverPort}/api/user/${userid}`, getAuthHeaders(makerspace))
+                        .then((response) => {
+                            alert('User deleted successfully!');
+                            searchForUser({ nativeEvent:{ text:'@' } } as NativeSyntheticEvent<TextInputChangeEventData>);
+                        })
+                        .catch((error) => {
+                            alert(JSON.stringify(error.response.data));
+                        });
+                },
+            },
+            {
+                text: 'Cancel',
+                onPress: () => {},
+                style: 'cancel',
+            }],
+        );
+    };
+    const longPressUser = (userid:string, userType:string) => {
+        if (makerspace?.user?.userType !== 'admin'){
+            return;
+        }
+        Alert.alert(
+            'User Options', 'Select an option:',
+            [{
+                text: 'Issue One Time Login',
+                onPress: () => issueOneTimeLogin(userid, userType),
+            },
+            {
+                text: 'Delete User',
+                onPress: () => deleteUser(userid),
+            },
+            {
+                text: 'Cancel',
+                onPress: () => {},
+                style: 'cancel',
+            }],
+        );
+    };
 
     return (
         <KeyboardAvoidingView
@@ -128,6 +193,7 @@ export default function SearchUser() {
                         colors={colors}
                         key={user.id}
                         changeUserType={handleUserTypeChange}
+                        longPressUser={longPressUser}
                         children={<DropdownSelect
                             isMultiple
                             isSearchable
@@ -222,7 +288,7 @@ export default function SearchUser() {
     );
 }
 
-export const UserCard = ({ user, colors, changeUserType, children }: { user:User, colors:ReturnType<typeof useColors>, changeUserType:(userid:string)=>void, children?:React.ReactNode }) =>
+export const UserCard = ({ user, colors, changeUserType, longPressUser, children }: { user:User, colors:ReturnType<typeof useColors>,longPressUser:(userid:string, userType:string)=>void, changeUserType:(userid:string)=>void, children?:React.ReactNode }) =>
     <YStack
         backgroundColor={colors.accent.dark}
         padding={'$2'}
@@ -234,7 +300,10 @@ export const UserCard = ({ user, colors, changeUserType, children }: { user:User
             alignItems={'center'}
             justifyContent={'space-between'}
         >
-            <Text color={colors.text}>{user.name}</Text>
+            <Text
+                color={colors.text}
+                onLongPress={() => longPressUser(user.id, user.userType)}
+            >{user.name}</Text>
             <Text
                 onLongPress={() => changeUserType(user.id)}
                 alignSelf='flex-end'

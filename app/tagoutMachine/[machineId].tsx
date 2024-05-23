@@ -8,6 +8,7 @@ import { getAuthHeaders } from '../../util/authRoutes';
 import BlurHeader from '../../components/BlurHeader';
 import { Button, H2, H3, H4, H5, Input, Spinner, Text, View, XStack, YStack } from 'tamagui';
 import { LinearGradient } from '@tamagui/linear-gradient';
+import { CancelButton } from '../../components/CancelButton';
 
 export default function TagOutMachine(){
 
@@ -94,7 +95,7 @@ export default function TagOutMachine(){
                 </View>
                 {makerspace?.user?.userType === 'admin' &&
                 <Button
-                    onPress={() => router.push({ pathname:`../addMachine/${machine.id}`, params:{ machineId:machine.id, machine:JSON.stringify(machine) } })}
+                    onPress={() => router.push({ pathname:`../addMachine/${machine.id}`, params:{ machine:JSON.stringify(machine) } })}
                     margin={'$2'}
                     marginBottom={'$-4'}
                     backgroundColor={colors.accent.dark}
@@ -126,6 +127,7 @@ export default function TagOutMachine(){
                     null
                 }
             </BlurHeader>
+            <CancelButton colors={colors} />
         </>
     );
 

@@ -10,6 +10,7 @@ import { handleUserLoginError } from '../util/goHome';
 import { getAuthHeaders } from '../util/authRoutes';
 import { getImage, getImageIDs, setImage } from '../util/machineImageCache';
 import { GLOBAL } from '../global';
+import * as Haptics from 'expo-haptics';
 import { cacheCurrentLocation } from '../util/locationCache';
 
 export const useMachines = () => {
@@ -110,6 +111,7 @@ export const disableMachineRoute = async (machineId:string, makerspace:Makerspac
         `${makerspace.serverAddress}:${makerspace.serverPort}/api/machine/disable/single/${machineId}`,
         getAuthHeaders(makerspace),
     );
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     return response.data as {message:string, machine:Machine};
 };
 
