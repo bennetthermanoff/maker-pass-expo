@@ -8,6 +8,7 @@ import { router } from 'expo-router';
 import { Plus } from '@tamagui/lucide-icons';
 import { CancelButton } from '../../components/CancelButton';
 import { ViewProps } from '../../components/Themed';
+import { parseGroupName } from '../../util/parseGroupName';
 
 export default function ManageMachineGroups(){
     const { machineGroups, loading, error, debouncedGetMachineGroups, machines } = useMachineGroups();
@@ -73,7 +74,13 @@ const MachineGroupCard = (props:{machineGroup:MachineGroupBody & {id:string},col
             marginTop={'$2'}
             marginLeft={'$2'}
             color={props.colors.text}
-        >{props.machineGroup.name}</H2>
+        >{parseGroupName(props.machineGroup.name)[0]}</H2>
+        {parseGroupName(props.machineGroup.name)[1] && <Text
+            color={props.colors.text}
+            opacity={.8}
+            marginTop={'$-2'}
+            marginLeft={'$2'}
+        >{`@${parseGroupName(props.machineGroup.name)[1]}`}</Text>}
         {props.machineGroup.machineIds.map((machineId,index) => <>
             {index < 3 && <Text
                 color={props.colors.subText}

@@ -11,6 +11,7 @@ import * as Haptics from 'expo-haptics';
 import { GLOBAL } from '../global';
 import { Alert } from 'react-native';
 import { clearLocationCache, getLocation } from './locationCache';
+import { handleChangePassword } from './handleChangePassword';
 
 export const handleURL =  (url:string|null) => {
     if (url === null) {
@@ -51,7 +52,7 @@ export const handleURL =  (url:string|null) => {
                 goHome();
                 Alert.alert(
                     'Logged In', 'Please reset your password',
-                    [{ text: 'Reset Password', onPress: () => router.push('/resetPassword') }],
+                    [{ text: 'Reset Password', onPress: () => handleChangePassword() }],
                 );
             }).catch((err) => {
                 alert('Error: ' + err);

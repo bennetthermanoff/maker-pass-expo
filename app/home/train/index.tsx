@@ -8,10 +8,11 @@ import axios from 'axios';
 import { Alert, KeyboardAvoidingView, NativeSyntheticEvent, Platform, TextInputChangeEventData, ViewStyle } from 'react-native';
 import { router } from 'expo-router';
 import DropdownSelect from 'react-native-input-select';
-import { Color } from '../../../types/makerspaceServer';
+import { Color, MakerspaceConfig } from '../../../types/makerspaceServer';
 import { useMachines } from '../../../hooks/useMachines';
 import { usePermissionGroups } from '../../../hooks/usePermissionGroups';
 import { Check } from '@tamagui/lucide-icons';
+import { debounce } from 'lodash';
 
 export default function SearchUser() {
     const [users, setUsers] = useState<User[]>([]);
@@ -37,21 +38,21 @@ export default function SearchUser() {
             new Promise((resolve) => setTimeout(resolve, 50)).then(() => {setCloseModal(false);});
         }
     }, [closeModal]);
-
-    const searchForUser = (text:NativeSyntheticEvent<TextInputChangeEventData>) => {
-        if (!makerspace?.serverAddress || !makerspace?.serverPort){
-            return alert('Unknown Makerspace.');
-        }
-        if (!text.nativeEvent.text){
-            return setUsers([]);
-        }
-        axios.get(`${makerspace?.serverAddress}:${makerspace?.serverPort}/api/user/search/${text.nativeEvent.text}`, getAuthHeaders(makerspace))
+    const debouncedSearch = debounce((search:string,makerspace:MakerspaceConfig) =>
+        axios.get(`${makerspace?.serverAddress}:${makerspace?.serverPort}/api/user/search/${search.trim()}`, getAuthHeaders(makerspace))
             .then((response) => setUsers(response.data.users))
             .catch((error) => {
                 alert(error);
                 setUsers([]);
-            });
-
+            }), 100);
+    const searchForUser = (event:NativeSyntheticEvent<TextInputChangeEventData>) => {
+        if (!makerspace?.serverAddress || !makerspace?.serverPort){
+            return alert('Unknown Makerspace.');
+        }
+        if (!event.nativeEvent.text){
+            return setUsers([]);
+        }
+        debouncedSearch(event.nativeEvent.text, makerspace);
     };
     const updatePermissions = (user:User) => {
         if (!makerspace?.serverAddress || !makerspace?.serverPort){
@@ -77,10 +78,12 @@ export default function SearchUser() {
             [{
                 text: 'Admin',
                 onPress: () => changeUserType(userid, 'admin'),
+                style: 'destructive',
             },
             {
                 text: 'Technician',
                 onPress: () => changeUserType(userid, 'technician'),
+                style: 'destructive',
             },
             {
                 text: 'User',
@@ -142,6 +145,7 @@ export default function SearchUser() {
                             alert(JSON.stringify(error.response.data));
                         });
                 },
+                style: 'destructive',
             },
             {
                 text: 'Cancel',
@@ -163,6 +167,7 @@ export default function SearchUser() {
             {
                 text: 'Delete User',
                 onPress: () => deleteUser(userid),
+                style: 'destructive',
             },
             {
                 text: 'Cancel',

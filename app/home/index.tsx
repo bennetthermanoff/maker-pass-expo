@@ -1,4 +1,4 @@
-import { Button, Card, Paragraph, Image, XStack, H2, CardProps, YStack, Circle, Spacer } from 'tamagui';
+import { Button, Card, Paragraph, Image, XStack, H2, CardProps, YStack, Circle, Spacer, H4, Text } from 'tamagui';
 import { AlertOctagon, AlertTriangle, Clock10, Plus } from '@tamagui/lucide-icons';
 import  BlurHeader  from '../../components/BlurHeader';
 import { useColors, Colors } from '../../constants/Colors';
@@ -17,6 +17,7 @@ import PagerView from 'react-native-pager-view';
 import * as Haptics from 'expo-haptics';
 import { getMachineGroupsFromServer } from '../../hooks/useMachineGroups';
 import { debounce, omit } from 'lodash';
+import { parseGroupName } from '../../util/parseGroupName';
 export type Page = {
     name:string;
     machines:Array<Machine & { lastUsedByName:string|null }>;
@@ -108,10 +109,15 @@ export default function Machines() {
             >
                 {pages.map((page, index) =>
                     <BlurHeader key={index} title={page.name} pullToRefresh={handleRefresh} refreshing={loading}>
+
                         {page.machines.map((machine) => <MachineCard
                             machine={machine}
                             colors={colors}
                             disableMachine={disableMachine}
+                            canDisable={
+                                makerspace?.user?.userType === 'admin' ||
+                                makerspace?.user?.userType === 'technician' ||
+                                machine.lastUsedBy !== makerspace?.user?.userId}
                             key={index + machine.id}
                             cardProps={
                                 { onLongPress:() => {
@@ -207,7 +213,7 @@ export default function Machines() {
     );
 }
 
-export const MachineCard = (props: {machine:Machine&{lastUsedByName:string|null}, uri?:string, cardProps?:CardProps, colors:Colors, disableMachine:(machineId:string)=>void }) => {
+export const MachineCard = (props: {machine:Machine&{lastUsedByName:string|null}, uri?:string, cardProps?:CardProps, colors:Colors, canDisable:boolean, disableMachine:(machineId:string)=>void }) => {
     const [animateTime,setAnimateTime] = useState(0);
 
     useEffect(() => {
@@ -260,8 +266,6 @@ export const MachineCard = (props: {machine:Machine&{lastUsedByName:string|null}
     return (
         <YStack
             margin={'$2'}
-            style={{
-            }}
         >
             <Card
                 elevate
@@ -288,7 +292,7 @@ export const MachineCard = (props: {machine:Machine&{lastUsedByName:string|null}
                 </Card.Header>
                 <Card.Footer padded>
                     <XStack flex={1} />
-                    {props.machine.enabled ?
+                    {props.canDisable ?
                         <Button
                             backgroundColor={'$red8'}
                             borderRadius="$10"
@@ -309,11 +313,9 @@ export const MachineCard = (props: {machine:Machine&{lastUsedByName:string|null}
                         <LinearGradient
                             width={'100%'}
                             borderRadius={7}
-                            height={180}
-                            marginBottom={-180}
-                            zIndex={1}
-                            colors={props.colors.text === 'black' ? ['#ffffff', '#ffffff00'] : ['#000000', '#00000000']}
+                            colors={props.colors.text === 'black' ? ['#ffffffff', '#ffffff00'] : ['#000000ff', '#00000000']}
                             opacity={1}
+                            style={{ position:'absolute', height:'100%' }}
                         />
                         <Image
                             resizeMode="cover"

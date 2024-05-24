@@ -17,9 +17,9 @@ export default function TagOutMachine(){
     const makerspace = useMakerspace();
     const getMachineInitialData = () => {
         const machine = JSON.parse(local.machine as string);
-        return machine as Machine;
+        return machine as Machine&{lastUsedByName:string|null};
     };
-    const [machine, setMachine] = useState<Machine>(getMachineInitialData());
+    const [machine, setMachine] = useState<Machine&{lastUsedByName:string|null}>(getMachineInitialData());
     const [tagOuts, setTagOuts] = useState <Array<TagOutWithName>>([]);
     const [reason, setReason] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
@@ -73,7 +73,12 @@ export default function TagOutMachine(){
 
     return (
         <>
-            <BlurHeader title={machine.name} pullToRefresh={() => getTagOuts(10)} refreshing={false} >
+            <BlurHeader
+                title={machine.name}
+                subtitle={machine.lastUsedByName ? `Last Used By: ${machine.lastUsedByName}` : undefined}
+                pullToRefresh={() => getTagOuts(10)}
+                refreshing={false}
+            >
                 <View style={{ flexDirection:'row', justifyContent:'space-between', alignItems:'center', padding:10 }}>
                     <Input
                         // margin={'$1'}

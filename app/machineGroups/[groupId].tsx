@@ -175,6 +175,10 @@ export default function EditMachineGroup(){
                         marginTop={'$4'}
                         width={'95%'}
                     />
+                    <Label
+                        color={colors.text}
+                        marginTop={'$-1'}
+                    >Tip: add a location for your machine groups with parenthesis</Label>
                     <DropdownSelect
                         label={'Machines'}
                         isMultiple
