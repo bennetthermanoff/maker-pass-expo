@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "makerpassexpo.app"
-               BlueprintName = "makerpassexpo"
-               ReferencedContainer = "container:makerpassexpo.xcodeproj">
+               BuildableName = "MakerPass.app"
+               BlueprintName = "MakerPass"
+               ReferencedContainer = "container:MakerPass.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "makerpassexpoTests.xctest"
-               BlueprintName = "makerpassexpoTests"
-               ReferencedContainer = "container:makerpassexpo.xcodeproj">
+               BuildableName = "MakerPassTests.xctest"
+               BlueprintName = "MakerPassTests"
+               ReferencedContainer = "container:MakerPass.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "makerpassexpo.app"
-            BlueprintName = "makerpassexpo"
-            ReferencedContainer = "container:makerpassexpo.xcodeproj">
+            BuildableName = "MakerPass.app"
+            BlueprintName = "MakerPass"
+            ReferencedContainer = "container:MakerPass.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "makerpassexpo.app"
-            BlueprintName = "makerpassexpo"
-            ReferencedContainer = "container:makerpassexpo.xcodeproj">
+            BuildableName = "MakerPass.app"
+            BlueprintName = "MakerPass"
+            ReferencedContainer = "container:MakerPass.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
