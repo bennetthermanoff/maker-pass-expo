@@ -115,9 +115,9 @@ export default function Machines() {
                             colors={colors}
                             disableMachine={disableMachine}
                             canDisable={
-                                makerspace?.user?.userType === 'admin' ||
+                                machine.enabled && (makerspace?.user?.userType === 'admin' ||
                                 makerspace?.user?.userType === 'technician' ||
-                                machine.lastUsedBy !== makerspace?.user?.userId}
+                                machine.lastUsedBy !== makerspace?.user?.userId)}
                             key={index + machine.id}
                             cardProps={
                                 { onLongPress:() => {
