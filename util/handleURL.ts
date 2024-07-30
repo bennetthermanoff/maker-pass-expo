@@ -158,5 +158,5 @@ export const goHomeOnBarAndCallFinished = () => {
 
 export const copyQR = async (qr:string) => {
     await setStringAsync(qr);
-    alert('QR Copied to Clipboard!');
+    alert('QR URL Copied to Clipboard!');
 };
