@@ -16,7 +16,9 @@ import { Alert, ImageSourcePropType } from 'react-native';
 import { goHome } from '../../util/goHome';
 import { useMachineGroups } from '../../hooks/useMachineGroups';
 import { Color } from '../../types/makerspaceServer';
+import { setStringAsync } from 'expo-clipboard';
 import keyLogo from '../../assets/images/key.png';
+import { copyQR } from '../../util/handleURL';
 
 export default function AddMachine() {
     const local = useLocalSearchParams();
@@ -269,6 +271,7 @@ export default function AddMachine() {
                             marginBottom={'$15'}
                             padding={'$2'}
                             backgroundColor={'white'}
+                            onLongPress={() => copyQR(getQR())}
                         >
                             {/* queryparams: serverId, machineId, enableKey, locationRequired  */}
 

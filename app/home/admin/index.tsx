@@ -12,11 +12,14 @@ import { getAuthHeaders } from '../../../util/authRoutes';
 import keyLogo from '../../../assets/images/key.png';
 import { ImageSourcePropType } from 'react-native';
 import { Color } from '../../../types/makerspaceServer';
+import { copyQR } from '../../../util/handleURL';
 
 export default function Admin() {
     const colors = useColors();
     const makerspace = useMakerspace();
     const [registrationKey, setRegistrationKey] = useState<string>('');
+
+    const getQR = () => `makerpass://--/makerspace/config?url=${makerspace?.serverAddress}&port=${makerspace?.serverPort}&registrationType=user&registrationKey=${registrationKey}`;
     useEffect(() => {
         if (makerspace){
             axios.get(`${makerspace.serverAddress}:${makerspace.serverPort}/api/ping/registrationKey`, getAuthHeaders(makerspace))
@@ -79,9 +82,10 @@ export default function Admin() {
                     marginBottom={'$15'}
                     padding={'$2'}
                     backgroundColor={'white'}
+                    onLongPress={() => copyQR(getQR())}
                 >
                     <QRCode
-                        value={`makerpass://--/makerspace/config?url=${makerspace?.serverAddress}&port=${makerspace?.serverPort}&registrationType=user&registrationKey=${registrationKey}`}
+                        value={getQR()}
                         color={getTokens().color[ colors.accent.dark as Color].val}
                         size={250}
                         logo={keyLogo as ImageSourcePropType}
