@@ -12,6 +12,7 @@ import { GLOBAL } from '../global';
 import { Alert } from 'react-native';
 import { clearLocationCache, getLocation } from './locationCache';
 import { handleChangePassword } from './handleChangePassword';
+import { setStringAsync } from 'expo-clipboard';
 
 export const handleURL =  (url:string|null) => {
     if (url === null) {
@@ -153,4 +154,9 @@ export const goHomeOnBarAndCallFinished = () => {
         GLOBAL.barRaceCondition = 0;
         goHome();
     }
+};
+
+export const copyQR = async (qr:string) => {
+    await setStringAsync(qr);
+    alert('QR Copied to Clipboard!');
 };
