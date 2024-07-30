@@ -11,6 +11,7 @@ import { MakerspaceConfig } from '../types/makerspaceServer';
 import { getCurrentServer } from '../util/makerspaces';
 import { useColors } from '../constants/Colors';
 import { View } from '../components/Themed';
+import { configAxiosInterceptors } from '../util/handleError';
 
 export {
     // Catch any errors thrown by the Layout component.
@@ -52,6 +53,10 @@ export default function RootLayout() {
     useEffect(() => {
         if (error) throw error;
     }, [error]);
+
+    useEffect(() => {
+        configAxiosInterceptors();
+    }, []);
 
     if (!loaded) {
 

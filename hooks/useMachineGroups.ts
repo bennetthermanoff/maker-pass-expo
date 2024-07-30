@@ -50,14 +50,19 @@ export const useMachineGroups = () => {
 };
 
 export const getMachineGroupsFromServer = async (makerspace:MakerspaceConfig) => {
-    const { data }:{data:MachineGroupMap} = await axios.get(
-        `${makerspace.serverAddress}:${makerspace.serverPort}/api/machineGroup/all`,
-        getAuthHeaders(makerspace),
-    );
-    const hasGeoFences = Object.values(data).some((group) => group.geoFences.length > 0);
-    if (hasGeoFences !== makerspace.hasGeoFences){
-        addOrUpdateServer({ ...makerspace, hasGeoFences });
-    }
+    try {
+        const { data }:{data:MachineGroupMap} = await axios.get(
+            `${makerspace.serverAddress}:${makerspace.serverPort}/api/machineGroup/all`,
+            getAuthHeaders(makerspace),
+        );
+        const hasGeoFences = Object.values(data).some((group) => group.geoFences.length > 0);
+        if (hasGeoFences !== makerspace.hasGeoFences){
+            addOrUpdateServer({ ...makerspace, hasGeoFences });
+        }
 
-    return data;
+        return data;
+    }
+    catch (e){
+        return {};
+    }
 };

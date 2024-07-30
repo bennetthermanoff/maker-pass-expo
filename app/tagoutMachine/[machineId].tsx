@@ -33,8 +33,7 @@ export default function TagOutMachine(){
                 setTagOuts(response.data);
                 return;
             }
-        } catch (error) {
-            alert(error);
+        } catch (e) {
             setLoading(false);
         }
     };
@@ -62,9 +61,7 @@ export default function TagOutMachine(){
                 await getTagOuts(10);
             }
         }
-        catch (error) {
-            console.error(error);
-        }
+        catch (e) { /* empty */ }
     };
 
     useEffect(() => {

@@ -70,7 +70,6 @@ export default function AddMachine() {
 
         }
         catch (e:any) {
-            alert(JSON.stringify(e.response.data));
         }
     };
 
@@ -94,7 +93,6 @@ export default function AddMachine() {
 
         }
         catch (e:any) {
-            alert(JSON.stringify(e.response.data));
         }
     };
     const handleDeleteMachine = async () => {
@@ -115,7 +113,6 @@ export default function AddMachine() {
 
                 }
                 catch (e:any) {
-                    alert(JSON.stringify(e.response.data));
                 }
             } },
         ]);

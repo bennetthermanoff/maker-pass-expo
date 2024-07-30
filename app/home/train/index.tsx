@@ -41,8 +41,7 @@ export default function SearchUser() {
     const debouncedSearch = debounce((search:string,makerspace:MakerspaceConfig) =>
         axios.get(`${makerspace?.serverAddress}:${makerspace?.serverPort}/api/user/search/${search.trim()}`, getAuthHeaders(makerspace))
             .then((response) => setUsers(response.data.users))
-            .catch((error) => {
-                alert(error);
+            .catch((e) => {
                 setUsers([]);
             }), 100);
     const searchForUser = (event:NativeSyntheticEvent<TextInputChangeEventData>) => {
@@ -64,8 +63,7 @@ export default function SearchUser() {
                 alert('Permissions updated successfully!');
                 setCloseModal(true);
             })
-            .catch((error) => {
-                alert(JSON.stringify(error.response.data));
+            .catch((e) => {
             });
     };
 
@@ -105,8 +103,7 @@ export default function SearchUser() {
                 alert('User type updated successfully!');
                 searchForUser({ nativeEvent:{ text:'@' } } as NativeSyntheticEvent<TextInputChangeEventData>);
             })
-            .catch((error) => {
-                alert(JSON.stringify(error.response.data));
+            .catch((e) => {
             });
     };
     const issueOneTimeLogin = (userId:string,userType:string) => {
@@ -120,8 +117,7 @@ export default function SearchUser() {
             const { accessToken }:{accessToken:string} = response.data;
             // router.push(`/home/admin/oneTimeLogin/${accessToken}`, { userid, userType });
             router.push({ pathname:`/oneTimeLogin/${accessToken}`, params:{ userId, userType } });
-        }).catch((error) => {
-            alert(JSON.stringify(error.response.data));
+        }).catch((e) => {
         });
     };
     const deleteUser = (userid:string) => {
@@ -141,8 +137,7 @@ export default function SearchUser() {
                             alert('User deleted successfully!');
                             searchForUser({ nativeEvent:{ text:'@' } } as NativeSyntheticEvent<TextInputChangeEventData>);
                         })
-                        .catch((error) => {
-                            alert(JSON.stringify(error.response.data));
+                        .catch((e) => {
                         });
                 },
                 style: 'destructive',

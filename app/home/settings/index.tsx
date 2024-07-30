@@ -39,7 +39,6 @@ export default function Machines() {
                                 await removeServer(makerspace.id);
                                 router.replace('/');
                             }).catch((err) => {
-                                alert('Error: ' + JSON.stringify(err));
                             });
 
                         },

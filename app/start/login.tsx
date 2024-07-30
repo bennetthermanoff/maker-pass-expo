@@ -4,7 +4,6 @@ import { useColors } from '../../constants/Colors';
 import { useMakerspace } from '../../hooks/useMakerspace';
 import { router } from 'expo-router';
 import axios from 'axios';
-import { handleError } from '../../util/handleError';
 import { addServerCredentials } from '../../util/makerspaces';
 import { goHome } from '../../util/goHome';
 import { KeyboardAvoidingView } from 'react-native';
@@ -35,8 +34,7 @@ export default function LoginScreen() {
                     const { userId,token,userType } = res.data;
                     await addServerCredentials({ serverId:makerspace.id, userId, userType, token });
                     goHome();
-                }).catch((err) => {
-                    handleError(err);
+                }).catch((e) => {
                     setLoading(false);
                 });
         }

@@ -90,7 +90,6 @@ export default function EditMachineGroup(){
             alert('Machine group added successfully!');
             GLOBAL.getMachines();
         } catch (e:any) {
-            alert(JSON.stringify(e.response.data));
         }
     };
     const handleEditMachineGroup = async () => {
@@ -114,7 +113,6 @@ export default function EditMachineGroup(){
             alert('Machine group updated successfully!');
             GLOBAL.getMachines();
         } catch (e:any) {
-            alert(JSON.stringify(e.response.data));
         }
     };
     const deleteMachineGroup = async () => {
@@ -130,7 +128,6 @@ export default function EditMachineGroup(){
             alert('Machine group deleted successfully!');
             GLOBAL.getMachines();
         } catch (e:any) {
-            alert(JSON.stringify(e.response.data));
         }
     };
     const handleDeleteGeoFence = (index:number) => {

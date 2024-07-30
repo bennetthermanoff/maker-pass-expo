@@ -26,7 +26,6 @@ export default function Admin() {
                 .then((res) => {
                     setRegistrationKey(res.data.registrationKey);
                 }).catch((err) => {
-                    alert(err);
                 });
         }}, [makerspace]);
 

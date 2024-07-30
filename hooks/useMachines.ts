@@ -99,19 +99,29 @@ export const useMachines = () => {
 };
 
 export const getMachinesFromServer = async (makerspace:MakerspaceConfig, withImages?:boolean) => {
-    const response = await axios.get(
-        `${makerspace.serverAddress}:${makerspace.serverPort}/api/machine/all${withImages ? '/photos' : ''}`,
-        getAuthHeaders(makerspace),
-    );
-    return response.data.machines as Array<Machine & {lastUsedByName:string|null}>;
+    try {
+        const response = await axios.get(
+            `${makerspace.serverAddress}:${makerspace.serverPort}/api/machine/all${withImages ? '/photos' : ''}`,
+            getAuthHeaders(makerspace),
+        );
+        return response.data.machines as Array<Machine & {lastUsedByName:string|null}>;
+    }
+    catch (e){
+        return [];
+    }
 };
 
 export const disableMachineRoute = async (machineId:string, makerspace:MakerspaceConfig) => {
-    const response = await axios.get(
-        `${makerspace.serverAddress}:${makerspace.serverPort}/api/machine/disable/single/${machineId}`,
-        getAuthHeaders(makerspace),
-    );
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-    return response.data as {message:string, machine:Machine};
+    try {
+        const response = await axios.get(
+            `${makerspace.serverAddress}:${makerspace.serverPort}/api/machine/disable/single/${machineId}`,
+            getAuthHeaders(makerspace),
+        );
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        return response.data as {message:string, machine:Machine};
+    }
+    catch (e){
+        return { message: '', machine: {} as Machine };
+    }
 };
 

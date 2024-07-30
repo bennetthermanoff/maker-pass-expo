@@ -66,7 +66,6 @@ export default function EditPermissionGroup(){
             router.back();
             alert('Permission group added successfully!');
         } catch (e:any) {
-            alert(JSON.stringify(e.response.data));
         }
     };
     const handleEditPermissionGroup = async () => {
