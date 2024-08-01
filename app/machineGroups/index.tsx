@@ -29,13 +29,13 @@ export default function ManageMachineGroups(){
                     margin={'$4'}
                     marginBottom={'$-2'}
                     onPress={() => {
-                        router.push({ pathname: '/machineGroups/new', params: {} });
+                        router.push({ pathname: '/machineGroups/[groupId]', params: { groupId:'new' } });
                     }}
                 >Group</Button>
                 {machineGroups?.map((machineGroup) => <MachineGroupCard
                     key={machineGroup.id}
                     childProps={{ key:machineGroup.id,
-                        onLongPress:() => router.push({ pathname: `/machineGroups/${machineGroup.id}`, params: { machineGroup:JSON.stringify(machineGroup) } }) }}
+                        onLongPress:() => router.push({ pathname: '/machineGroups/[groupId]', params: { groupId:machineGroup.id, machineGroup:JSON.stringify(machineGroup) } }) }}
                     machineGroup={machineGroup}
                     colors={colors}
                     machines={machines}

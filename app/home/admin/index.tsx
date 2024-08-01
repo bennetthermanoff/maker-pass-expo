@@ -25,7 +25,6 @@ export default function Admin() {
             axios.get(`${makerspace.serverAddress}:${makerspace.serverPort}/api/ping/registrationKey`, getAuthHeaders(makerspace))
                 .then((res) => {
                     setRegistrationKey(res.data.registrationKey);
-                }).catch((err) => {
                 });
         }}, [makerspace]);
 

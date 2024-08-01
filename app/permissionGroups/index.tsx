@@ -28,13 +28,13 @@ export default function ManageMachineGroups(){
                     margin={'$4'}
                     marginBottom={'$-2'}
                     onPress={() => {
-                        router.push({ pathname: '/permissionGroups/new', params: {} });
+                        router.push({ pathname: '/permissionGroups/[groupId]', params: { groupId:'new' } });
                     }}
                 >Group</Button>
                 {permissionGroups?.map((permissionGroup) => <PermissionGroupCard
                     key={permissionGroup.id}
                     childProps={{ key:permissionGroup.id,
-                        onLongPress:() => router.push({ pathname: `/permissionGroups/${permissionGroup.id}`, params: { permissionGroup:JSON.stringify(permissionGroup),
+                        onLongPress:() => router.push({ pathname: '/permissionGroups/[groupId]', params: { groupId:permissionGroup.id, permissionGroup:JSON.stringify(permissionGroup),
                         } }) }}
                     permissionGroup={permissionGroup}
                     colors={colors}

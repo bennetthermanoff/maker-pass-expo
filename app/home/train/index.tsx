@@ -116,7 +116,7 @@ export default function SearchUser() {
         axios.get(`${makerspace?.serverAddress}:${makerspace?.serverPort}/api/user/token/${userId}`,  getAuthHeaders(makerspace)).then((response) => {
             const { accessToken }:{accessToken:string} = response.data;
             // router.push(`/home/admin/oneTimeLogin/${accessToken}`, { userid, userType });
-            router.push({ pathname:`/oneTimeLogin/${accessToken}`, params:{ userId, userType } });
+            router.push({ pathname:'/oneTimeLogin/[loginToken]', params:{ loginToken:accessToken, userid:userId, userType } });
         }).catch((e) => {
         });
     };

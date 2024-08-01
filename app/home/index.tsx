@@ -123,7 +123,7 @@ export default function Machines() {
                                 { onLongPress:() => {
                                     if (makerspace?.user?.userType === 'admin' || makerspace?.user?.userType === 'technician'){
                                         Haptics.selectionAsync();
-                                        router.push({ pathname: `/tagoutMachine/${machine.id}`, params: { machine:JSON.stringify(omit(machine, ['photo'])) } });
+                                        router.push({ pathname: '/tagoutMachine/[machineId]', params: { machineId:machine.id, machine:JSON.stringify(omit(machine, ['photo'])) } });
                                     }
                                 },
                                 }}
