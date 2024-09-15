@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { Alert } from 'react-native';
+import { getCurrentServerId, removeServerCredentials } from './makerspaces';
+import { goHome } from './goHome';
 const handleError = (err: any) => {
     const error = removeAttrDeep(err, 'accesstoken');
     //if 400, print message
@@ -14,6 +16,12 @@ const handleError = (err: any) => {
             { text: 'Show Details', onPress: () => Alert.alert('Error Details', JSON.stringify(error)) },
             { text: 'Dismiss', onPress: () => {} },
         ]);
+        getCurrentServerId().then((serverId) => {
+            if (serverId) {
+                removeServerCredentials(serverId).then(() => {
+                    goHome();
+                });
+            }});
     }
     else if (err.response?.status === 403) {
         Alert.alert('Oops, something went wrong', 'You do not have permission to perform this action.', [
