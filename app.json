@@ -49,7 +49,7 @@
         "android.permission.RECORD_AUDIO"
       ],
       "package": "com.bennetthermanoff.makerpass",
-      "versionCode": 10
+      "versionCode": 12
     },
     "web": {
       "bundler": "metro",
