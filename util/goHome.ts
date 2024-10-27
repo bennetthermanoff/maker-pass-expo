@@ -23,6 +23,7 @@ export const handleUserLoginError = async () => {
     const currentMakerspace = await getCurrentServer();
     if (currentMakerspace?.user){
         alert('Session expired. Please log in again.');
+        GLOBAL.getMachines = async () => {};
         removeServerCredentials(currentMakerspace?.id);
         clearStackGoTo('/start/choose');
         router.push('/start/login');

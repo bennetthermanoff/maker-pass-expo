@@ -1,67 +1,74 @@
 import axios from 'axios';
 import { Alert } from 'react-native';
 import { getCurrentServerId, removeServerCredentials } from './makerspaces';
-import { goHome } from './goHome';
+import { goHome, handleUserLoginError } from './goHome';
+import { router } from 'expo-router';
 const handleError = (err: any) => {
-    const error = removeAttrDeep(err, 'accesstoken');
+    const scrubbedError = removeAttrDeep(err, 'accesstoken');
     //if 400, print message
     if (err.response?.status === 400) {
-        Alert.alert('Oops, something went wrong', error.response.data.message, [
-            { text: 'Show Details', onPress: () => Alert.alert('Error Details', JSON.stringify(error)) },
-            { text: 'Dismiss', onPress: () => {} },
-        ]);
+        if (err.response?.data?.message === 'Invalid password'){
+            Alert.alert('Wrong Password', 'The password you entered is incorrect.', [
+                { text: 'Dismiss', onPress: () => {} },
+                { text: 'Forgot Password', onPress: () => {
+                    Alert.alert('Forgot Password', 'Please contact your administrator to reset your password.', [
+                        { text: 'Dismiss', onPress: () => {} },
+                        { text: 'Scan QR Code', onPress: () => {
+                            router.push('/scanner');
+                        } },
+                    ]);
+                } },
+            ]);
+        }
+        else {
+            Alert.alert('Oops, something went wrong', err.response?.data?.message, [
+                { text: 'Show Details', onPress: () => Alert.alert('Error Details', JSON.stringify(scrubbedError)) },
+                { text: 'Dismiss', onPress: () => {} },
+            ]);
+        }
     }
     else if (err.response?.status === 401) {
-        Alert.alert('Oops, something went wrong', 'Please log in again.', [
-            { text: 'Show Details', onPress: () => Alert.alert('Error Details', JSON.stringify(error)) },
-            { text: 'Dismiss', onPress: () => {} },
-        ]);
-        getCurrentServerId().then((serverId) => {
-            if (serverId) {
-                removeServerCredentials(serverId).then(() => {
-                    goHome();
-                });
-            }});
+        handleUserLoginError();
     }
     else if (err.response?.status === 403) {
         Alert.alert('Oops, something went wrong', 'You do not have permission to perform this action.', [
-            { text: 'Show Details', onPress: () => Alert.alert('Error Details', JSON.stringify(error)) },
+            { text: 'Show Details', onPress: () => Alert.alert('Error Details', JSON.stringify(scrubbedError)) },
             { text: 'Dismiss', onPress: () => {} },
         ]);
     }
     else if (err.response?.status === 404) {
         Alert.alert('Oops, something went wrong', 'The requested resource was not found.', [
-            { text: 'Show Details', onPress: () => Alert.alert('Error Details', JSON.stringify(error)) },
+            { text: 'Show Details', onPress: () => Alert.alert('Error Details', JSON.stringify(scrubbedError)) },
             { text: 'Dismiss', onPress: () => {} },
         ]);
     }
     else if (err.response?.status === 500) {
         Alert.alert('Oops, something went wrong', 'The server encountered an error. Please try again later.', [
-            { text: 'Show Details', onPress: () => Alert.alert('Error Details', JSON.stringify(error)) },
+            { text: 'Show Details', onPress: () => Alert.alert('Error Details', JSON.stringify(scrubbedError)) },
             { text: 'Dismiss', onPress: () => {} },
         ]);
     }
     else if (err.response?.status === 502 || err.response?.status === 503) {
         Alert.alert('Oops, something went wrong', 'The server is currently down. Please try again later.', [
-            { text: 'Show Details', onPress: () => Alert.alert('Error Details', JSON.stringify(error)) },
+            { text: 'Show Details', onPress: () => Alert.alert('Error Details', JSON.stringify(scrubbedError)) },
             { text: 'Dismiss', onPress: () => {} },
         ]);
     }
     else if (err.response?.status === 504) {
         Alert.alert('Oops, something went wrong', 'The server is taking too long to respond. Please try again later.', [
-            { text: 'Show Details', onPress: () => Alert.alert('Error Details', JSON.stringify(error)) },
+            { text: 'Show Details', onPress: () => Alert.alert('Error Details', JSON.stringify(scrubbedError)) },
             { text: 'Dismiss', onPress: () => {} },
         ]);
     }
-    else if (error.request) {
+    else if (err.request) {
         Alert.alert('Oops, something went wrong', 'The server is not responding. Please check your internet connection.', [
-            { text: 'Show Details', onPress: () => Alert.alert('Error Details', JSON.stringify(error)) },
+            { text: 'Show Details', onPress: () => Alert.alert('Error Details', JSON.stringify(scrubbedError)) },
             { text: 'Dismiss', onPress: () => {} },
         ]);
     }
     else {
         Alert.alert('Oops, something went wrong', '', [
-            { text: 'Show Details', onPress: () => Alert.alert('Error Details', JSON.stringify(error)) },
+            { text: 'Show Details', onPress: () => Alert.alert('Error Details', JSON.stringify(scrubbedError)) },
             { text: 'Dismiss', onPress: () => {} },
         ]);
     }

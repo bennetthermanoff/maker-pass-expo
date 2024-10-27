@@ -49,7 +49,8 @@ export const handleURL =  (url:string|null) => {
             if (!token || !userId || !userType || !serverId){
                 throw new Error('Invalid Login Parameters');
             }
-            addServerCredentials({ serverId:serverId as string, userId:userId as string, userType:userType as string, token:token as string }).then(() => {
+            addServerCredentials({ serverId:serverId as string, userId:userId as string, userType:userType as string, token:token as string }).then(async () => {
+                await new Promise((resolve) => setTimeout(resolve, 1000));
                 goHome();
                 Alert.alert(
                     'Logged In', 'Please reset your password',
@@ -108,42 +109,25 @@ const handleEnableMachine = async ({ serverId, machineId, enableKey, locationReq
     }
     await setCurrentServer(serverId);
 
-    try {
-        let location:{lat:number, lng:number}|undefined = undefined;
-        if (locationRequired === 'true'){
-            const newLocation = await getLocation();
-            if (!newLocation){
-                throw new Error('Location Permission Required');
-            } else {
-                location = newLocation;
-            }
+    let location:{lat:number, lng:number}|undefined = undefined;
+    if (locationRequired === 'true'){
+        const newLocation = await getLocation();
+        if (!newLocation){
+            throw new Error('Location Permission Required');
+        } else {
+            location = newLocation;
+        }
 
-        }
-        const { data }:{data:{message:string, machine:Machine }} = await axios.post(
-            `${makerspace.serverAddress}:${makerspace.serverPort}/api/machine/enable/single/${machineId}`,
-            { enableKey, location },
-            getAuthHeaders(makerspace),
-        );
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-        GLOBAL.getMachines();
-        goHomeOnBarAndCallFinished();
-        GLOBAL.getMachines();
-    } catch (err:any){
-        if (err.response.status === 401){
-            handleUserLoginError();
-
-        }
-        else if (err.response.data.message){
-            Alert.alert('Cannot Enable Machine',err.response.data.message);
-            goHomeOnBarAndCallFinished();
-            if (err.response.data.message === 'Invalid location'){
-                clearLocationCache();
-            }
-        }
-        else {
-            alert(JSON.stringify(err));
-        }
     }
+    const { data }:{data:{message:string, machine:Machine }} = await axios.post(
+        `${makerspace.serverAddress}:${makerspace.serverPort}/api/machine/enable/single/${machineId}`,
+        { enableKey, location },
+        getAuthHeaders(makerspace),
+    );
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+    GLOBAL.getMachines();
+    goHomeOnBarAndCallFinished();
+    GLOBAL.getMachines();
 
 };
 
