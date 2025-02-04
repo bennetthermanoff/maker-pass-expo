@@ -31,6 +31,12 @@
           <string>com.bennetthermanoff.makerpass</string>
         </array>
       </dict>
+      <dict>
+        <key>CFBundleURLSchemes</key>
+        <array>
+          <string>exp+maker-pass-expo</string>
+        </array>
+      </dict>
     </array>
     <key>CFBundleVersion</key>
     <string>14</string>
@@ -59,6 +65,7 @@
     <string>The app accesses your photos to let you pick machine images.</string>
     <key>NSUserActivityTypes</key>
     <array>
+      <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
     </array>
     <key>UIAppFonts</key>

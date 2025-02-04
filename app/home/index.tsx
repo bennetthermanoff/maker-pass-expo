@@ -31,7 +31,7 @@ export default function Machines() {
     const [currentPage, setCurrentPage] = useState(0);
 
     useFocusEffect(useCallback(() => {
-        GLOBAL.getMachines();
+        getMachines();
     }, []));
     useEffect(() => {
         AppState.addEventListener('change', handleAppStateChange);
