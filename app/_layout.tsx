@@ -12,6 +12,8 @@ import { getCurrentServer } from '../util/makerspaces';
 import { useColors } from '../constants/Colors';
 import { View } from '../components/Themed';
 import { configAxiosInterceptors } from '../util/handleError';
+import { Provider } from 'react-redux';
+import { store } from '../state/store';
 
 export {
     // Catch any errors thrown by the Layout component.
@@ -63,7 +65,11 @@ export default function RootLayout() {
         return;
     }
 
-    return <RootLayoutNav />;
+    return (
+        <Provider store={store}>
+            <RootLayoutNav />
+        </Provider>
+    );
 }
 
 function RootLayoutNav() {

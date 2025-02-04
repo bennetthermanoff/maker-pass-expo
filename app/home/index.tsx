@@ -1,23 +1,21 @@
-import { Button, Card, Paragraph, Image, XStack, H2, CardProps, YStack, Circle, Spacer, H4, Text } from 'tamagui';
-import { AlertOctagon, AlertTriangle, Clock10, Plus } from '@tamagui/lucide-icons';
+import { Button, Card, Paragraph, Image, XStack, H2, CardProps, YStack, Circle, Spacer } from 'tamagui';
+import { AlertOctagon, AlertTriangle, Clock10 } from '@tamagui/lucide-icons';
 import  BlurHeader  from '../../components/BlurHeader';
 import { useColors, Colors } from '../../constants/Colors';
 import { useMakerspace } from '../../hooks/useMakerspace';
 import { router, useFocusEffect } from 'expo-router';
-import { useMachines } from '../../hooks/useMachines';
-import { Machine, MachineGroupArray, MachineGroupMap } from '../../types/machine';
+import { Machine } from '../../types/machine';
 import { LinearGradient } from '@tamagui/linear-gradient';
 import { QrCode } from '@tamagui/lucide-icons';
 import React, { useCallback, useEffect, useState } from 'react';
-import { interpolate } from 'react-native-reanimated';
 import defaultImage from '../../assets/images/icon.png';
 import { AppState, ImageSourcePropType } from 'react-native';
-import { GLOBAL } from '../../global';
 import PagerView from 'react-native-pager-view';
 import * as Haptics from 'expo-haptics';
-import { getMachineGroupsFromServer } from '../../hooks/useMachineGroups';
-import { debounce, omit } from 'lodash';
-import { parseGroupName } from '../../util/parseGroupName';
+import { omit } from 'lodash';
+import { useSelector } from 'react-redux';
+import { disableMachine, fetchMachineGroups, fetchMachines, selectLoading, selectMachineGroups, selectMachines } from '../../state/slices/machinesSlice';
+import { useAppDispatch } from '../../state/store';
 export type Page = {
     name:string;
     machines:Array<Machine & { lastUsedByName:string|null }>;
@@ -25,33 +23,32 @@ export type Page = {
 };
 export default function Machines() {
     const colors = useColors();
-    const { machines, loading, error, getMachines, disableMachine, makerspace } = useMachines();
-    const [machineGroupMap, setMachineGroupMap] = useState<MachineGroupMap>({});
     const [pages, setPages] = useState<Page[]>([{ name:'Machines', type:'group', machines:[] }]);
     const [currentPage, setCurrentPage] = useState(0);
-
-    useFocusEffect(useCallback(() => {
-        getMachines();
-    }, []));
-    useEffect(() => {
-        AppState.addEventListener('change', handleAppStateChange);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-    useEffect(() => {
-        if (makerspace){
-            getMachineGroupsFromServer(makerspace).then((machineGroups) => {
-                setMachineGroupMap(machineGroups);
-            });
-        }
-    },[makerspace]);
+    const machineGroupMap = useSelector(selectMachineGroups);
+    const machines = useSelector(selectMachines);
+    const makerspace = useMakerspace();
+    const loading = useSelector(selectLoading);
+    const dispatch = useAppDispatch();
 
     const handleRefresh = () => {
         if (makerspace){
-            getMachines();
-            getMachineGroupsFromServer(makerspace).then((machineGroups) => {
-                setMachineGroupMap(machineGroups);
-            });
-        }};
+            dispatch(fetchMachines(makerspace));
+            dispatch(fetchMachineGroups(makerspace));
+        }
+    };
+    useFocusEffect(useCallback(() => {
+        handleRefresh();
+    }, []));
+    useEffect(() => {
+        AppState.addEventListener('change', (nextAppState) => {
+            if (nextAppState === 'active') {
+                handleRefresh();
+            }
+        });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+    useEffect(handleRefresh,[makerspace, dispatch]);
 
     // Machine Pages
     // (if any) Machines that are enabled by current user
@@ -95,12 +92,6 @@ export default function Machines() {
         }
     }, [machineGroupMap, machines, makerspace]);
 
-    const handleAppStateChange = (nextAppState: string) => {
-        if (nextAppState === 'active') {
-            GLOBAL.getMachines();
-        }
-    };
-
     return (
         <>
             <PagerView
@@ -113,7 +104,7 @@ export default function Machines() {
                         {page.machines.map((machine) => <MachineCard
                             machine={machine}
                             colors={colors}
-                            disableMachine={disableMachine}
+                            disableMachine={makerspace ? (machineId) => dispatch(disableMachine({ machineId:machine.id, makerspace })) : () => {}}
                             canDisable={
                                 machine.enabled && (makerspace?.user?.userType === 'admin' ||
                                 makerspace?.user?.userType === 'technician' ||
@@ -128,7 +119,6 @@ export default function Machines() {
                                 },
                                 }}
                         />)}
-                        {error && <Paragraph>{error}</Paragraph>}
                     </BlurHeader>)}
             </PagerView>
 

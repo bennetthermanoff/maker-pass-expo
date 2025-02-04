@@ -104,7 +104,7 @@ export const getMachinesFromServer = async (makerspace:MakerspaceConfig, withIma
             `${makerspace.serverAddress}:${makerspace.serverPort}/api/machine/all${withImages ? '/photos' : ''}`,
             getAuthHeaders(makerspace),
         );
-        return response.data.machines as Array<Machine & {lastUsedByName:string|null}>;
+        return response.data.machines as Array<Machine>;
     }
     catch (e){
         return [];

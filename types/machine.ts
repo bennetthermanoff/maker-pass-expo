@@ -8,6 +8,7 @@ export type Machine = {
     solenoidMode: boolean;
     enableKey: string|null;
     lastUsedBy: string|null;
+    lastUsedByName:string|null;
     latestTagOutId: string|null;
 }
 
