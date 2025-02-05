@@ -1,21 +1,23 @@
 import { useColors } from '../../constants/Colors';
 import BlurHeader from '../../components/BlurHeader';
-import { Text, YStack, Image } from 'tamagui';
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { fetchMachineGroups, fetchMachines, selectLoading, selectMachineGroups, selectMachines } from '../../state/slices/machinesSlice';
-import Banner from '../../assets/images/banner.png';
-import BannerDark from '../../assets/images/banner-dark.png';
+import { fetchMachineGroups, fetchMachines, selectActiveMachinesForUserFactory, selectLoading, selectMachineGroups, selectMachines } from '../../state/slices/machinesSlice';
 import { useMakerspace } from '../../hooks/useMakerspace';
 import { useAppDispatch } from '../../state/store';
-import { useFocusEffect } from 'expo-router';
-import { AppState, ImageSourcePropType } from 'react-native';
+import { router, useFocusEffect } from 'expo-router';
+import { AppState } from 'react-native';
+import { Button, H2, ScrollView, YStack } from 'tamagui';
+import { QrCode } from '@tamagui/lucide-icons';
+import { MachineCard } from './OldHome';
+import { LargeBentoBox } from '../../components/LargeBentoBox';
+import { getImage } from '../../util/machineImageCache';
 export default function Make() {
     const colors = useColors();
     const [currentPage, setCurrentPage] = useState(0);
     const machineGroupMap = useSelector(selectMachineGroups);
-    const machines = useSelector(selectMachines);
     const makerspace = useMakerspace();
+    const activeMachines = useSelector(selectActiveMachinesForUserFactory(makerspace));
     const loading = useSelector(selectLoading);
     const dispatch = useAppDispatch();
 
@@ -39,19 +41,64 @@ export default function Make() {
     useEffect(handleRefresh,[makerspace, dispatch]);
     return (
         <>
-            <BlurHeader title="" pullToRefresh={handleRefresh} refreshing={loading}>
-                <YStack alignItems='center' height={'$20'} margin={'$3'} borderRadius={'$3'} >
-                    <YStack style={{ height: '100%', width: '100%', position: 'absolute', top: 0, right: 0 }} backgroundColor={colors.inverseText} borderRadius={'$3'} opacity={.3} />
-                    <Image
-                        marginTop={'$3'}
-                        source={(colors.text === 'white' ? BannerDark : Banner) as ImageSourcePropType}
-                        resizeMode='contain'
-                        width={'90%'}
-                        height={'30%'}
-                    />
-                    <Text fontSize={'$6'} color={colors.text} marginTop={'$2'}>Scan a QR to activate a machine!</Text>
+            <BlurHeader title="MakerPass" subtitle='@Tulane MakerSpace' isHero pullToRefresh={handleRefresh} refreshing={loading}>
+                <YStack
+                    aspectRatio={1.9} //Important!
+
+                    alignSelf='center'
+                    margin={'$3'}
+                    width={'95%'}
+                    padding={'$3'}
+                    backgroundColor={colors.accent.light}
+                    borderRadius={20}
+                >
+                    <H2
+                        marginLeft={'$3'}
+                        marginBottom={'$1'}
+                        color={colors.text}
+                    >Active Machines</H2>
+                    <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={true}
+                        showsVerticalScrollIndicator={false}
+                        width={'100%'}
+                    >
+                        {activeMachines.map((machine, index) =>
+                            <LargeBentoBox
+                                key={machine.id}
+                                machine={machine}
+                                colors={colors}
+                                showDisableButton={true}
+                            />)}
+                    </ScrollView>
+
                 </YStack>
+
             </BlurHeader>
+            <YStack
+                position='absolute'
+                bottom={0}
+                right={0}
+                width={'100%'}
+                backgroundColor={'transparent'}
+            >
+                <Button
+                    color={colors.text}
+                    iconAfter={QrCode}
+                    margin={'$3'}
+                    marginBottom={'$3'}
+                    width={'95%'}
+                    height={60}
+                    scaleIcon={2}
+                    alignSelf='center'
+                    fontSize={'$7'}
+                    backgroundColor={colors.accent.dark}
+                    onPress={() => {
+                        router.push('/scanner');
+                    }}
+                >Scan QR</Button>
+            </YStack>
+
         </>
     );
 

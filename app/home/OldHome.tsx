@@ -203,7 +203,7 @@ export default function Machines() {
     );
 }
 
-export const MachineCard = (props: {machine:Machine&{lastUsedByName:string|null}, uri?:string, cardProps?:CardProps, colors:Colors, canDisable:boolean, disableMachine:(machineId:string)=>void }) => {
+export const MachineCard = (props: {machine:Machine, uri?:string, cardProps?:CardProps, colors:Colors, canDisable:boolean, disableMachine:(machineId:string)=>void }) => {
     const [animateTime,setAnimateTime] = useState(0);
 
     useEffect(() => {

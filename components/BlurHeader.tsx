@@ -1,14 +1,16 @@
 
-import { Circle, H1, H3, ScrollView, YStack, getTokens, Text } from 'tamagui';
+import { Circle, H1, H3, Image, ScrollView, YStack, getTokens, Text } from 'tamagui';
 import { Color } from '../types/makerspaceServer';
+import Banner from '../assets/images/banner.png';
+import BannerDark from '../assets/images/banner-dark.png';
 import { BlurView } from 'expo-blur';
 import React, { useEffect, useState } from 'react';
 import Animated,{ useAnimatedProps, interpolate, Extrapolation } from 'react-native-reanimated';
 import { useColors } from '../constants/Colors';
-import { Platform, RefreshControl } from 'react-native';
+import { ImageSourcePropType, Platform, RefreshControl } from 'react-native';
 import { parseGroupName } from '../util/parseGroupName';
 
-export default function BlurHeader({ title, subtitle, children, pullToRefresh, refreshing }: { title: string, subtitle?:string, children?: React.ReactNode, pullToRefresh?: () => void| Promise<void> , refreshing?: boolean}) {
+export default function BlurHeader({ title, subtitle, isHero = false, children, pullToRefresh, refreshing }: { title: string, subtitle?:string, isHero?:boolean, children?: React.ReactNode, pullToRefresh?: () => void| Promise<void> , refreshing?: boolean}) {
     const colors = useColors();
     const [scrollY, setScrollY] = useState(0);
     const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
@@ -99,25 +101,43 @@ export default function BlurHeader({ title, subtitle, children, pullToRefresh, r
                             flexDirection: 'column',
                             justifyContent: 'flex-start',
                             minHeight: '100%',
+
                             paddingTop: 100,
                         }
                     }
                 >
-                    <H1
-                        style={{
-                            color: colors.text,
-                            marginLeft: '3%',
-                            fontSize: 40,
-                            fontWeight: '900',
-                            opacity: interpolate(
-                                scrollY,
-                                [0, 50, 70],
-                                [1, 0, 0],
-                                Extrapolation.EXTEND,
-                            ),
+                    {isHero ?
+                        <Image
+                            marginTop={'$0'}
+                            source={(colors.text === 'white' ? BannerDark : Banner) as ImageSourcePropType}
+                            resizeMode='contain'
+                            width={'90%'}
+                            height={'10%'}
+                            style={{
+                                opacity: interpolate(
+                                    scrollY,
+                                    [0, 50, 70],
+                                    [1, 0, 0],
+                                    Extrapolation.EXTEND,
+                                ),
+                            }}
+                        />
+                        :
+                        <H1
+                            style={{
+                                color: colors.text,
+                                marginLeft: '3%',
+                                fontSize: 40,
+                                fontWeight: '900',
+                                opacity: interpolate(
+                                    scrollY,
+                                    [0, 50, 70],
+                                    [1, 0, 0],
+                                    Extrapolation.EXTEND,
+                                ),
 
-                        }}
-                    >{parseGroupName(title)[0]}</H1>
+                            }}
+                        >{parseGroupName(title)[0]}</H1>}
                     {parseGroupName(title)[1] && <Text
                         color={colors.text}
                         marginTop={'$-2'}
@@ -135,9 +155,10 @@ export default function BlurHeader({ title, subtitle, children, pullToRefresh, r
                     >{`@${parseGroupName(title)[1]}`}</Text>}
                     {subtitle && <Text
                         color={colors.text}
-                        marginTop={'$-2'}
+                        marginTop={isHero ? '$-3' : '$-2'}
                         style={{
                             color: colors.text,
+                            fontSize:15,
                             marginLeft: '3%',
                             opacity: interpolate(
                                 scrollY,

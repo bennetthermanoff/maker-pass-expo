@@ -111,3 +111,18 @@ export const selectMachinesByGroup = (state:any, groupId:string) => {
     return [];
 };
 
+export const selectActiveMachinesForUserFactory = (makerspace:MakerspaceConfig|null) => (state:any) => {
+    if (!makerspace?.user){
+        return [];
+    }
+
+    const machines = selectMachines(state);
+    if ( makerspace?.user?.userType === 'user'){
+        //only show machines that the user activated
+        return machines.filter((machine) => machine.lastUsedBy === makerspace.user?.userId);
+    }
+    else {
+        //show  all machines in current location (TODO: LOCATION NOT IMPLEMENTED YET)
+        return machines.filter((machine) => machine.enabled);
+    }
+};

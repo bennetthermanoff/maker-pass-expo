@@ -42,7 +42,7 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="index"
                 options={{
-                    title: 'Machines',
+                    title: 'Make',
                     tabBarIcon: ({ color }) => <TabBarIcon name='wrench' color={color} />,
                     headerShown: false,
 
