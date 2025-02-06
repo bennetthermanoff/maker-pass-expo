@@ -1,21 +1,36 @@
 import { Button, H2, Spacer, Text, YStack } from 'tamagui';
 import BlurHeader from '../../components/BlurHeader';
 import { Colors, useColors } from '../../constants/Colors';
-import { useMachineGroups } from '../../hooks/useMachineGroups';
-import { Machine, MachineGroupArray, MachineGroupBody } from '../../types/machine';
+import { Machine, MachineGroupBody } from '../../types/machine';
 import { LinearGradient } from '@tamagui/linear-gradient';
 import { router } from 'expo-router';
 import { Plus } from '@tamagui/lucide-icons';
-import { ViewProps } from '../../components/Themed';
 import { parseGroupName } from '../../util/parseGroupName';
+import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { fetchMachineGroups, selectLoading, selectMachineGroupAsArray, selectMachines } from '../../state/slices/machinesSlice';
+import { useMakerspace } from '../../hooks/useMakerspace';
+import { useAppDispatch } from '../../state/store';
 
 export default function ManageMachineGroups(){
-    const { machineGroups, loading, error, debouncedGetMachineGroups, machines } = useMachineGroups();
+    const machineGroups = useSelector(selectMachineGroupAsArray);
+    const machines = useSelector(selectMachines);
+    const loading = useSelector(selectLoading);
+    const makerspace = useMakerspace();
+    const dispatch = useAppDispatch();
     const colors = useColors();
+    const getMachineGroups = async () => {
+        if (makerspace?.user){
+            dispatch(fetchMachineGroups(makerspace));
+        }
+    };
+    useEffect(() => {
+        getMachineGroups();
+    },[makerspace]);
 
     return (
         <>
-            <BlurHeader title="Machine Groups" hasBackButton pullToRefresh={debouncedGetMachineGroups} refreshing={loading}>
+            <BlurHeader title="Machine Groups" hasBackButton pullToRefresh={getMachineGroups} refreshing={loading}>
                 <Button
                     iconAfter={Plus}
                     scaleIcon={1.5}

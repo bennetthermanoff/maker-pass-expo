@@ -6,18 +6,21 @@ import BlurHeader from '../../components/BlurHeader';
 import { Button, H3, H4, Input, Label, Section, Spacer, Switch, Text, XStack, YStack, getTokens } from 'tamagui';
 import DropdownSelect from 'react-native-input-select';
 import { Color } from '../../types/makerspaceServer';
-import { useMachines } from '../../hooks/useMachines';
 import { Minus, Plus } from '@tamagui/lucide-icons';
 import { Alert, KeyboardAvoidingView, Platform, ViewStyle } from 'react-native';
 import axios from 'axios';
 import * as Location from 'expo-location';
 import { getAuthHeaders } from '../../util/authRoutes';
 import { GLOBAL } from '../../global';
+import { useSelector } from 'react-redux';
+import { selectMachines } from '../../state/slices/machinesSlice';
+import { useMakerspace } from '../../hooks/useMakerspace';
 
 export default function EditMachineGroup(){
     const local = useLocalSearchParams();
     const colors = useColors();
-    const { machines, loading, makerspace } = useMachines();
+    const machines = useSelector(selectMachines);
+    const makerspace = useMakerspace();
     const getMachineGroupInitialData = () => {
         if (local.groupId === 'new'){
             return { name:'',machineIds:[],geoFences:[] };

@@ -12,6 +12,15 @@ export type Machine = {
     latestTagOutId: string|null;
 }
 
+export type LocationGroupMap = {
+    [key: string]: LocationGroupBody
+}
+export type LocationGroupBody = {
+    name: string;
+    machineIds: string[];
+    geoFences: GeoFence[];
+}
+
 export type MachineGroupMap={
     [key: string]: MachineGroupBody
 }

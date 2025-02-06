@@ -1,17 +1,19 @@
 import { createAsyncThunk, createSlice, Dispatch } from '@reduxjs/toolkit';
-import { update } from 'lodash';
-import { Machine, MachineGroupArray, MachineGroupMap } from '../../types/machine';
+import { has, update } from 'lodash';
+import { LocationGroupMap, Machine, MachineGroupArray, MachineGroupMap } from '../../types/machine';
 import { MakerspaceConfig } from '../../types/makerspaceServer';
 import { disableMachineRoute, getMachinesFromServer } from '../../hooks/useMachines';
 import { getImage, getImageIDs, setImage } from '../../util/machineImageCache';
-import { cacheCurrentLocation } from '../../util/locationCache';
-import { getMachineGroupsFromServer } from '../../hooks/useMachineGroups';
+import { cacheCurrentLocation, getLocation } from '../../util/locationCache';
+import { getLocationGroupsFromServer, getMachineGroupsFromServer } from '../../hooks/useMachineGroups';
+import { addOrUpdateServer } from '../../util/makerspaces';
 
 export const machinesSlice = createSlice({
     name: 'machines',
     initialState: {
         machines: [] as Machine[],
         machineGroups: {} as MachineGroupMap,
+        locationGroups: {} as LocationGroupMap,
         loading: false,
     },
     reducers: {
@@ -35,6 +37,10 @@ export const machinesSlice = createSlice({
             state.machineGroups = action.payload;
         },
 
+        updateLocationGroups(state, action) {
+            state.locationGroups = action.payload;
+        },
+
         setLoading(state, action) {
             state.loading = action.payload;
         },
@@ -42,7 +48,7 @@ export const machinesSlice = createSlice({
     },
 });
 
-export const { addMachine, removeMachine, updateMachine, updateMachines, setLoading, updateMachineGroups } = machinesSlice.actions;
+export const { addMachine, removeMachine, updateMachine, updateMachines, setLoading, updateMachineGroups, updateLocationGroups } = machinesSlice.actions;
 
 // REDUX THUNKS
 
@@ -93,6 +99,28 @@ export const fetchMachineGroups = (makerspace:MakerspaceConfig) => async (dispat
         const mgm = await getMachineGroupsFromServer(makerspace);
         dispatch(updateMachineGroups(mgm));
     }
+    updateMakerspaceHasGeoFences(makerspace);
+    dispatch(setLoading(false));
+};
+
+export const updateMakerspaceHasGeoFences = (makerspace:MakerspaceConfig) => (state:any) => {
+    const machineGroups = selectMachineGroups(state);
+    const locationGroups = selectLocationGroups(state);
+    const hasMachineGroupsWithGeoFences = Object.values(machineGroups).some((group) => group.geoFences.length > 0)
+                                       || Object.values(locationGroups).some((group) => group.geoFences.length > 0);
+    if (hasMachineGroupsWithGeoFences !== makerspace.hasGeoFences){
+        addOrUpdateServer({ ...makerspace, hasGeoFences:hasMachineGroupsWithGeoFences });
+    }
+
+};
+
+export const fetchLocationGroups = (makerspace:MakerspaceConfig) => async (dispatch:Dispatch) => {
+    dispatch(setLoading(true));
+    if (makerspace?.user){
+        const lgm = await getLocationGroupsFromServer(makerspace);
+        dispatch(updateLocationGroups(lgm));
+    }
+    updateMakerspaceHasGeoFences(makerspace);
     dispatch(setLoading(false));
 };
 
@@ -100,6 +128,7 @@ export const fetchMachineGroups = (makerspace:MakerspaceConfig) => async (dispat
 export const selectMachines = (state:any) => state.machines.machines as Machine[];
 export const selectMachineGroups = (state:any) => state.machines.machineGroups as MachineGroupMap;
 export const selectLoading = (state:any) => state.machines.loading as boolean;
+export const selectLocationGroups = (state:any) => state.machines.locationGroups as LocationGroupMap;
 
 export const selectMachinesByGroup = (state:any, groupId:string) => {
     const machines = selectMachines(state);
@@ -109,6 +138,15 @@ export const selectMachinesByGroup = (state:any, groupId:string) => {
         return machines.filter((machine) => group.machineIds.includes(machine.id));
     }
     return [];
+};
+
+export const selectMachineGroupAsArray = (state:any) => {
+    const machineGroups = selectMachineGroups(state);
+    const machineGroupArray:MachineGroupArray = [];
+    for (const id in machineGroups){
+        machineGroupArray.push({ ...machineGroups[id], id });
+    }
+    return machineGroupArray;
 };
 
 export const selectActiveMachinesForUserFactory = (makerspace:MakerspaceConfig|null) => (state:any) => {
@@ -126,3 +164,4 @@ export const selectActiveMachinesForUserFactory = (makerspace:MakerspaceConfig|n
         return machines.filter((machine) => machine.enabled);
     }
 };
+
