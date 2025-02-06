@@ -11,7 +11,6 @@ import BlurHeader from '../../components/BlurHeader';
 import { getAuthHeaders } from '../../util/authRoutes';
 import { GLOBAL } from '../../global';
 import QRCode from 'react-native-qrcode-svg';
-import { CancelButton } from '../../components/CancelButton';
 import { Alert, ImageSourcePropType } from 'react-native';
 import { goHome } from '../../util/goHome';
 import { useMachineGroups } from '../../hooks/useMachineGroups';
@@ -140,7 +139,7 @@ export default function AddMachine() {
 
     return (
         <>
-            <BlurHeader title={local.machineId === 'new' ? 'Add Machine' : 'Edit Machine'}>
+            <BlurHeader hasBackButton title={local.machineId === 'new' ? 'Add Machine' : 'Edit Machine'}>
                 <YStack
                     width={'100%'}
                     alignItems='center'
@@ -285,7 +284,6 @@ export default function AddMachine() {
 
                 </YStack>
             </BlurHeader>
-            <CancelButton colors={colors} />
         </>
     );
 }

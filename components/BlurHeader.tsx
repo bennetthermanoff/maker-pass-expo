@@ -1,5 +1,5 @@
 
-import { Circle, H1, H3, Image, ScrollView, YStack, getTokens, Text } from 'tamagui';
+import { Circle, H1, H3, Image, ScrollView, YStack, getTokens, Text, XStack } from 'tamagui';
 import { Color } from '../types/makerspaceServer';
 import Banner from '../assets/images/banner.png';
 import BannerDark from '../assets/images/banner-dark.png';
@@ -9,8 +9,11 @@ import Animated,{ useAnimatedProps, interpolate, Extrapolation } from 'react-nat
 import { useColors } from '../constants/Colors';
 import { ImageSourcePropType, Platform, RefreshControl } from 'react-native';
 import { parseGroupName } from '../util/parseGroupName';
+import { ChevronLeft } from '@tamagui/lucide-icons';
+import { router } from 'expo-router';
 
-export default function BlurHeader({ title, subtitle, isHero = false, children, pullToRefresh, refreshing }: { title: string, subtitle?:string, isHero?:boolean, children?: React.ReactNode, pullToRefresh?: () => void| Promise<void> , refreshing?: boolean}) {
+export default function BlurHeader({ title, subtitle, isHero = false, hasBackButton = false, pullToRefresh, refreshing, children }:
+    { title: string, subtitle?: string, isHero?: boolean, hasBackButton?: boolean, children?: React.ReactNode, pullToRefresh?: () => void | Promise<void>, refreshing?: boolean }) {
     const colors = useColors();
     const [scrollY, setScrollY] = useState(0);
     const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
@@ -34,6 +37,25 @@ export default function BlurHeader({ title, subtitle, isHero = false, children, 
 
     return (
         <>
+            {hasBackButton &&
+            <XStack
+                onPress={() => {
+                    router.back();
+                }}
+                style={{
+                    position: 'absolute',
+                    top: 55,
+                    left: 0,
+                    zIndex: 2,
+                }}
+                width={50}
+            >
+                <ChevronLeft
+                    size={40}
+                    color={colors.text}
+                />
+            </XStack>
+            }
             <AnimatedBlurView
                 animatedProps={animatedProps}
                 style={{

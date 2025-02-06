@@ -7,7 +7,6 @@ import { Color } from '../../types/makerspaceServer';
 import { ImageSourcePropType } from 'react-native';
 import keyLogo from '../../assets/images/key.png';
 import BlurHeader from '../../components/BlurHeader';
-import { CancelButton } from '../../components/CancelButton';
 
 export default function OneTimeLogin() {
     const local = useLocalSearchParams();
@@ -19,7 +18,7 @@ export default function OneTimeLogin() {
 
     const getQR = () => `makerpass://--/makerspace/login?token=${loginToken}&userId=${userId}&userType=${userType}&serverId=${makerspace?.id}`;
     return <>
-        <BlurHeader title='One Time Login'>
+        <BlurHeader hasBackButton title='One Time Login'>
             <YStack
                 style={{ flex: 1, alignItems: 'center' }}
             >
@@ -48,7 +47,6 @@ export default function OneTimeLogin() {
                 </View>
             </YStack>
         </BlurHeader>
-        <CancelButton colors={colors} />
     </>
     ;
 }

@@ -6,7 +6,6 @@ import { Machine, MachineGroupArray, MachineGroupBody, PermissionGroup } from '.
 import { LinearGradient } from '@tamagui/linear-gradient';
 import { router } from 'expo-router';
 import { Plus } from '@tamagui/lucide-icons';
-import { CancelButton } from '../../components/CancelButton';
 import { ViewProps } from '../../components/Themed';
 import { usePermissionGroups } from '../../hooks/usePermissionGroups';
 
@@ -15,7 +14,7 @@ export default function ManageMachineGroups(){
     const { permissionGroups, loading, error, debouncedGetPermissionGroups, machines } = usePermissionGroups();
     return (
         <>
-            <BlurHeader title="Permisison Groups" pullToRefresh={debouncedGetPermissionGroups} refreshing={loading}>
+            <BlurHeader hasBackButton title="Permisison Groups" pullToRefresh={debouncedGetPermissionGroups} refreshing={loading}>
                 <Button
                     iconAfter={Plus}
                     scaleIcon={1.5}
@@ -43,7 +42,6 @@ export default function ManageMachineGroups(){
                 <Spacer size={'$12'} />
 
             </BlurHeader>
-            <CancelButton colors={colors} />
 
         </>
     );

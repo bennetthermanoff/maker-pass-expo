@@ -8,7 +8,6 @@ import { getAuthHeaders } from '../../util/authRoutes';
 import BlurHeader from '../../components/BlurHeader';
 import { Button, H2, H3, H4, H5, Input, Spinner, Text, View, XStack, YStack } from 'tamagui';
 import { LinearGradient } from '@tamagui/linear-gradient';
-import { CancelButton } from '../../components/CancelButton';
 
 export default function TagOutMachine(){
 
@@ -71,6 +70,7 @@ export default function TagOutMachine(){
     return (
         <>
             <BlurHeader
+                hasBackButton
                 title={machine.name}
                 subtitle={machine.lastUsedByName ? `Last Used By: ${machine.lastUsedByName}` : undefined}
                 pullToRefresh={() => getTagOuts(10)}
@@ -129,7 +129,6 @@ export default function TagOutMachine(){
                     null
                 }
             </BlurHeader>
-            <CancelButton colors={colors} />
         </>
     );
 

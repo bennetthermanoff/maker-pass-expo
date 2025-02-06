@@ -6,7 +6,6 @@ import { Machine, MachineGroupArray, MachineGroupBody } from '../../types/machin
 import { LinearGradient } from '@tamagui/linear-gradient';
 import { router } from 'expo-router';
 import { Plus } from '@tamagui/lucide-icons';
-import { CancelButton } from '../../components/CancelButton';
 import { ViewProps } from '../../components/Themed';
 import { parseGroupName } from '../../util/parseGroupName';
 
@@ -16,7 +15,7 @@ export default function ManageMachineGroups(){
 
     return (
         <>
-            <BlurHeader title="Machine Groups" pullToRefresh={debouncedGetMachineGroups} refreshing={loading}>
+            <BlurHeader title="Machine Groups" hasBackButton pullToRefresh={debouncedGetMachineGroups} refreshing={loading}>
                 <Button
                     iconAfter={Plus}
                     scaleIcon={1.5}
@@ -43,7 +42,6 @@ export default function ManageMachineGroups(){
                 <Spacer size={'$12'} />
 
             </BlurHeader>
-            <CancelButton colors={colors} />
 
         </>
     );

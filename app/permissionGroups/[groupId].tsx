@@ -7,7 +7,6 @@ import { Button, H3, H4, Input, Label, Section, Spacer, Switch, Text, XStack, YS
 import DropdownSelect from 'react-native-input-select';
 import { Color } from '../../types/makerspaceServer';
 import { useMachines } from '../../hooks/useMachines';
-import { CancelButton } from '../../components/CancelButton';
 import { Minus, Plus } from '@tamagui/lucide-icons';
 import { KeyboardAvoidingView, Platform, ViewStyle } from 'react-native';
 import axios from 'axios';
@@ -111,7 +110,7 @@ export default function EditPermissionGroup(){
             style={{ backgroundColor:getTokens().color[colors.background as Color].val , minHeight:'100%' }}
             behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}
         >
-            <BlurHeader title={local.groupId === 'new' ? 'Add Permission Group' : 'Edit Permission Group'}>
+            <BlurHeader hasBackButton title={local.groupId === 'new' ? 'Add Permission Group' : 'Edit Permission Group'}>
                 <YStack
                     width={'100%'}
                     alignItems='center'
@@ -203,7 +202,6 @@ export default function EditPermissionGroup(){
                         : null}
                 </YStack>
             </BlurHeader>
-            <CancelButton colors={colors} />
         </KeyboardAvoidingView>
     );
 }
