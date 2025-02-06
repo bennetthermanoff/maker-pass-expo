@@ -15,9 +15,10 @@ export type Machine = {
 export type LocationGroupMap = {
     [key: string]: LocationGroupBody
 }
+export type LocationGroupArray = Array<LocationGroupBody & {id:string}>
 export type LocationGroupBody = {
     name: string;
-    machineIds: string[];
+    groups: string[];
     geoFences: GeoFence[];
 }
 

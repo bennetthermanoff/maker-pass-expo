@@ -1,22 +1,21 @@
 import { useColors } from '../../constants/Colors';
 import BlurHeader from '../../components/BlurHeader';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { fetchMachineGroups, fetchMachines, selectActiveMachinesForUserFactory, selectLoading, selectMachineGroups, selectMachines } from '../../state/slices/machinesSlice';
+import { fetchLocationGroups, fetchMachineGroups, fetchMachines, selectActiveMachinesForUserFactory, selectLoading, selectLocationGroups, selectLocationGroupsAsArray, selectMachineGroups, selectMachines } from '../../state/slices/machinesSlice';
 import { useMakerspace } from '../../hooks/useMakerspace';
 import { useAppDispatch } from '../../state/store';
 import { router, useFocusEffect } from 'expo-router';
 import { AppState } from 'react-native';
 import { Button, H2, ScrollView, YStack } from 'tamagui';
 import { QrCode } from '@tamagui/lucide-icons';
-import { MachineCard } from './OldHome';
 import { LargeBentoBox } from '../../components/LargeBentoBox';
-import { getImage } from '../../util/machineImageCache';
+import { useLocation } from '../../hooks/useLocation';
 export default function Make() {
     const colors = useColors();
-    const [currentPage, setCurrentPage] = useState(0);
     const machineGroupMap = useSelector(selectMachineGroups);
     const makerspace = useMakerspace();
+    const { locationMap, location } = useLocation();
     const activeMachines = useSelector(selectActiveMachinesForUserFactory(makerspace));
     const loading = useSelector(selectLoading);
     const dispatch = useAppDispatch();
@@ -25,6 +24,7 @@ export default function Make() {
         if (makerspace){
             dispatch(fetchMachines(makerspace));
             dispatch(fetchMachineGroups(makerspace));
+            dispatch(fetchLocationGroups(makerspace));
         }
     };
     useFocusEffect(useCallback(() => {
@@ -41,7 +41,7 @@ export default function Make() {
     useEffect(handleRefresh,[makerspace, dispatch]);
     return (
         <>
-            <BlurHeader title="MakerPass" subtitle='@Tulane MakerSpace' isHero pullToRefresh={handleRefresh} refreshing={loading}>
+            <BlurHeader title="MakerPass" subtitle={'@' + location?.name} isHero pullToRefresh={handleRefresh} refreshing={loading}>
                 <YStack
                     aspectRatio={1.9} //Important!
 

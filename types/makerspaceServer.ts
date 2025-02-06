@@ -15,7 +15,8 @@ export interface MakerspaceConfig {
         userName?: string,
         userEmail?: string,
     }
-    additionalInfoFields?: AdditionalInfoField[]
+    additionalInfoFields?: AdditionalInfoField[],
+    currentLocation?: string,
 }
 export interface MakerspaceTheme {
     primary: ColorName,

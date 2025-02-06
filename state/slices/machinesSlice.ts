@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, Dispatch } from '@reduxjs/toolkit';
 import { has, update } from 'lodash';
-import { LocationGroupMap, Machine, MachineGroupArray, MachineGroupMap } from '../../types/machine';
+import { LocationGroupArray, LocationGroupMap, Machine, MachineGroupArray, MachineGroupMap } from '../../types/machine';
 import { MakerspaceConfig } from '../../types/makerspaceServer';
 import { disableMachineRoute, getMachinesFromServer } from '../../hooks/useMachines';
 import { getImage, getImageIDs, setImage } from '../../util/machineImageCache';
@@ -147,6 +147,14 @@ export const selectMachineGroupAsArray = (state:any) => {
         machineGroupArray.push({ ...machineGroups[id], id });
     }
     return machineGroupArray;
+};
+export const selectLocationGroupsAsArray = (state:any) => {
+    const locationGroups = selectLocationGroups(state);
+    const locationGroupArray:LocationGroupArray = [];
+    for (const id in locationGroups){
+        locationGroupArray.push({ ...locationGroups[id], id });
+    }
+    return locationGroupArray;
 };
 
 export const selectActiveMachinesForUserFactory = (makerspace:MakerspaceConfig|null) => (state:any) => {
