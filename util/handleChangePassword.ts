@@ -1,6 +1,5 @@
-import { Alert } from 'react-native';
-import { MakerspaceConfig } from '../types/makerspaceServer';
 import axios from 'axios';
+import { Alert } from 'react-native';
 import { getAuthHeaders } from './authRoutes';
 import { getCurrentServer } from './makerspaces';
 

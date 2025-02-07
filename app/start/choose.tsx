@@ -1,13 +1,13 @@
-import { Button, H2, Text, View, XStack, YStack,Image } from 'tamagui';
-import { Alert, ImageSourcePropType, StyleSheet } from 'react-native';
 import * as Linking from 'expo-linking';
-import { useColors } from '../../constants/Colors';
 import { router } from 'expo-router';
-import { removeServer } from '../../util/makerspaces';
-import Banner from '../../assets/images/banner.png';
-import BannerDark from '../../assets/images/banner-dark.png';
-import { currentServerSelector } from '../../state/slices/makerspacesSlice';
+import { Alert, ImageSourcePropType, StyleSheet } from 'react-native';
 import { useSelector } from 'react-redux';
+import { Button, Image, Text, View, XStack, YStack } from 'tamagui';
+import BannerDark from '../../assets/images/banner-dark.png';
+import Banner from '../../assets/images/banner.png';
+import { useColors } from '../../constants/Colors';
+import { currentServerSelector } from '../../state/slices/makerspacesSlice';
+import { removeServer } from '../../util/makerspaces';
 export default function LoginOrRegister() {
     const url = Linking.useURL();
     const colors = useColors();

@@ -1,16 +1,15 @@
+import { LinearGradient } from '@tamagui/linear-gradient';
+import { Plus } from '@tamagui/lucide-icons';
+import { router } from 'expo-router';
+import { useSelector } from 'react-redux';
 import { Button, H2, Spacer, Text, YStack } from 'tamagui';
 import BlurHeader from '../../components/BlurHeader';
 import { Colors, useColors } from '../../constants/Colors';
-import { Machine, MachineGroupBody } from '../../types/machine';
-import { LinearGradient } from '@tamagui/linear-gradient';
-import { router } from 'expo-router';
-import { Plus } from '@tamagui/lucide-icons';
-import { parseGroupName } from '../../util/parseGroupName';
-import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { fetchMachineGroups, selectLoading, selectMachineGroupAsArray, selectMachines } from '../../state/slices/machinesSlice';
-import { useAppDispatch } from '../../state/store';
 import { currentServerSelector } from '../../state/slices/makerspacesSlice';
+import { useAppDispatch } from '../../state/store';
+import { Machine, MachineGroupBody } from '../../types/machine';
+import { parseGroupName } from '../../util/parseGroupName';
 
 export default function ManageMachineGroups(){
     const machineGroups = useSelector(selectMachineGroupAsArray);

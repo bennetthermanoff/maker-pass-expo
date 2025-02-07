@@ -1,6 +1,6 @@
-import * as SecureStore from 'expo-secure-store';
-import { AdditionalInfoField, MakerspaceConfig, MakerspaceServers as MakerspaceServerIds, MakerspaceTheme } from '../types/makerspaceServer';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
+import { MakerspaceConfig, MakerspaceServers as MakerspaceServerIds, MakerspaceTheme } from '../types/makerspaceServer';
 
 export const addOrUpdateServer = async (server: MakerspaceConfig) => {
     let currentServer = await getServer(server.id);

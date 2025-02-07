@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { LocationGroupBody, LocationGroupMap, MachineGroupMap } from '../types/machine';
-import { MakerspaceConfig } from '../types/makerspaceServer';
 import { useSelector } from 'react-redux';
 import { selectLocationGroups, selectMachineGroups } from '../state/slices/machinesSlice';
-import { addOrUpdateServer } from '../util/makerspaces';
 import { currentServerSelector } from '../state/slices/makerspacesSlice';
+import { LocationGroupBody, LocationGroupMap, MachineGroupMap } from '../types/machine';
+import { MakerspaceConfig } from '../types/makerspaceServer';
+import { addOrUpdateServer } from '../util/makerspaces';
 
 export const useLocation = () => {
     const [location, setLocation] = useState<LocationGroupBody|null>(null);

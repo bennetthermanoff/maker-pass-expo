@@ -1,8 +1,7 @@
 import axios from 'axios';
-import { Alert } from 'react-native';
-import { getCurrentServerId, removeServerCredentials } from './makerspaces';
-import { goHome, handleUserLoginError } from './goHome';
 import { router } from 'expo-router';
+import { Alert } from 'react-native';
+import { handleUserLoginError } from './goHome';
 const handleError = (err: any) => {
     const scrubbedError = removeAttrDeep(err, 'accesstoken');
     //if 400, print message

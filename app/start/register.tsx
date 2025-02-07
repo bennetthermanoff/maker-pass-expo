@@ -1,20 +1,17 @@
-import { Button, H2, H4, Input, Label, ScrollView, Spinner, XStack, YStack, getTokens } from 'tamagui';
-import DropdownSelect from 'react-native-input-select';
-import { useColors } from '../../constants/Colors';
-import { useEffect, useState } from 'react';
-import { router, useGlobalSearchParams } from 'expo-router';
-import { AdditionalInfoField, Color, MakerspaceTheme } from '../../types/makerspaceServer';
 import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
-import { KeyboardAvoidingView, Platform } from 'react-native';
-import * as Location from 'expo-location';
-import Checkbox from 'expo-checkbox';
 import axios from 'axios';
-import { DropdownProps } from 'react-native-input-select/lib/typescript/types/index.types';
-import { GLOBAL } from '../../global';
-import React from 'react';
-import { goHome } from '../../util/goHome';
-import { currentServerSelector } from '../../state/slices/makerspacesSlice';
+import Checkbox from 'expo-checkbox';
+import * as Location from 'expo-location';
+import { router } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { KeyboardAvoidingView, Platform } from 'react-native';
+import DropdownSelect from 'react-native-input-select';
 import { useSelector } from 'react-redux';
+import { Button, H2, H4, Input, Label, ScrollView, Spinner, XStack, YStack, getTokens } from 'tamagui';
+import { useColors } from '../../constants/Colors';
+import { GLOBAL } from '../../global';
+import { currentServerSelector } from '../../state/slices/makerspacesSlice';
+import { AdditionalInfoField, Color } from '../../types/makerspaceServer';
 
 export default function Register(){
 

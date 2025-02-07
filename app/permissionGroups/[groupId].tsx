@@ -1,17 +1,15 @@
-import { router, useLocalSearchParams } from 'expo-router';
-import { useColors } from '../../constants/Colors';
-import { MachineGroupBody, PermissionGroup } from '../../types/machine';
-import { useState } from 'react';
-import BlurHeader from '../../components/BlurHeader';
-import { Button, H3, H4, Input, Label, Section, Spacer, Switch, Text, XStack, YStack, getTokens } from 'tamagui';
-import DropdownSelect from 'react-native-input-select';
-import { Color } from '../../types/makerspaceServer';
-import { useMachines } from '../../hooks/useMachines';
-import { Minus, Plus } from '@tamagui/lucide-icons';
-import { KeyboardAvoidingView, Platform, ViewStyle } from 'react-native';
 import axios from 'axios';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useState } from 'react';
+import { KeyboardAvoidingView, Platform, ViewStyle } from 'react-native';
+import DropdownSelect from 'react-native-input-select';
+import { Button, Input, Section, YStack, getTokens } from 'tamagui';
+import BlurHeader from '../../components/BlurHeader';
+import { useColors } from '../../constants/Colors';
+import { useMachines } from '../../hooks/useMachines';
+import { PermissionGroup } from '../../types/machine';
+import { Color } from '../../types/makerspaceServer';
 import { getAuthHeaders } from '../../util/authRoutes';
-import { GLOBAL } from '../../global';
 
 export default function EditPermissionGroup(){
     const local = useLocalSearchParams();

@@ -1,16 +1,16 @@
-import { useColors } from '../../constants/Colors';
-import BlurHeader from '../../components/BlurHeader';
-import { useCallback, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { fetchLocationGroups, fetchMachineGroups, fetchMachines, selectActiveMachinesForUserFactory, selectLoading, selectLocationGroups, selectLocationGroupsAsArray, selectMachineGroups, selectMachines } from '../../state/slices/machinesSlice';
-import { useAppDispatch } from '../../state/store';
-import { router, useFocusEffect } from 'expo-router';
-import { AppState } from 'react-native';
-import { Button, H2, ScrollView, YStack } from 'tamagui';
 import { QrCode } from '@tamagui/lucide-icons';
+import { router, useFocusEffect } from 'expo-router';
+import { useCallback, useEffect } from 'react';
+import { AppState } from 'react-native';
+import { useSelector } from 'react-redux';
+import { Button, H2, ScrollView, YStack } from 'tamagui';
+import BlurHeader from '../../components/BlurHeader';
 import { LargeBentoBox } from '../../components/LargeBentoBox';
+import { useColors } from '../../constants/Colors';
 import { useLocation } from '../../hooks/useLocation';
+import { fetchLocationGroups, fetchMachineGroups, fetchMachines, selectActiveMachinesForUserFactory, selectLoading, selectMachineGroups } from '../../state/slices/machinesSlice';
 import { currentServerSelector } from '../../state/slices/makerspacesSlice';
+import { useAppDispatch } from '../../state/store';
 export default function Make() {
     const colors = useColors();
     const machineGroupMap = useSelector(selectMachineGroups);

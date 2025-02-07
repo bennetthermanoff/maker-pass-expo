@@ -1,19 +1,19 @@
 
-import { useEffect, useState } from 'react';
-import BlurHeader from '../../../components/BlurHeader';
-import { Button, H3, View, YStack, getTokens } from 'tamagui';
 import { Wrench } from '@tamagui/lucide-icons';
-import { useColors } from '../../../constants/Colors';
-import { router } from 'expo-router';
-import QRCode from 'react-native-qrcode-svg';
 import axios from 'axios';
-import { getAuthHeaders } from '../../../util/authRoutes';
-import keyLogo from '../../../assets/images/key.png';
+import { router } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { ImageSourcePropType } from 'react-native';
-import { Color } from '../../../types/makerspaceServer';
-import { copyQR } from '../../../util/handleURL';
-import { currentServerSelector } from '../../../state/slices/makerspacesSlice';
+import QRCode from 'react-native-qrcode-svg';
 import { useSelector } from 'react-redux';
+import { Button, H3, View, YStack, getTokens } from 'tamagui';
+import keyLogo from '../../../assets/images/key.png';
+import BlurHeader from '../../../components/BlurHeader';
+import { useColors } from '../../../constants/Colors';
+import { currentServerSelector } from '../../../state/slices/makerspacesSlice';
+import { Color } from '../../../types/makerspaceServer';
+import { getAuthHeaders } from '../../../util/authRoutes';
+import { copyQR } from '../../../util/handleURL';
 
 export default function Admin() {
     const colors = useColors();

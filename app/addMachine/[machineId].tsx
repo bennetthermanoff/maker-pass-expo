@@ -1,24 +1,23 @@
-import { useMemo, useState } from 'react';
-import { useColors } from '../../constants/Colors';
-import { Machine } from '../../types/machine';
-import { Button, H4, Input, Label, Switch, View, XStack, YStack, getTokens } from 'tamagui';
 import { Image, Plus, Trash } from '@tamagui/lucide-icons';
-import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
+import * as ImagePicker from 'expo-image-picker';
 import { router, useLocalSearchParams } from 'expo-router';
-import BlurHeader from '../../components/BlurHeader';
-import { getAuthHeaders } from '../../util/authRoutes';
-import { GLOBAL } from '../../global';
-import QRCode from 'react-native-qrcode-svg';
+import { useState } from 'react';
 import { Alert, ImageSourcePropType } from 'react-native';
-import { goHome } from '../../util/goHome';
-import { Color } from '../../types/makerspaceServer';
-import { setStringAsync } from 'expo-clipboard';
-import keyLogo from '../../assets/images/key.png';
-import { copyQR } from '../../util/handleURL';
-import { currentServerSelector } from '../../state/slices/makerspacesSlice';
+import QRCode from 'react-native-qrcode-svg';
 import { useSelector } from 'react-redux';
+import { Button, H4, Input, Label, Switch, View, XStack, YStack, getTokens } from 'tamagui';
+import keyLogo from '../../assets/images/key.png';
+import BlurHeader from '../../components/BlurHeader';
+import { useColors } from '../../constants/Colors';
+import { GLOBAL } from '../../global';
 import { selectMachineGroups } from '../../state/slices/machinesSlice';
+import { currentServerSelector } from '../../state/slices/makerspacesSlice';
+import { Machine } from '../../types/machine';
+import { Color } from '../../types/makerspaceServer';
+import { getAuthHeaders } from '../../util/authRoutes';
+import { goHome } from '../../util/goHome';
+import { copyQR } from '../../util/handleURL';
 
 export default function AddMachine() {
     const local = useLocalSearchParams();

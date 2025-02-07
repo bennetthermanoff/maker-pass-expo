@@ -1,13 +1,13 @@
 import { useLocalSearchParams } from 'expo-router';
-import { Label, View, YStack, getTokens } from 'tamagui';
-import { useColors } from '../../constants/Colors';
-import QRCode from 'react-native-qrcode-svg';
-import { Color } from '../../types/makerspaceServer';
 import { ImageSourcePropType } from 'react-native';
+import QRCode from 'react-native-qrcode-svg';
+import { useSelector } from 'react-redux';
+import { Label, View, YStack, getTokens } from 'tamagui';
 import keyLogo from '../../assets/images/key.png';
 import BlurHeader from '../../components/BlurHeader';
+import { useColors } from '../../constants/Colors';
 import { currentServerSelector } from '../../state/slices/makerspacesSlice';
-import { useSelector } from 'react-redux';
+import { Color } from '../../types/makerspaceServer';
 
 export default function OneTimeLogin() {
     const local = useLocalSearchParams();

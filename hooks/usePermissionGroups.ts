@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react';
-import { Machine, MachineGroupArray, MachineGroupMap, PermissionGroup, PermissionGroupArray } from '../types/machine';
-import { getMachinesFromServer } from './useMachines';
-import { debounce } from 'lodash';
-import { GLOBAL } from '../global';
-import { MakerspaceConfig } from '../types/makerspaceServer';
 import axios from 'axios';
-import { getAuthHeaders } from '../util/authRoutes';
-import { currentServerSelector } from '../state/slices/makerspacesSlice';
+import { debounce } from 'lodash';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { GLOBAL } from '../global';
+import { currentServerSelector } from '../state/slices/makerspacesSlice';
+import { Machine, MachineGroupMap, PermissionGroupArray } from '../types/machine';
+import { MakerspaceConfig } from '../types/makerspaceServer';
+import { getAuthHeaders } from '../util/authRoutes';
+import { getMachinesFromServer } from './useMachines';
 
 export const usePermissionGroups = () => {
     const [permissionGroups,setMachineGroups] = useState<PermissionGroupArray>([]);

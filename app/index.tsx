@@ -1,17 +1,17 @@
-import { tanStackColors, useColors } from '../constants/Colors';
-import splash from '../assets/images/splash.png';
-import splashDark from '../assets/images/splash-dark.png';
+import { SplashScreen } from 'expo-router';
 import { useEffect, useState } from 'react';
-import Animated, { interpolate, interpolateColor, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import {  Image, getTokens } from 'tamagui';
-import { Appearance, ColorSchemeName, ImageSourcePropType } from 'react-native';
-import { SplashScreen, router, useLocalSearchParams } from 'expo-router';
-import { goHome } from '../util/goHome';
-import { Color } from '../types/makerspaceServer';
+import { Appearance, ImageSourcePropType } from 'react-native';
+import Animated, { interpolateColor, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import { useSelector } from 'react-redux';
+import { Image, getTokens } from 'tamagui';
+import splashDark from '../assets/images/splash-dark.png';
+import splash from '../assets/images/splash.png';
+import { useColors } from '../constants/Colors';
 import { fetchLocationGroups, fetchMachineGroups, fetchMachines } from '../state/slices/machinesSlice';
 import { currentServerSelector } from '../state/slices/makerspacesSlice';
-import { useSelector } from 'react-redux';
 import { useAppDispatch } from '../state/store';
+import { Color } from '../types/makerspaceServer';
+import { goHome } from '../util/goHome';
 
 export default function Splash() {
     const colors = useColors();

@@ -1,12 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Appearance } from 'react-native';
-import { ColorName, ColorResponse, MakerspaceTheme } from '../types/makerspaceServer';
-import { getTokens } from 'tamagui';
-import { router, useGlobalSearchParams, useRootNavigationState } from 'expo-router';
-import  { GLOBAL } from '../global';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { useSelector } from 'react-redux';
+import { getTokens } from 'tamagui';
 import { currentThemeSelector, darkModeSelector } from '../state/slices/makerspacesSlice';
+import { ColorName } from '../types/makerspaceServer';
 const tintColorLight = '#2f95dc';
 const tintColorDark = '#fff';
 

@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import * as SecureStore from 'expo-secure-store';
 import { MakerspaceConfig, MakerspaceServers as MakerspaceServerIds, MakerspaceTheme } from '../../types/makerspaceServer';
 
 interface MakerspacesState {

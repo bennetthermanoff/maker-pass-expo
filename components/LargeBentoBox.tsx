@@ -1,11 +1,11 @@
-import { Machine } from '../types/machine';
-import { Colors } from '../constants/Colors';
-import { useEffect, useState } from 'react';
-import { getImage } from '../util/machineImageCache';
-import { YStack, Text, Image, H3, Button } from 'tamagui';
 import { LinearGradient } from '@tamagui/linear-gradient';
-import defaultImage from '../assets/images/icon.png';
+import { useEffect, useState } from 'react';
 import { ImageSourcePropType } from 'react-native';
+import { Button, H3, Image, YStack } from 'tamagui';
+import defaultImage from '../assets/images/icon.png';
+import { Colors } from '../constants/Colors';
+import { Machine } from '../types/machine';
+import { getImage } from '../util/machineImageCache';
 
 export const LargeBentoBox = ({ machine, colors, showDisableButton = false }: {machine: Machine, colors: Colors, showDisableButton?: boolean}) => {
     const [image, setImage] = useState<string | null>(null);

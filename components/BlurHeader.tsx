@@ -1,16 +1,16 @@
 
-import { Circle, H1, H3, Image, ScrollView, YStack, getTokens, Text, XStack } from 'tamagui';
-import { Color } from '../types/makerspaceServer';
-import Banner from '../assets/images/banner.png';
-import BannerDark from '../assets/images/banner-dark.png';
-import { BlurView } from 'expo-blur';
-import React, { useEffect, useState } from 'react';
-import Animated,{ useAnimatedProps, interpolate, Extrapolation } from 'react-native-reanimated';
-import { useColors } from '../constants/Colors';
-import { ImageSourcePropType, Platform, RefreshControl } from 'react-native';
-import { parseGroupName } from '../util/parseGroupName';
 import { ChevronLeft } from '@tamagui/lucide-icons';
+import { BlurView } from 'expo-blur';
 import { router } from 'expo-router';
+import React, { useState } from 'react';
+import { ImageSourcePropType, Platform, RefreshControl } from 'react-native';
+import Animated, { Extrapolation, interpolate, useAnimatedProps } from 'react-native-reanimated';
+import { getTokens, H1, H3, Image, ScrollView, Text, XStack, YStack } from 'tamagui';
+import BannerDark from '../assets/images/banner-dark.png';
+import Banner from '../assets/images/banner.png';
+import { useColors } from '../constants/Colors';
+import { Color } from '../types/makerspaceServer';
+import { parseGroupName } from '../util/parseGroupName';
 
 export default function BlurHeader({ title, subtitle, isHero = false, hasBackButton = false, subtitleOnPress, pullToRefresh, refreshing, children }:
     { title: string, subtitle?: string, isHero?: boolean, hasBackButton?: boolean, subtitleOnPress?:()=>void, children?: React.ReactNode, pullToRefresh?: () => void | Promise<void>, refreshing?: boolean }) {

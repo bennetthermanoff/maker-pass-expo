@@ -1,18 +1,15 @@
-import { useEffect, useState } from 'react';
-import { Machine, MachineGroupArray, TagOut } from '../types/machine';
-import { debounce } from 'lodash';
 import axios from 'axios';
-import { MakerspaceConfig } from '../types/makerspaceServer';
-import { clearStackGoTo } from '../util/clearStackGoTo';
-import { router } from 'expo-router';
-import { handleUserLoginError } from '../util/goHome';
-import { getAuthHeaders } from '../util/authRoutes';
-import { getImage, getImageIDs, setImage } from '../util/machineImageCache';
-import { GLOBAL } from '../global';
 import * as Haptics from 'expo-haptics';
-import { cacheCurrentLocation } from '../util/locationCache';
-import { currentServerSelector } from '../state/slices/makerspacesSlice';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { GLOBAL } from '../global';
+import { currentServerSelector } from '../state/slices/makerspacesSlice';
+import { Machine } from '../types/machine';
+import { MakerspaceConfig } from '../types/makerspaceServer';
+import { getAuthHeaders } from '../util/authRoutes';
+import { handleUserLoginError } from '../util/goHome';
+import { cacheCurrentLocation } from '../util/locationCache';
+import { getImage, getImageIDs, setImage } from '../util/machineImageCache';
 
 export const useMachines = () => {
     const [machines, setMachines] = useState <Array<Machine&{lastUsedByName:string|null}>>([]);

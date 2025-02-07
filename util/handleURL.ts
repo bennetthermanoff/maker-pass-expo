@@ -1,18 +1,17 @@
-import * as Linking from 'expo-linking';
-import { router } from 'expo-router';
 import axios from 'axios';
-import { MakerspaceConfig, MakerspaceServers, PingResponse } from '../types/makerspaceServer';
-import { addOrUpdateServer, addServerCredentials, getCurrentServer, getServer, getServers, setCurrentServer } from './makerspaces';
+import { setStringAsync } from 'expo-clipboard';
+import * as Haptics from 'expo-haptics';
+import * as Linking from 'expo-linking';
+import * as Location from 'expo-location';
+import { router } from 'expo-router';
+import { Alert } from 'react-native';
+import { GLOBAL } from '../global';
 import { Machine } from '../types/machine';
 import { getAuthHeaders } from './authRoutes';
-import { goHome, handleUserLoginError } from './goHome';
-import * as Location from 'expo-location';
-import * as Haptics from 'expo-haptics';
-import { GLOBAL } from '../global';
-import { Alert } from 'react-native';
-import { clearLocationCache, getLocation } from './locationCache';
+import { goHome } from './goHome';
 import { handleChangePassword } from './handleChangePassword';
-import { setStringAsync } from 'expo-clipboard';
+import { getLocation } from './locationCache';
+import { addOrUpdateServer, addServerCredentials, getServer, getServers, setCurrentServer } from './makerspaces';
 
 export const handleURL =  (url:string|null) => {
     if (url === null) {

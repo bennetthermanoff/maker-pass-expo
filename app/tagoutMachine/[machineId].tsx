@@ -1,14 +1,14 @@
-import { router, useLocalSearchParams } from 'expo-router';
-import { Colors, useColors } from '../../constants/Colors';
-import { Machine, TagOutWithName } from '../../types/machine';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { getAuthHeaders } from '../../util/authRoutes';
-import BlurHeader from '../../components/BlurHeader';
-import { Button, H2, H3, H4, H5, Input, Spinner, Text, View, XStack, YStack } from 'tamagui';
 import { LinearGradient } from '@tamagui/linear-gradient';
-import { currentServerSelector } from '../../state/slices/makerspacesSlice';
+import axios from 'axios';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { Button, H2, H4, Input, Spinner, Text, View, XStack, YStack } from 'tamagui';
+import BlurHeader from '../../components/BlurHeader';
+import { Colors, useColors } from '../../constants/Colors';
+import { currentServerSelector } from '../../state/slices/makerspacesSlice';
+import { Machine, TagOutWithName } from '../../types/machine';
+import { getAuthHeaders } from '../../util/authRoutes';
 
 export default function TagOutMachine(){
 

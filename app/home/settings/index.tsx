@@ -1,21 +1,20 @@
 
-import { Button, Text, XStack, Image } from 'tamagui';
-import { useColors } from '../../../constants/Colors';
-import { removeServer } from '../../../util/makerspaces';
-import { router } from 'expo-router';
-import BlurHeader from '../../../components/BlurHeader';
-import { clearImages } from '../../../util/machineImageCache';
-import { Alert, ImageSourcePropType } from 'react-native';
-import Banner from '../../../assets/images/banner.png';
-import BannerDark from '../../../assets/images/banner-dark.png';
 import { FileImage, Key, Link, Trash2, Unlink } from '@tamagui/lucide-icons';
-import { openBrowserAsync } from 'expo-web-browser';
 import axios from 'axios';
-import { getAuthHeaders } from '../../../util/authRoutes';
-import { MakerspaceConfig } from '../../../types/makerspaceServer';
-import { handleChangePassword } from '../../../util/handleChangePassword';
-import { currentServerSelector } from '../../../state/slices/makerspacesSlice';
+import { router } from 'expo-router';
+import { openBrowserAsync } from 'expo-web-browser';
+import { Alert, ImageSourcePropType } from 'react-native';
 import { useSelector } from 'react-redux';
+import { Button, Image, Text, XStack } from 'tamagui';
+import BannerDark from '../../../assets/images/banner-dark.png';
+import Banner from '../../../assets/images/banner.png';
+import BlurHeader from '../../../components/BlurHeader';
+import { useColors } from '../../../constants/Colors';
+import { currentServerSelector } from '../../../state/slices/makerspacesSlice';
+import { getAuthHeaders } from '../../../util/authRoutes';
+import { handleChangePassword } from '../../../util/handleChangePassword';
+import { clearImages } from '../../../util/machineImageCache';
+import { removeServer } from '../../../util/makerspaces';
 
 export default function Machines() {
     const colors = useColors();

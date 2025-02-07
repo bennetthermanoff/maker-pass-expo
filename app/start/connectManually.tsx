@@ -1,13 +1,12 @@
+import { router } from 'expo-router';
 import { useState } from 'react';
+import { KeyboardAvoidingView } from 'react-native';
+import { useSelector } from 'react-redux';
 import { Button, H4, Input, Spinner, Text, YStack, getTokens } from 'tamagui';
 import { useColors } from '../../constants/Colors';
-import { router } from 'expo-router';
-import { KeyboardAvoidingView } from 'react-native';
-import { Color } from '../../types/makerspaceServer';
-import React from 'react';
-import { handleConnect } from '../../util/handleURL';
 import { currentServerSelector } from '../../state/slices/makerspacesSlice';
-import { useSelector } from 'react-redux';
+import { Color } from '../../types/makerspaceServer';
+import { handleConnect } from '../../util/handleURL';
 
 export default function ConnectManually() {
 

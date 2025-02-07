@@ -1,21 +1,14 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { SplashScreen, Stack, router } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
-import { useColorScheme } from 'react-native';
-import { TamaguiProvider } from 'tamagui';
-import config from '../tamagui.config';
-import { useLoadFonts } from './fontLoader';
-import { MakerspaceConfig } from '../types/makerspaceServer';
-import { getCurrentServer } from '../util/makerspaces';
-import { useColors } from '../constants/Colors';
-import { View } from '../components/Themed';
-import { configAxiosInterceptors } from '../util/handleError';
+import { SplashScreen, Stack } from 'expo-router';
+import { useEffect } from 'react';
 import { Provider, useSelector } from 'react-redux';
+import { TamaguiProvider } from 'tamagui';
+import { darkModeSelector, fetchCurrentServerId, fetchServers } from '../state/slices/makerspacesSlice';
 import { store, useAppDispatch } from '../state/store';
-import { currentServerSelector, darkModeSelector, fetchCurrentServerId, fetchServers } from '../state/slices/makerspacesSlice';
-import { fetchLocationGroups, fetchMachineGroups, fetchMachines } from '../state/slices/machinesSlice';
+import config from '../tamagui.config';
+import { configAxiosInterceptors } from '../util/handleError';
 
 export {
     // Catch any errors thrown by the Layout component.

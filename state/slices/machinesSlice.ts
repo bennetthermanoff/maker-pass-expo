@@ -1,11 +1,10 @@
 import { createAsyncThunk, createSelector, createSlice, Dispatch } from '@reduxjs/toolkit';
-import { has, update } from 'lodash';
+import { getLocationGroupsFromServer, getMachineGroupsFromServer } from '../../hooks/useMachineGroups';
+import { disableMachineRoute, getMachinesFromServer } from '../../hooks/useMachines';
 import { LocationGroupArray, LocationGroupMap, Machine, MachineGroupArray, MachineGroupMap } from '../../types/machine';
 import { MakerspaceConfig } from '../../types/makerspaceServer';
-import { disableMachineRoute, getMachinesFromServer } from '../../hooks/useMachines';
+import { cacheCurrentLocation } from '../../util/locationCache';
 import { getImage, getImageIDs, setImage } from '../../util/machineImageCache';
-import { cacheCurrentLocation, getLocation } from '../../util/locationCache';
-import { getLocationGroupsFromServer, getMachineGroupsFromServer } from '../../hooks/useMachineGroups';
 import { addOrUpdateServer } from '../../util/makerspaces';
 
 export const machinesSlice = createSlice({

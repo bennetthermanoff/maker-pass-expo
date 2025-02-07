@@ -1,13 +1,11 @@
+import { LinearGradient } from '@tamagui/linear-gradient';
+import { Plus } from '@tamagui/lucide-icons';
+import { router } from 'expo-router';
 import { Button, H2, Spacer, Text, YStack } from 'tamagui';
 import BlurHeader from '../../components/BlurHeader';
 import { Colors, useColors } from '../../constants/Colors';
-import { useMachineGroups } from '../../hooks/useMachineGroups';
-import { Machine, MachineGroupArray, MachineGroupBody, PermissionGroup } from '../../types/machine';
-import { LinearGradient } from '@tamagui/linear-gradient';
-import { router } from 'expo-router';
-import { Plus } from '@tamagui/lucide-icons';
-import { ViewProps } from '../../components/Themed';
 import { usePermissionGroups } from '../../hooks/usePermissionGroups';
+import { Machine, PermissionGroup } from '../../types/machine';
 
 export default function ManageMachineGroups(){
     const colors = useColors();

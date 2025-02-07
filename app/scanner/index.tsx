@@ -1,15 +1,11 @@
-import { useEffect, useState } from 'react';
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import { H1, H3, Spinner, XStack, YStack } from 'tamagui';
-import { StyleSheet, Text } from 'react-native';
-import { goHomeOnBarAndCallFinished, handleURL } from '../../util/handleURL';
 import { router } from 'expo-router';
-import { Button } from 'tamagui';
-import { useColors } from '../../constants/Colors';
-import BlurHeader from '../../components/BlurHeader';
-import { goHome } from '../../util/goHome';
+import { useEffect, useState } from 'react';
 import { interpolate } from 'react-native-reanimated';
+import { Button, H1, Spinner, XStack, YStack } from 'tamagui';
+import { useColors } from '../../constants/Colors';
 import { GLOBAL } from '../../global';
+import { goHomeOnBarAndCallFinished, handleURL } from '../../util/handleURL';
 
 export default function Scanner() {
     const [hasPermission, setHasPermission] = useState<null|Boolean>(null);

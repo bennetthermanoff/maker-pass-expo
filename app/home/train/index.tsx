@@ -1,18 +1,17 @@
-import { Input, YStack, Text, XStack, getTokens, Button } from 'tamagui';
-import BlurHeader from '../../../components/BlurHeader';
-import React, { useEffect, useState } from 'react';
-import { PermissionObject, User, UserType } from '../../../types/user';
-import { useColors } from '../../../constants/Colors';
-import { getAuthHeaders } from '../../../util/authRoutes';
-import axios from 'axios';
-import { Alert, KeyboardAvoidingView, NativeSyntheticEvent, Platform, TextInputChangeEventData, ViewStyle } from 'react-native';
-import { router } from 'expo-router';
-import DropdownSelect from 'react-native-input-select';
-import { Color, MakerspaceConfig } from '../../../types/makerspaceServer';
-import { useMachines } from '../../../hooks/useMachines';
-import { usePermissionGroups } from '../../../hooks/usePermissionGroups';
 import { Check } from '@tamagui/lucide-icons';
+import axios from 'axios';
+import { router } from 'expo-router';
 import { debounce } from 'lodash';
+import React, { useEffect, useState } from 'react';
+import { Alert, KeyboardAvoidingView, NativeSyntheticEvent, Platform, TextInputChangeEventData, ViewStyle } from 'react-native';
+import DropdownSelect from 'react-native-input-select';
+import { Button, Input, Text, XStack, YStack, getTokens } from 'tamagui';
+import BlurHeader from '../../../components/BlurHeader';
+import { useColors } from '../../../constants/Colors';
+import { usePermissionGroups } from '../../../hooks/usePermissionGroups';
+import { Color, MakerspaceConfig } from '../../../types/makerspaceServer';
+import { PermissionObject, User, UserType } from '../../../types/user';
+import { getAuthHeaders } from '../../../util/authRoutes';
 
 export default function SearchUser() {
     const [users, setUsers] = useState<User[]>([]);

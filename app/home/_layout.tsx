@@ -1,13 +1,10 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Tabs } from 'expo-router';
-import { Pressable, View, useColorScheme } from 'react-native';
-
-import Colors, { useColors } from '../../constants/Colors';
-import { YStack, getTokens } from 'tamagui';
-import { Color } from '../../types/makerspaceServer';
-import { BlurView } from 'expo-blur';
+import { Tabs } from 'expo-router';
 import { useSelector } from 'react-redux';
+import { getTokens } from 'tamagui';
+import { useColors } from '../../constants/Colors';
 import { currentServerSelector } from '../../state/slices/makerspacesSlice';
+import { Color } from '../../types/makerspaceServer';
 
 /**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/

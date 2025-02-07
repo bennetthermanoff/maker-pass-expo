@@ -1,15 +1,15 @@
-import { useState } from 'react';
-import { Button, H2, H4, Input, Spinner, Text, XStack, YStack, getTokens } from 'tamagui';
-import { useColors } from '../../constants/Colors';
-import { router } from 'expo-router';
 import axios from 'axios';
-import { addServerCredentials } from '../../util/makerspaces';
-import { goHome } from '../../util/goHome';
+import { router } from 'expo-router';
+import { useState } from 'react';
 import { KeyboardAvoidingView } from 'react-native';
-import { Color } from '../../types/makerspaceServer';
+import { useSelector } from 'react-redux';
+import { Button, H2, H4, Input, Spinner, Text, YStack, getTokens } from 'tamagui';
+import { useColors } from '../../constants/Colors';
 import { GLOBAL } from '../../global';
 import { currentServerSelector } from '../../state/slices/makerspacesSlice';
-import { useSelector } from 'react-redux';
+import { Color } from '../../types/makerspaceServer';
+import { goHome } from '../../util/goHome';
+import { addServerCredentials } from '../../util/makerspaces';
 
 export default function LoginScreen() {
 

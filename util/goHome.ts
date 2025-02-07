@@ -1,7 +1,7 @@
 import { router } from 'expo-router';
+import { GLOBAL } from '../global';
 import { clearStackGoTo } from './clearStackGoTo';
 import { getCurrentServer, removeServerCredentials } from './makerspaces';
-import { GLOBAL } from '../global';
 
 export const goHome = async() => {
     //if no makerspace, root
