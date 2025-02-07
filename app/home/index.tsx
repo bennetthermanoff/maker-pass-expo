@@ -7,16 +7,15 @@ import { Button, H2, ScrollView, YStack } from 'tamagui';
 import BlurHeader from '../../components/BlurHeader';
 import { LargeBentoBox } from '../../components/LargeBentoBox';
 import { useColors } from '../../constants/Colors';
-import { useLocation } from '../../hooks/useLocation';
-import { fetchLocationGroups, fetchMachineGroups, fetchMachines, selectActiveMachinesForUserFactory, selectLoading, selectMachineGroups } from '../../state/slices/machinesSlice';
+import { fetchLocationGroups, fetchMachineGroups, fetchMachines, selectActiveMachinesForUserFactory, selectCurrentLocationGroup, selectLoading, selectMachineGroups } from '../../state/slices/machinesSlice';
 import { currentServerSelector } from '../../state/slices/makerspacesSlice';
 import { useAppDispatch } from '../../state/store';
 export default function Make() {
     const colors = useColors();
     const machineGroupMap = useSelector(selectMachineGroups);
     const makerspace = useSelector(currentServerSelector);
-    const { locationMap, location } = useLocation();
     const activeMachines = useSelector(selectActiveMachinesForUserFactory(makerspace));
+    const locationGroup = useSelector(selectCurrentLocationGroup);
     const loading = useSelector(selectLoading);
     const dispatch = useAppDispatch();
 
@@ -41,7 +40,7 @@ export default function Make() {
     useEffect(handleRefresh,[makerspace, dispatch]);
     return (
         <>
-            <BlurHeader title="MakerPass" subtitle={'@' + location?.name} isHero pullToRefresh={handleRefresh} refreshing={loading}>
+            <BlurHeader title="MakerPass" subtitle={'@' + locationGroup?.name} isHero pullToRefresh={handleRefresh} refreshing={loading}>
                 <YStack
                     aspectRatio={1.9} //Important!
 

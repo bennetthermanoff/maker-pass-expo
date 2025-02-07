@@ -1,11 +1,12 @@
 import { createAsyncThunk, createSelector, createSlice, Dispatch } from '@reduxjs/toolkit';
 import { getLocationGroupsFromServer, getMachineGroupsFromServer } from '../../hooks/useMachineGroups';
 import { disableMachineRoute, getMachinesFromServer } from '../../hooks/useMachines';
-import { LocationGroupArray, LocationGroupMap, Machine, MachineGroupArray, MachineGroupMap } from '../../types/machine';
+import { LocationGroupArray, LocationGroupBody, LocationGroupMap, Machine, MachineGroupArray, MachineGroupMap } from '../../types/machine';
 import { MakerspaceConfig } from '../../types/makerspaceServer';
 import { cacheCurrentLocation } from '../../util/locationCache';
 import { getImage, getImageIDs, setImage } from '../../util/machineImageCache';
 import { addOrUpdateServer } from '../../util/makerspaces';
+import { currentServerSelector } from './makerspacesSlice';
 
 export const machinesSlice = createSlice({
     name: 'machines',
@@ -155,6 +156,35 @@ export const selectLocationGroupsAsArray = (state:any) => {
     }
     return locationGroupArray;
 };
+export const selectCurrentLocationGroup = createSelector(
+    [currentServerSelector, selectMachineGroups, selectLocationGroups],
+    (makerspace:MakerspaceConfig|null, machineGroups:MachineGroupMap, locationMap:LocationGroupMap) => {
+        if (!makerspace){
+            return null;
+        }
+        if (makerspace?.currentLocation){
+            const location = locationMap[makerspace.currentLocation];
+            if (location){
+                return location;
+            }
+        } else {
+            if ( Object.keys(locationMap).length > 0 && makerspace){
+                //set default location to first location
+                const location = Object.keys(locationMap)[0];
+                addOrUpdateServer({ ...makerspace, currentLocation: location });
+                return locationMap[Object.keys(locationMap)[0]];
+            }
+        }
+        // we have no locations, so default to makerspace name and all groups
+        const machineGroupIds = Object.keys(machineGroups);
+        addOrUpdateServer({ ...makerspace, currentLocation: undefined });
+        return {
+            name: makerspace?.name || '',
+            groups: machineGroupIds,
+            geoFences: [],
+        }as LocationGroupBody;
+    },
+);
 
 export const selectActiveMachinesForUserFactory = (makerspace: MakerspaceConfig | null) =>
     createSelector(
