@@ -9,14 +9,14 @@ import { parseGroupName } from '../../util/parseGroupName';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { fetchMachineGroups, selectLoading, selectMachineGroupAsArray, selectMachines } from '../../state/slices/machinesSlice';
-import { useMakerspace } from '../../hooks/useMakerspace';
 import { useAppDispatch } from '../../state/store';
+import { currentServerSelector } from '../../state/slices/makerspacesSlice';
 
 export default function ManageMachineGroups(){
     const machineGroups = useSelector(selectMachineGroupAsArray);
     const machines = useSelector(selectMachines);
     const loading = useSelector(selectLoading);
-    const makerspace = useMakerspace();
+    const makerspace = useSelector(currentServerSelector);
     const dispatch = useAppDispatch();
     const colors = useColors();
     const getMachineGroups = async () => {
@@ -24,9 +24,6 @@ export default function ManageMachineGroups(){
             dispatch(fetchMachineGroups(makerspace));
         }
     };
-    useEffect(() => {
-        getMachineGroups();
-    },[makerspace]);
 
     return (
         <>

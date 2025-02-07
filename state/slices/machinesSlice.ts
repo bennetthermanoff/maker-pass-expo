@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, Dispatch } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSelector, createSlice, Dispatch } from '@reduxjs/toolkit';
 import { has, update } from 'lodash';
 import { LocationGroupArray, LocationGroupMap, Machine, MachineGroupArray, MachineGroupMap } from '../../types/machine';
 import { MakerspaceConfig } from '../../types/makerspaceServer';
@@ -157,19 +157,40 @@ export const selectLocationGroupsAsArray = (state:any) => {
     return locationGroupArray;
 };
 
-export const selectActiveMachinesForUserFactory = (makerspace:MakerspaceConfig|null) => (state:any) => {
-    if (!makerspace?.user){
-        return [];
-    }
+export const selectActiveMachinesForUserFactory = (makerspace: MakerspaceConfig | null) =>
+    createSelector(
+        [selectMachines, selectLocationGroups, selectMachineGroups, (state: any) => makerspace ],
+        (machines, locationGroups, machineGroups, makerspace) => {
+            if (!makerspace?.user) {
+                return [];
+            }
 
-    const machines = selectMachines(state);
-    if ( makerspace?.user?.userType === 'user'){
-        //only show machines that the user activated
-        return machines.filter((machine) => machine.lastUsedBy === makerspace.user?.userId);
+            if (makerspace.user.userType === 'user') {
+            // only show machines that the user activated
+                return machines.filter((machine) => machine.lastUsedBy === makerspace.user?.userId);
+            } else {
+                // show all active machines in current location
+                if (!makerspace.currentLocation){
+                    return machines.filter((machine) => machine.enabled);
+                }
+                const currentLocationId = makerspace.currentLocation;
+                const machinesInLocation = findMachineIdsInLocationGroups({ currentLocationId, locationGroups, machineGroups });
+                return machines.filter((machine) => machine.enabled && machinesInLocation.includes(machine.id));
+            }
+        },
+    );
+
+export const findMachineIdsInLocationGroups = ({ currentLocationId, locationGroups, machineGroups }:
+        { currentLocationId:string, locationGroups:LocationGroupMap, machineGroups:MachineGroupMap }) => {
+    const machineIds:string[] = [];
+    const locationGroup = locationGroups[currentLocationId];
+    if (locationGroup){
+        locationGroup.groups.forEach((groupId) => {
+            const group = machineGroups[groupId];
+            if (group){
+                machineIds.push(...group.machineIds);
+            }
+        });
     }
-    else {
-        //show  all machines in current location (TODO: LOCATION NOT IMPLEMENTED YET)
-        return machines.filter((machine) => machine.enabled);
-    }
+    return machineIds;
 };
-

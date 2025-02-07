@@ -6,17 +6,18 @@ import { Wrench } from '@tamagui/lucide-icons';
 import { useColors } from '../../../constants/Colors';
 import { router } from 'expo-router';
 import QRCode from 'react-native-qrcode-svg';
-import { useMakerspace } from '../../../hooks/useMakerspace';
 import axios from 'axios';
 import { getAuthHeaders } from '../../../util/authRoutes';
 import keyLogo from '../../../assets/images/key.png';
 import { ImageSourcePropType } from 'react-native';
 import { Color } from '../../../types/makerspaceServer';
 import { copyQR } from '../../../util/handleURL';
+import { currentServerSelector } from '../../../state/slices/makerspacesSlice';
+import { useSelector } from 'react-redux';
 
 export default function Admin() {
     const colors = useColors();
-    const makerspace = useMakerspace();
+    const makerspace = useSelector(currentServerSelector);
     const [registrationKey, setRegistrationKey] = useState<string>('');
 
     const getQR = () => `makerpass://--/makerspace/config?url=${makerspace?.serverAddress}&port=${makerspace?.serverPort}&registrationType=user&registrationKey=${registrationKey}`;

@@ -1,4 +1,4 @@
-import { tanStackColors, useAsyncColors, useColors } from '../constants/Colors';
+import { tanStackColors, useColors } from '../constants/Colors';
 import splash from '../assets/images/splash.png';
 import splashDark from '../assets/images/splash-dark.png';
 import { useEffect, useState } from 'react';
@@ -8,11 +8,22 @@ import { Appearance, ColorSchemeName, ImageSourcePropType } from 'react-native';
 import { SplashScreen, router, useLocalSearchParams } from 'expo-router';
 import { goHome } from '../util/goHome';
 import { Color } from '../types/makerspaceServer';
-import { GLOBAL } from '../global';
+import { fetchLocationGroups, fetchMachineGroups, fetchMachines } from '../state/slices/machinesSlice';
+import { currentServerSelector } from '../state/slices/makerspacesSlice';
+import { useSelector } from 'react-redux';
+import { useAppDispatch } from '../state/store';
 
 export default function Splash() {
-    const local = useLocalSearchParams();
-    const colors = useAsyncColors();
+    const colors = useColors();
+    const makerspace = useSelector(currentServerSelector);
+    const dispatch = useAppDispatch();
+    useEffect(() => {
+        if (makerspace?.id){
+            dispatch(fetchMachines(makerspace));
+            dispatch(fetchMachineGroups(makerspace));
+            dispatch(fetchLocationGroups(makerspace));
+        }
+    }, [makerspace]);
     const [endColor, setEndColor] = useState<string>(getTokens().color[`$blue4${Appearance.getColorScheme() === 'dark' ? 'Dark' : 'Light'}`].val);
     const colorScheme = Appearance.getColorScheme();
     const interp  = useSharedValue(0);
@@ -54,3 +65,7 @@ export default function Splash() {
     );
 
 }
+function dispatch(arg0: any) {
+    throw new Error('Function not implemented.');
+}
+

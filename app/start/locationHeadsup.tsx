@@ -1,16 +1,17 @@
 import { View, YStack, Image, Text, H2, Button } from 'tamagui';
 import { useColors } from '../../constants/Colors';
-import { useMakerspace } from '../../hooks/useMakerspace';
 import { ImageSourcePropType } from 'react-native';
 import Banner from '../../assets/images/banner.png';
 import BannerDark from '../../assets/images/banner-dark.png';
 import { useEffect } from 'react';
 import { getForegroundPermissionsAsync, requestForegroundPermissionsAsync } from 'expo-location';
 import { router } from 'expo-router';
+import { currentServerSelector } from '../../state/slices/makerspacesSlice';
+import { useSelector } from 'react-redux';
 
 export default function LocationHeadsup() {
     const colors = useColors();
-    const makerspace = useMakerspace();
+    const makerspace = useSelector(currentServerSelector);
 
     useEffect(() => {
         const getPermissions = async () => {

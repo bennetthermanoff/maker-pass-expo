@@ -2,7 +2,6 @@
 import { Button, Text, XStack, Image } from 'tamagui';
 import { useColors } from '../../../constants/Colors';
 import { removeServer } from '../../../util/makerspaces';
-import { useMakerspace } from '../../../hooks/useMakerspace';
 import { router } from 'expo-router';
 import BlurHeader from '../../../components/BlurHeader';
 import { clearImages } from '../../../util/machineImageCache';
@@ -15,10 +14,12 @@ import axios from 'axios';
 import { getAuthHeaders } from '../../../util/authRoutes';
 import { MakerspaceConfig } from '../../../types/makerspaceServer';
 import { handleChangePassword } from '../../../util/handleChangePassword';
+import { currentServerSelector } from '../../../state/slices/makerspacesSlice';
+import { useSelector } from 'react-redux';
 
 export default function Machines() {
     const colors = useColors();
-    const makerspace = useMakerspace();
+    const makerspace = useSelector(currentServerSelector);
 
     const handleDeleteAccount = async () => {
         if (makerspace?.id){

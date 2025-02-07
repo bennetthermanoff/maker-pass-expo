@@ -1,6 +1,5 @@
 import { router, useLocalSearchParams } from 'expo-router';
 import { Colors, useColors } from '../../constants/Colors';
-import { useMakerspace } from '../../hooks/useMakerspace';
 import { Machine, TagOutWithName } from '../../types/machine';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -8,12 +7,14 @@ import { getAuthHeaders } from '../../util/authRoutes';
 import BlurHeader from '../../components/BlurHeader';
 import { Button, H2, H3, H4, H5, Input, Spinner, Text, View, XStack, YStack } from 'tamagui';
 import { LinearGradient } from '@tamagui/linear-gradient';
+import { currentServerSelector } from '../../state/slices/makerspacesSlice';
+import { useSelector } from 'react-redux';
 
 export default function TagOutMachine(){
 
     const local = useLocalSearchParams();
     const colors = useColors();
-    const makerspace = useMakerspace();
+    const makerspace = useSelector(currentServerSelector);
     const getMachineInitialData = () => {
         const machine = JSON.parse(local.machine as string);
         return machine as Machine&{lastUsedByName:string|null};

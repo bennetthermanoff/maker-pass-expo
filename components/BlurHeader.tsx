@@ -12,8 +12,8 @@ import { parseGroupName } from '../util/parseGroupName';
 import { ChevronLeft } from '@tamagui/lucide-icons';
 import { router } from 'expo-router';
 
-export default function BlurHeader({ title, subtitle, isHero = false, hasBackButton = false, pullToRefresh, refreshing, children }:
-    { title: string, subtitle?: string, isHero?: boolean, hasBackButton?: boolean, children?: React.ReactNode, pullToRefresh?: () => void | Promise<void>, refreshing?: boolean }) {
+export default function BlurHeader({ title, subtitle, isHero = false, hasBackButton = false, subtitleOnPress, pullToRefresh, refreshing, children }:
+    { title: string, subtitle?: string, isHero?: boolean, hasBackButton?: boolean, subtitleOnPress?:()=>void, children?: React.ReactNode, pullToRefresh?: () => void | Promise<void>, refreshing?: boolean }) {
     const colors = useColors();
     const [scrollY, setScrollY] = useState(0);
     const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);

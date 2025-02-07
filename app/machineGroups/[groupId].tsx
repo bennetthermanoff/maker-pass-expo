@@ -14,13 +14,13 @@ import { getAuthHeaders } from '../../util/authRoutes';
 import { GLOBAL } from '../../global';
 import { useSelector } from 'react-redux';
 import { selectMachines } from '../../state/slices/machinesSlice';
-import { useMakerspace } from '../../hooks/useMakerspace';
+import { currentServerSelector } from '../../state/slices/makerspacesSlice';
 
 export default function EditMachineGroup(){
     const local = useLocalSearchParams();
     const colors = useColors();
     const machines = useSelector(selectMachines);
-    const makerspace = useMakerspace();
+    const makerspace = useSelector(currentServerSelector);
     const getMachineGroupInitialData = () => {
         if (local.groupId === 'new'){
             return { name:'',machineIds:[],geoFences:[] };

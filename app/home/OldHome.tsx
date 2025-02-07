@@ -2,7 +2,6 @@ import { Button, Card, Paragraph, Image, XStack, H2, CardProps, YStack, Circle, 
 import { AlertOctagon, AlertTriangle, Clock10 } from '@tamagui/lucide-icons';
 import  BlurHeader  from '../../components/BlurHeader';
 import { useColors, Colors } from '../../constants/Colors';
-import { useMakerspace } from '../../hooks/useMakerspace';
 import { router, useFocusEffect } from 'expo-router';
 import { Machine } from '../../types/machine';
 import { LinearGradient } from '@tamagui/linear-gradient';
@@ -16,6 +15,7 @@ import { omit } from 'lodash';
 import { useSelector } from 'react-redux';
 import { disableMachine, fetchMachineGroups, fetchMachines, selectLoading, selectMachineGroups, selectMachines } from '../../state/slices/machinesSlice';
 import { useAppDispatch } from '../../state/store';
+import { currentServerSelector } from '../../state/slices/makerspacesSlice';
 export type Page = {
     name:string;
     machines:Array<Machine & { lastUsedByName:string|null }>;
@@ -27,7 +27,7 @@ export default function Machines() {
     const [currentPage, setCurrentPage] = useState(0);
     const machineGroupMap = useSelector(selectMachineGroups);
     const machines = useSelector(selectMachines);
-    const makerspace = useMakerspace();
+    const makerspace = useSelector(currentServerSelector);
     const loading = useSelector(selectLoading);
     const dispatch = useAppDispatch();
 

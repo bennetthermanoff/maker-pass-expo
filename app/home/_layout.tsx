@@ -3,10 +3,11 @@ import { Link, Tabs } from 'expo-router';
 import { Pressable, View, useColorScheme } from 'react-native';
 
 import Colors, { useColors } from '../../constants/Colors';
-import { useMakerspace } from '../../hooks/useMakerspace';
 import { YStack, getTokens } from 'tamagui';
 import { Color } from '../../types/makerspaceServer';
 import { BlurView } from 'expo-blur';
+import { useSelector } from 'react-redux';
+import { currentServerSelector } from '../../state/slices/makerspacesSlice';
 
 /**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
@@ -21,7 +22,7 @@ function TabBarIcon(props: {
 export default function TabLayout() {
     const colors = useColors();
 
-    const makerspace = useMakerspace();
+    const makerspace = useSelector(currentServerSelector);
     return (
 
         <Tabs

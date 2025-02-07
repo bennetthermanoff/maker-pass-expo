@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { Machine, MachineGroupArray, TagOut } from '../types/machine';
 import { debounce } from 'lodash';
 import axios from 'axios';
-import { useMakerspace } from './useMakerspace';
 import { MakerspaceConfig } from '../types/makerspaceServer';
 import { clearStackGoTo } from '../util/clearStackGoTo';
 import { router } from 'expo-router';
@@ -12,10 +11,12 @@ import { getImage, getImageIDs, setImage } from '../util/machineImageCache';
 import { GLOBAL } from '../global';
 import * as Haptics from 'expo-haptics';
 import { cacheCurrentLocation } from '../util/locationCache';
+import { currentServerSelector } from '../state/slices/makerspacesSlice';
+import { useSelector } from 'react-redux';
 
 export const useMachines = () => {
     const [machines, setMachines] = useState <Array<Machine&{lastUsedByName:string|null}>>([]);
-    const makerspace = useMakerspace();
+    const makerspace = useSelector(currentServerSelector);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<null|string>(null);
 

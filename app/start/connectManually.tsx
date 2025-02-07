@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Button, H4, Input, Spinner, Text, YStack, getTokens } from 'tamagui';
 import { useColors } from '../../constants/Colors';
-import { useMakerspace } from '../../hooks/useMakerspace';
 import { router } from 'expo-router';
 import { KeyboardAvoidingView } from 'react-native';
 import { Color } from '../../types/makerspaceServer';
 import React from 'react';
 import { handleConnect } from '../../util/handleURL';
+import { currentServerSelector } from '../../state/slices/makerspacesSlice';
+import { useSelector } from 'react-redux';
 
 export default function ConnectManually() {
 
@@ -22,7 +23,7 @@ export default function ConnectManually() {
         registrationType:'user',
     });
     const colors = useColors();
-    const makerspace = useMakerspace();
+    const makerspace = useSelector(currentServerSelector);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string>('');
 

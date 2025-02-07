@@ -4,13 +4,14 @@ import * as Linking from 'expo-linking';
 import { useColors } from '../../constants/Colors';
 import { router } from 'expo-router';
 import { removeServer } from '../../util/makerspaces';
-import { useMakerspace } from '../../hooks/useMakerspace';
 import Banner from '../../assets/images/banner.png';
 import BannerDark from '../../assets/images/banner-dark.png';
+import { currentServerSelector } from '../../state/slices/makerspacesSlice';
+import { useSelector } from 'react-redux';
 export default function LoginOrRegister() {
     const url = Linking.useURL();
     const colors = useColors();
-    const makerspace = useMakerspace();
+    const makerspace = useSelector(currentServerSelector);
 
     return (
         <>

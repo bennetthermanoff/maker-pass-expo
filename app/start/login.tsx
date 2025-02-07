@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Button, H2, H4, Input, Spinner, Text, XStack, YStack, getTokens } from 'tamagui';
 import { useColors } from '../../constants/Colors';
-import { useMakerspace } from '../../hooks/useMakerspace';
 import { router } from 'expo-router';
 import axios from 'axios';
 import { addServerCredentials } from '../../util/makerspaces';
@@ -9,6 +8,8 @@ import { goHome } from '../../util/goHome';
 import { KeyboardAvoidingView } from 'react-native';
 import { Color } from '../../types/makerspaceServer';
 import { GLOBAL } from '../../global';
+import { currentServerSelector } from '../../state/slices/makerspacesSlice';
+import { useSelector } from 'react-redux';
 
 export default function LoginScreen() {
 
@@ -17,7 +18,7 @@ export default function LoginScreen() {
         password?: string;
     }>({});
     const colors = useColors();
-    const makerspace = useMakerspace();
+    const makerspace = useSelector(currentServerSelector);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string>('');
 

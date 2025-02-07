@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useMakerspace } from './useMakerspace';
 import { Machine, MachineGroupArray, MachineGroupMap, PermissionGroup, PermissionGroupArray } from '../types/machine';
 import { getMachinesFromServer } from './useMachines';
 import { debounce } from 'lodash';
@@ -7,13 +6,15 @@ import { GLOBAL } from '../global';
 import { MakerspaceConfig } from '../types/makerspaceServer';
 import axios from 'axios';
 import { getAuthHeaders } from '../util/authRoutes';
+import { currentServerSelector } from '../state/slices/makerspacesSlice';
+import { useSelector } from 'react-redux';
 
 export const usePermissionGroups = () => {
     const [permissionGroups,setMachineGroups] = useState<PermissionGroupArray>([]);
     const [machines,setMachines] = useState<Machine[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<null|string>(null);
-    const makerspace = useMakerspace();
+    const makerspace = useSelector(currentServerSelector);
 
     const getMachineGroups = async () => {
         setLoading(true);

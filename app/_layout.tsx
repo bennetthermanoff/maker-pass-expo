@@ -2,7 +2,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { SplashScreen, Stack, router } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useColorScheme } from 'react-native';
 import { TamaguiProvider } from 'tamagui';
 import config from '../tamagui.config';
@@ -12,8 +12,10 @@ import { getCurrentServer } from '../util/makerspaces';
 import { useColors } from '../constants/Colors';
 import { View } from '../components/Themed';
 import { configAxiosInterceptors } from '../util/handleError';
-import { Provider } from 'react-redux';
-import { store } from '../state/store';
+import { Provider, useSelector } from 'react-redux';
+import { store, useAppDispatch } from '../state/store';
+import { currentServerSelector, darkModeSelector, fetchCurrentServerId, fetchServers } from '../state/slices/makerspacesSlice';
+import { fetchLocationGroups, fetchMachineGroups, fetchMachines } from '../state/slices/machinesSlice';
 
 export {
     // Catch any errors thrown by the Layout component.
@@ -73,10 +75,19 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-    const colorScheme = useColorScheme();
+
+    const dispatch = useAppDispatch();
+    // this loads server data from secure store, from here on we can use redux
+    // all actions to redux store also update secure store, see makerspacesSlice.ts
+    useEffect(() => {
+        dispatch(fetchCurrentServerId());
+        dispatch(fetchServers());
+    }, []);
+
+    const isDarkMode = useSelector(darkModeSelector);
     return (
         <TamaguiProvider config={config}>
-            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+            <ThemeProvider value={isDarkMode ? DarkTheme : DefaultTheme}>
                 <Stack
                     screenOptions={{
                         headerShown: false,

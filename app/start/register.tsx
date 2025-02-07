@@ -1,7 +1,6 @@
 import { Button, H2, H4, Input, Label, ScrollView, Spinner, XStack, YStack, getTokens } from 'tamagui';
 import DropdownSelect from 'react-native-input-select';
 import { useColors } from '../../constants/Colors';
-import { useMakerspace } from '../../hooks/useMakerspace';
 import { useEffect, useState } from 'react';
 import { router, useGlobalSearchParams } from 'expo-router';
 import { AdditionalInfoField, Color, MakerspaceTheme } from '../../types/makerspaceServer';
@@ -9,17 +8,18 @@ import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/d
 import { KeyboardAvoidingView, Platform } from 'react-native';
 import * as Location from 'expo-location';
 import Checkbox from 'expo-checkbox';
-
 import axios from 'axios';
 import { DropdownProps } from 'react-native-input-select/lib/typescript/types/index.types';
 import { GLOBAL } from '../../global';
 import React from 'react';
 import { goHome } from '../../util/goHome';
+import { currentServerSelector } from '../../state/slices/makerspacesSlice';
+import { useSelector } from 'react-redux';
 
 export default function Register(){
 
     const colors = useColors();
-    const makerspace = useMakerspace();
+    const makerspace = useSelector(currentServerSelector);
     const [loading, setLoading] = useState(false);
     const [additionalInfo, setAdditionalInfo] = useState<AdditionalInfoField[]>([]);
     const [formData, setFormData] = useState<{[key:string]:string|boolean}>({});

@@ -3,20 +3,23 @@ import { LocationGroupBody, LocationGroupMap, MachineGroupMap } from '../types/m
 import { MakerspaceConfig } from '../types/makerspaceServer';
 import { useSelector } from 'react-redux';
 import { selectLocationGroups, selectMachineGroups } from '../state/slices/machinesSlice';
-import { useMakerspace } from './useMakerspace';
 import { addOrUpdateServer } from '../util/makerspaces';
+import { currentServerSelector } from '../state/slices/makerspacesSlice';
 
 export const useLocation = () => {
     const [location, setLocation] = useState<LocationGroupBody|null>(null);
     const locationMap = useSelector(selectLocationGroups)as LocationGroupMap;
     const machineGroups = useSelector(selectMachineGroups)as MachineGroupMap;
-    const makerspace = useMakerspace();
+    const makerspace = useSelector(currentServerSelector);
     useEffect(() => {
         setLocation(getCurrentLocation(makerspace, machineGroups, locationMap));
     }, [makerspace, machineGroups, locationMap]);
     return { location, locationMap };
 };
 export const getCurrentLocation = (makerspace:MakerspaceConfig|null, machineGroups:MachineGroupMap, locationMap:LocationGroupMap) => {
+    if (!makerspace){
+        return null;
+    }
     if (makerspace?.currentLocation){
         const location = locationMap[makerspace.currentLocation];
         if (location){
@@ -32,6 +35,7 @@ export const getCurrentLocation = (makerspace:MakerspaceConfig|null, machineGrou
     }
     // we have no locations, so default to makerspace name and all groups
     const machineGroupIds = Object.keys(machineGroups);
+    addOrUpdateServer({ ...makerspace, currentLocation: undefined });
     return {
         name: makerspace?.name || '',
         groups: machineGroupIds,
