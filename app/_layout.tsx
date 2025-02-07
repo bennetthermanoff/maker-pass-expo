@@ -3,9 +3,10 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from 'expo-router';
 import { useEffect } from 'react';
+import { Appearance } from 'react-native';
 import { Provider, useSelector } from 'react-redux';
 import { TamaguiProvider } from 'tamagui';
-import { darkModeSelector, fetchCurrentServerId, fetchServers } from '../state/slices/makerspacesSlice';
+import { darkModeSelector, fetchCurrentServerId, fetchServers, setDarkMode } from '../state/slices/makerspacesSlice';
 import { store, useAppDispatch } from '../state/store';
 import config from '../tamagui.config';
 import { configAxiosInterceptors } from '../util/handleError';
@@ -75,6 +76,12 @@ function RootLayoutNav() {
     useEffect(() => {
         dispatch(fetchCurrentServerId());
         dispatch(fetchServers());
+        //listen for dark mode changes
+        Appearance.getColorScheme() === 'dark' ? dispatch(setDarkMode(true)) : dispatch(setDarkMode(false));
+        Appearance.addChangeListener(({ colorScheme }) => {
+            dispatch(setDarkMode(colorScheme === 'dark'));
+        });
+
     }, []);
 
     const isDarkMode = useSelector(darkModeSelector);

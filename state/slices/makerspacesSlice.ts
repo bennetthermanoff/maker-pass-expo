@@ -118,6 +118,7 @@ export const {
     addServerCredentials,
     removeServerCredentials,
     setTheme,
+    setDarkMode,
 } = makerspacesSlice.actions;
 
 export const currentServerSelector = (state: { makerspaces: MakerspacesState }) => {
