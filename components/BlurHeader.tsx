@@ -12,8 +12,8 @@ import { useColors } from '../constants/Colors';
 import { Color } from '../types/makerspaceServer';
 import { parseGroupName } from '../util/parseGroupName';
 
-export default function BlurHeader({ title, subtitle, isHero = false, hasBackButton = false, subtitleOnPress, pullToRefresh, refreshing, children }:
-    { title: string, subtitle?: string, isHero?: boolean, hasBackButton?: boolean, subtitleOnPress?:()=>void, children?: React.ReactNode, pullToRefresh?: () => void | Promise<void>, refreshing?: boolean }) {
+export default function BlurHeader({ title, subtitle, isHero = false, hasBackButton = false, isTransparent = false, subtitleOnPress, pullToRefresh, refreshing, children }:
+    { title: string, subtitle?: string, isHero?: boolean, hasBackButton?: boolean, isTransparent?:boolean, subtitleOnPress?:()=>void, children?: React.ReactNode, pullToRefresh?: () => void | Promise<void>, refreshing?: boolean }) {
     const colors = useColors();
     const [scrollY, setScrollY] = useState(0);
     const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
@@ -94,7 +94,7 @@ export default function BlurHeader({ title, subtitle, isHero = false, hasBackBut
             </AnimatedBlurView>
 
             <ScrollView
-                backgroundColor={colors.background}
+                backgroundColor={isTransparent ? 'transparent' : colors.background}
                 onScroll={(event) => {
                     if (event.nativeEvent.contentOffset.y < 80){
                         setScrollY(event.nativeEvent.contentOffset.y);
@@ -116,14 +116,13 @@ export default function BlurHeader({ title, subtitle, isHero = false, hasBackBut
             >
 
                 <YStack
-                    backgroundColor={colors.background}
+                    backgroundColor={isTransparent ? 'transparent' : colors.background}
                     style={
                         {
                             flex: 1,
                             flexDirection: 'column',
                             justifyContent: 'flex-start',
                             minHeight: '100%',
-
                             paddingTop: 100,
                         }
                     }
@@ -188,8 +187,8 @@ export default function BlurHeader({ title, subtitle, isHero = false, hasBackBut
                                 [.8, 0, 0],
                                 Extrapolation.EXTEND,
                             ),
-
                         }}
+                        onPress={subtitleOnPress}
                     >{subtitle}</Text>}
                     {children}
                 </YStack>
