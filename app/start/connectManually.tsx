@@ -3,8 +3,7 @@ import { useState } from 'react';
 import { KeyboardAvoidingView } from 'react-native';
 import { useSelector } from 'react-redux';
 import { Button, H4, Input, Spinner, Text, YStack, getTokens } from 'tamagui';
-import { useColors } from '../../constants/Colors';
-import { currentServerSelector } from '../../state/slices/makerspacesSlice';
+import { colorSelector, currentServerSelector } from '../../state/slices/makerspacesSlice';
 import { Color } from '../../types/makerspaceServer';
 import { handleConnect } from '../../util/handleURL';
 
@@ -21,7 +20,7 @@ export default function ConnectManually() {
         registrationKey:'',
         registrationType:'user',
     });
-    const colors = useColors();
+    const colors = useSelector(colorSelector);
     const makerspace = useSelector(currentServerSelector);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string>('');

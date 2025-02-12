@@ -1,21 +1,19 @@
-import axios from 'axios';
-import * as Haptics from 'expo-haptics';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { GLOBAL } from '../global';
-import { currentServerSelector } from '../state/slices/makerspacesSlice';
+import { currentServerSelector, handleLoginError } from '../state/slices/makerspacesSlice';
+import { useAppDispatch } from '../state/store';
 import { Machine } from '../types/machine';
-import { MakerspaceConfig } from '../types/makerspaceServer';
-import { getAuthHeaders } from '../util/authRoutes';
-import { handleUserLoginError } from '../util/goHome';
 import { cacheCurrentLocation } from '../util/locationCache';
 import { getImage, getImageIDs, setImage } from '../util/machineImageCache';
+import { disableMachineRoute, getMachinesFromServer } from '../util/machineRoutes';
 
 export const useMachines = () => {
     const [machines, setMachines] = useState <Array<Machine&{lastUsedByName:string|null}>>([]);
     const makerspace = useSelector(currentServerSelector);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<null|string>(null);
+    const dispatch = useAppDispatch();
 
     const getMachines = async () => {
         setLoading(true);
@@ -49,7 +47,7 @@ export const useMachines = () => {
         }
         catch (err:any){
             if (err.response.status === 401){
-                handleUserLoginError();
+                dispatch(handleLoginError());
             }
             setError(JSON.stringify(err.response.data));
             setLoading(false);
@@ -78,7 +76,7 @@ export const useMachines = () => {
         } catch (err:any){
             alert(err);
             if (err.response.status === 401){
-                handleUserLoginError();
+                dispatch(handleLoginError());
             }
             setError(JSON.stringify(err));
         }
@@ -94,32 +92,5 @@ export const useMachines = () => {
     }, [makerspace]);
 
     return { machines, loading, error, getMachines, disableMachine, makerspace };
-};
-
-export const getMachinesFromServer = async (makerspace:MakerspaceConfig, withImages?:boolean) => {
-    try {
-        const response = await axios.get(
-            `${makerspace.serverAddress}:${makerspace.serverPort}/api/machine/all${withImages ? '/photos' : ''}`,
-            getAuthHeaders(makerspace),
-        );
-        return response.data.machines as Array<Machine>;
-    }
-    catch (e){
-        return [];
-    }
-};
-
-export const disableMachineRoute = async (machineId:string, makerspace:MakerspaceConfig) => {
-    try {
-        const response = await axios.get(
-            `${makerspace.serverAddress}:${makerspace.serverPort}/api/machine/disable/single/${machineId}`,
-            getAuthHeaders(makerspace),
-        );
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-        return response.data as {message:string, machine:Machine};
-    }
-    catch (e){
-        return { message: '', machine: {} as Machine };
-    }
 };
 

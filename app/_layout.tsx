@@ -52,12 +52,7 @@ export default function RootLayout() {
         if (error) throw error;
     }, [error]);
 
-    useEffect(() => {
-        configAxiosInterceptors();
-    }, []);
-
     if (!loaded) {
-
         return;
     }
 
@@ -76,6 +71,7 @@ function RootLayoutNav() {
     useEffect(() => {
         dispatch(fetchCurrentServerId());
         dispatch(fetchServers());
+        configAxiosInterceptors();
         //listen for dark mode changes
         Appearance.getColorScheme() === 'dark' ? dispatch(setDarkMode(true)) : dispatch(setDarkMode(false));
         Appearance.addChangeListener(({ colorScheme }) => {

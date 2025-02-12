@@ -3,17 +3,18 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { KeyboardAvoidingView, Platform, ViewStyle } from 'react-native';
 import DropdownSelect from 'react-native-input-select';
+import { useSelector } from 'react-redux';
 import { Button, Input, Section, YStack, getTokens } from 'tamagui';
 import BlurHeader from '../../components/BlurHeader';
-import { useColors } from '../../constants/Colors';
 import { useMachines } from '../../hooks/useMachines';
+import { colorSelector } from '../../state/slices/makerspacesSlice';
 import { PermissionGroup } from '../../types/machine';
 import { Color } from '../../types/makerspaceServer';
 import { getAuthHeaders } from '../../util/authRoutes';
 
 export default function EditPermissionGroup(){
     const local = useLocalSearchParams();
-    const colors = useColors();
+    const colors = useSelector(colorSelector);
     const { machines, loading, makerspace } = useMachines();
     const getPermissionGroupInitialData = () => {
         if (local.groupId === 'new'){

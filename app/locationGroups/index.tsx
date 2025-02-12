@@ -4,9 +4,9 @@ import { router } from 'expo-router';
 import { useSelector } from 'react-redux';
 import { Button, H2, Spacer, Text, YStack } from 'tamagui';
 import BlurHeader from '../../components/BlurHeader';
-import { Colors, useColors } from '../../constants/Colors';
+import { Colors } from '../../constants/Colors';
 import { fetchLocationGroups, selectLoading, selectLocationGroupsAsArray, selectMachineGroupAsArray } from '../../state/slices/machinesSlice';
-import { currentServerSelector } from '../../state/slices/makerspacesSlice';
+import { colorSelector, currentServerSelector } from '../../state/slices/makerspacesSlice';
 import { useAppDispatch } from '../../state/store';
 import { LocationGroupBody, MachineGroupArray } from '../../types/machine';
 import { parseGroupName } from '../../util/parseGroupName';
@@ -17,7 +17,7 @@ export default function ManageLocationGroups(){
     const loading = useSelector(selectLoading);
     const makerspace = useSelector(currentServerSelector);
     const dispatch = useAppDispatch();
-    const colors = useColors();
+    const colors = useSelector(colorSelector);
     const getLocationGroups = async () => {
         if (makerspace?.user){
             dispatch(fetchLocationGroups(makerspace));

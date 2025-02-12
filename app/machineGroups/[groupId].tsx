@@ -8,17 +8,16 @@ import DropdownSelect from 'react-native-input-select';
 import { useSelector } from 'react-redux';
 import { Button, H3, H4, Input, Section, Switch, Text, XStack, YStack, getTokens } from 'tamagui';
 import BlurHeader from '../../components/BlurHeader';
-import { useColors } from '../../constants/Colors';
 import { GLOBAL } from '../../global';
 import { selectMachines } from '../../state/slices/machinesSlice';
-import { currentServerSelector } from '../../state/slices/makerspacesSlice';
+import { colorSelector, currentServerSelector } from '../../state/slices/makerspacesSlice';
 import { MachineGroupBody } from '../../types/machine';
 import { Color } from '../../types/makerspaceServer';
 import { getAuthHeaders } from '../../util/authRoutes';
 
 export default function EditMachineGroup(){
     const local = useLocalSearchParams();
-    const colors = useColors();
+    const colors = useSelector(colorSelector);
     const machines = useSelector(selectMachines);
     const makerspace = useSelector(currentServerSelector);
     const getMachineGroupInitialData = () => {

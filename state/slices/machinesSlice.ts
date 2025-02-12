@@ -1,12 +1,13 @@
 import { createAsyncThunk, createSelector, createSlice, Dispatch } from '@reduxjs/toolkit';
 import { getLocationGroupsFromServer, getMachineGroupsFromServer } from '../../hooks/useMachineGroups';
-import { disableMachineRoute, getMachinesFromServer } from '../../hooks/useMachines';
 import { LocationGroupArray, LocationGroupBody, LocationGroupMap, Machine, MachineGroupArray, MachineGroupMap } from '../../types/machine';
 import { MakerspaceConfig } from '../../types/makerspaceServer';
 import { cacheCurrentLocation } from '../../util/locationCache';
 import { getImage, getImageIDs, setImage } from '../../util/machineImageCache';
-import { addOrUpdateServer } from '../../util/makerspaces';
-import { currentServerSelector } from './makerspacesSlice';
+import { disableMachineRoute, getMachinesFromServer } from '../../util/machineRoutes';
+import { RootState } from '../store';
+import { addOrUpdateServer, currentServerSelector, handleLoginError } from './makerspacesSlice';
+import { selectCurrentUserPermissions, selectPermissionGroups } from './permissionsSlice';
 
 export const machinesSlice = createSlice({
     name: 'machines',
@@ -51,11 +52,14 @@ export const machinesSlice = createSlice({
 export const { addMachine, removeMachine, updateMachine, updateMachines, setLoading, updateMachineGroups, updateLocationGroups } = machinesSlice.actions;
 
 // REDUX THUNKS
-
-export const fetchMachines = (makerspace:MakerspaceConfig) => async (dispatch:any) => {
+export const fetchMachines = (makerspace:MakerspaceConfig) => async (dispatch:Dispatch) => {
     dispatch(setLoading(true));
     if (makerspace?.user){
-        let machines = await getMachinesFromServer(makerspace,false);
+        let machines = await getMachinesFromServer(makerspace,false).catch((err) => {
+            if (err.response.status === 401){
+                dispatch(handleLoginError());
+                return [];
+            }}).then((machines) => machines as Array<Machine>);
         const cachedImageIds = await getImageIDs();
         machines = await Promise.all(machines.map(async (machine) => {
             if (machine.photoHash){
@@ -79,6 +83,8 @@ export const fetchMachines = (makerspace:MakerspaceConfig) => async (dispatch:an
             }
         }
     }
+    console.log('FINISHED FETCHING MACHINES');
+
     dispatch(setLoading(false));
 };
 export const disableMachine =  createAsyncThunk(
@@ -101,6 +107,8 @@ export const fetchMachineGroups = (makerspace:MakerspaceConfig) => async (dispat
     }
     updateMakerspaceHasGeoFences(makerspace);
     dispatch(setLoading(false));
+    console.log('FINISHED FETCHING MACHINE GROUPS');
+
 };
 
 export const updateMakerspaceHasGeoFences = (makerspace:MakerspaceConfig) => (state:any) => {
@@ -121,14 +129,15 @@ export const fetchLocationGroups = (makerspace:MakerspaceConfig) => async (dispa
         dispatch(updateLocationGroups(lgm));
     }
     updateMakerspaceHasGeoFences(makerspace);
+    console.log('FINISHED FETCHING LOCATION GROUPS');
     dispatch(setLoading(false));
 };
 
 // SELECTORS
-export const selectMachines = (state:any) => state.machines.machines as Machine[];
-export const selectMachineGroups = (state:any) => state.machines.machineGroups as MachineGroupMap;
-export const selectLoading = (state:any) => state.machines.loading as boolean;
-export const selectLocationGroups = (state:any) => state.machines.locationGroups as LocationGroupMap;
+export const selectMachines = (state:RootState) => state.machines.machines;
+export const selectMachineGroups = (state:RootState) => state.machines.machineGroups as MachineGroupMap;
+export const selectLoading = (state:RootState) => state.machines.loading as boolean;
+export const selectLocationGroups = (state:RootState) => state.machines.locationGroups;
 
 export const selectMachinesByGroup = (state:any, groupId:string) => {
     const machines = selectMachines(state);
@@ -140,7 +149,7 @@ export const selectMachinesByGroup = (state:any, groupId:string) => {
     return [];
 };
 
-export const selectMachineGroupAsArray = (state:any) => {
+export const selectMachineGroupAsArray = (state:RootState) => {
     const machineGroups = selectMachineGroups(state);
     const machineGroupArray:MachineGroupArray = [];
     for (const id in machineGroups){
@@ -148,7 +157,7 @@ export const selectMachineGroupAsArray = (state:any) => {
     }
     return machineGroupArray;
 };
-export const selectLocationGroupsAsArray = (state:any) => {
+export const selectLocationGroupsAsArray = (state:RootState) => {
     const locationGroups = selectLocationGroups(state);
     const locationGroupArray:LocationGroupArray = [];
     for (const id in locationGroups){
@@ -162,22 +171,18 @@ export const selectCurrentLocationGroup = createSelector(
         if (!makerspace){
             return null;
         }
-        if (makerspace?.currentLocation){
+        if (makerspace?.currentLocation && makerspace.currentLocation in locationMap){
             const location = locationMap[makerspace.currentLocation];
             if (location){
                 return location;
             }
         } else {
             if ( Object.keys(locationMap).length > 0 && makerspace){
-                //set default location to first location
-                const location = Object.keys(locationMap)[0];
-                addOrUpdateServer({ ...makerspace, currentLocation: location });
                 return locationMap[Object.keys(locationMap)[0]];
             }
         }
         // we have no locations, so default to makerspace name and all groups
         const machineGroupIds = Object.keys(machineGroups);
-        addOrUpdateServer({ ...makerspace, currentLocation: undefined });
         return {
             name: makerspace?.name || '',
             groups: machineGroupIds,
@@ -223,3 +228,44 @@ export const findMachineIdsInLocationGroups = ({ currentLocationId, locationGrou
     }
     return machineIds;
 };
+export const selectMachinesInCurrentLocation = createSelector(
+    [selectMachines, selectCurrentLocationGroup, selectMachineGroups],
+    (machines, currentLocation, machineGroups) => {
+        if (!currentLocation){
+            return machines;
+        }
+        const machineIds:string[] = [];
+        currentLocation.groups.forEach((groupId) => {
+            const group = machineGroups[groupId];
+            if (group){
+                machineIds.push(...group.machineIds);
+            }
+        });
+        return machines.filter((machine) => machineIds.includes(machine.id));
+    },
+);
+
+export const selectYourMachinesForUser = createSelector(
+    [selectMachinesInCurrentLocation, selectCurrentUserPermissions, selectPermissionGroups],
+    (machines, userPermissions, permissionGroupMap) => {
+        console.log('machines', machines.length);
+
+        const machinesByGroupId = {} as Record<string,Machine[]>;
+        userPermissions?.groups.forEach((group) => {
+            if (group.permission){
+                const machineIds = permissionGroupMap[group.id]?.machineIds;
+                machinesByGroupId[group.id] = machines.filter((machine) => machineIds?.includes(machine.id));
+            }
+        });
+        const otherMachineIds:string[] = [];
+        userPermissions?.machines.forEach((machine) => {
+            otherMachineIds.push(machine.id);
+        });
+        console.log('otherMachineIds', otherMachineIds);
+
+        machinesByGroupId.OTHER = machines.filter((machine) => otherMachineIds.includes(machine.id));
+        console.log('machinesByGroupId', machinesByGroupId.OTHER.length);
+
+        return { machinesByGroupId, permissionGroupMap };
+    },
+);

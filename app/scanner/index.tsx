@@ -2,16 +2,17 @@ import { BarCodeScanner } from 'expo-barcode-scanner';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { interpolate } from 'react-native-reanimated';
+import { useSelector } from 'react-redux';
 import { Button, H1, Spinner, XStack, YStack } from 'tamagui';
-import { useColors } from '../../constants/Colors';
 import { GLOBAL } from '../../global';
+import { colorSelector } from '../../state/slices/makerspacesSlice';
 import { goHomeOnBarAndCallFinished, handleURL } from '../../util/handleURL';
 
 export default function Scanner() {
     const [hasPermission, setHasPermission] = useState<null|Boolean>(null);
     const [header, setHeader] = useState('Scan QR');
     const [scanned, setScanned] = useState(false);
-    const colors = useColors();
+    const colors = useSelector(colorSelector);
 
     const [animateTime,setAnimateTime] = useState(0);
 

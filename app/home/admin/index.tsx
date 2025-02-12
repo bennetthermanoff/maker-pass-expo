@@ -9,14 +9,13 @@ import { useSelector } from 'react-redux';
 import { Button, H3, View, YStack, getTokens } from 'tamagui';
 import keyLogo from '../../../assets/images/key.png';
 import BlurHeader from '../../../components/BlurHeader';
-import { useColors } from '../../../constants/Colors';
-import { currentServerSelector } from '../../../state/slices/makerspacesSlice';
+import { colorSelector, currentServerSelector } from '../../../state/slices/makerspacesSlice';
 import { Color } from '../../../types/makerspaceServer';
 import { getAuthHeaders } from '../../../util/authRoutes';
 import { copyQR } from '../../../util/handleURL';
 
 export default function Admin() {
-    const colors = useColors();
+    const colors = useSelector(colorSelector);
     const makerspace = useSelector(currentServerSelector);
     const [registrationKey, setRegistrationKey] = useState<string>('');
 

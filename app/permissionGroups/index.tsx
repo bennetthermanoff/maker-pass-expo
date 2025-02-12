@@ -3,12 +3,14 @@ import { Plus } from '@tamagui/lucide-icons';
 import { router } from 'expo-router';
 import { Button, H2, Spacer, Text, YStack } from 'tamagui';
 import BlurHeader from '../../components/BlurHeader';
-import { Colors, useColors } from '../../constants/Colors';
+import { Colors } from '../../constants/Colors';
 import { usePermissionGroups } from '../../hooks/usePermissionGroups';
 import { Machine, PermissionGroup } from '../../types/machine';
+import { colorSelector } from '../../state/slices/makerspacesSlice';
+import { useSelector } from 'react-redux';
 
 export default function ManageMachineGroups(){
-    const colors = useColors();
+    const colors = useSelector(colorSelector);
     const { permissionGroups, loading, error, debouncedGetPermissionGroups, machines } = usePermissionGroups();
     return (
         <>

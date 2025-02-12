@@ -21,7 +21,7 @@ export type Page = {
     type:'group'|'user'|'taggedOut'|'inUse';
 };
 export default function Machines() {
-    const colors = useColors();
+    const colors = useSelector(colorSelector);
     const [pages, setPages] = useState<Page[]>([{ name:'Machines', type:'group', machines:[] }]);
     const [currentPage, setCurrentPage] = useState(0);
     const machineGroupMap = useSelector(selectMachineGroups);

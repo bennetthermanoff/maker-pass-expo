@@ -9,10 +9,9 @@ import { useSelector } from 'react-redux';
 import { Button, H4, Input, Label, Switch, View, XStack, YStack, getTokens } from 'tamagui';
 import keyLogo from '../../assets/images/key.png';
 import BlurHeader from '../../components/BlurHeader';
-import { useColors } from '../../constants/Colors';
 import { GLOBAL } from '../../global';
 import { selectMachineGroups } from '../../state/slices/machinesSlice';
-import { currentServerSelector } from '../../state/slices/makerspacesSlice';
+import { colorSelector, currentServerSelector } from '../../state/slices/makerspacesSlice';
 import { Machine } from '../../types/machine';
 import { Color } from '../../types/makerspaceServer';
 import { getAuthHeaders } from '../../util/authRoutes';
@@ -21,7 +20,7 @@ import { copyQR } from '../../util/handleURL';
 
 export default function AddMachine() {
     const local = useLocalSearchParams();
-    const colors = useColors();
+    const colors = useSelector(colorSelector);
     const makerspace = useSelector(currentServerSelector);
     const groups = useSelector(selectMachineGroups);
 

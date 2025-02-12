@@ -53,7 +53,7 @@ export type PermissionGroup = {
     name: string;
     machineIds: string[];
 };
-export type PermissionGroupObject = {
+export type PermissionGroupMap = {
     [groupId:string]:{
         name:string;
         machineIds:string[];

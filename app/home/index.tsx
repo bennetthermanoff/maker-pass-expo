@@ -1,38 +1,42 @@
 import { QrCode } from '@tamagui/lucide-icons';
-import { router, useFocusEffect } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { router } from 'expo-router';
+import { debounce } from 'lodash';
+import { useEffect, useState } from 'react';
 import { AppState } from 'react-native';
 import Animated, { useSharedValue, withTiming } from 'react-native-reanimated';
 import { useSelector } from 'react-redux';
-import { Button, getTokens, H2, H3, ScrollView, YStack } from 'tamagui';
+import { Button, getTokens, H2, H3, ScrollView, Text, YStack } from 'tamagui';
 import BlurHeader from '../../components/BlurHeader';
-import { LargeBentoBox } from '../../components/LargeBentoBox';
-import { useColors } from '../../constants/Colors';
-import { fetchLocationGroups, fetchMachineGroups, fetchMachines, selectActiveMachinesForUserFactory, selectCurrentLocationGroup, selectLoading, selectLocationGroups, selectMachineGroups } from '../../state/slices/machinesSlice';
-import { addOrUpdateServer, currentServerSelector } from '../../state/slices/makerspacesSlice';
+import { GridMachineBentoBox } from '../../components/GridMachineBentoBox';
+import { LargeMachineBentoBox } from '../../components/LargeMachineBentoBox';
+import { Colors } from '../../constants/Colors';
+import { fetchLocationGroups, fetchMachineGroups, fetchMachines, selectActiveMachinesForUserFactory, selectCurrentLocationGroup, selectLoading, selectLocationGroups, selectMachineGroups, selectYourMachinesForUser } from '../../state/slices/machinesSlice';
+import { addOrUpdateServer, colorSelector, currentServerSelector } from '../../state/slices/makerspacesSlice';
+import { fetchPermissionGroups, fetchPermissionsForUser } from '../../state/slices/permissionsSlice';
 import { useAppDispatch } from '../../state/store';
+import { Machine, PermissionGroupMap } from '../../types/machine';
 import { Color } from '../../types/makerspaceServer';
 export default function Make() {
-    const colors = useColors();
+    const colors = useSelector(colorSelector);
     const machineGroupMap = useSelector(selectMachineGroups);
     const makerspace = useSelector(currentServerSelector);
-    const activeMachines = useSelector(selectActiveMachinesForUserFactory(makerspace));
     const locationGroup = useSelector(selectCurrentLocationGroup);
     const loading = useSelector(selectLoading);
     const dispatch = useAppDispatch();
+    const yourMachinesForUser = useSelector(selectYourMachinesForUser);
 
     const [locationPickerActivated, setLocationPickerActivated] = useState(false);
 
-    const handleRefresh = () => {
+    const handleRefresh = debounce(() => {
         if (makerspace){
             dispatch(fetchMachines(makerspace));
             dispatch(fetchMachineGroups(makerspace));
             dispatch(fetchLocationGroups(makerspace));
+            dispatch(fetchPermissionGroups(makerspace));
+            dispatch(fetchPermissionsForUser(makerspace));
         }
-    };
-    useFocusEffect(useCallback(() => {
-        handleRefresh();
-    }, []));
+    }, 3000, { leading: true, trailing: false });
+
     useEffect(() => {
         AppState.addEventListener('change', (nextAppState) => {
             if (nextAppState === 'active') {
@@ -41,43 +45,12 @@ export default function Make() {
         });
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-    useEffect(handleRefresh,[makerspace, dispatch]);
     return (
         <>
 
             <BlurHeader title="MakerPass" subtitle={'@' + locationGroup?.name} isHero pullToRefresh={handleRefresh} subtitleOnPress={() => {setLocationPickerActivated(!locationPickerActivated);}} refreshing={loading}>
-                <YStack
-                    aspectRatio={1.9} //Important!
-
-                    alignSelf='center'
-                    margin={'$3'}
-                    width={'95%'}
-                    padding={'$3'}
-                    backgroundColor={colors.accent.light}
-                    borderRadius={20}
-                >
-                    <H2
-                        marginLeft={'$2'}
-                        marginBottom={'$1'}
-                        color={colors.text}
-                    >Active Machines</H2>
-                    <ScrollView
-                        horizontal
-                        showsHorizontalScrollIndicator={true}
-                        showsVerticalScrollIndicator={false}
-                        width={'100%'}
-                    >
-                        {activeMachines.map((machine, index) =>
-                            <LargeBentoBox
-                                key={machine.id}
-                                machine={machine}
-                                colors={colors}
-                                showDisableButton={true}
-                            />)}
-                    </ScrollView>
-
-                </YStack>
-
+                <ActiveMachineBento colors={colors} activeMachines={useSelector(selectActiveMachinesForUserFactory(makerspace))} />
+                <YourMachinesBento colors={colors} machineMap={yourMachinesForUser.machinesByGroupId} permissionGroupMap={yourMachinesForUser.permissionGroupMap} />
             </BlurHeader>
             <YStack
                 position='absolute'
@@ -95,7 +68,7 @@ export default function Make() {
                     height={60}
                     scaleIcon={2}
                     alignSelf='center'
-                    fontSize={'$7'}
+                    // fontSize={'$7'}
                     backgroundColor={colors.accent.dark}
                     onPress={() => {
                         router.push('/scanner');
@@ -108,11 +81,96 @@ export default function Make() {
 
 }
 
+const ActiveMachineBento = ({ colors, activeMachines }: { colors: Colors, activeMachines: Machine[] }) =>
+    <YStack
+        aspectRatio={1.9} //Important!
+        alignSelf='center'
+        margin={'$3'}
+        width={'95%'}
+        padding={'$3'}
+        backgroundColor={colors.accent.light}
+        borderRadius={20}
+    >
+        <H2
+            marginLeft={'$2'}
+            marginBottom={'$1'}
+            color={colors.text}
+        >Active Machines</H2>
+        {activeMachines.length === 0 ?
+            <YStack
+                height={'100%'}
+                justifyContent='center'
+            >
+                <H3
+                    marginTop={-60.7}
+                    textAlign='center'
+                    alignSelf='center'
+                    color={colors.text}
+                >No Active Machines</H3>
+                <Text
+                    textAlign='center'
+                    alignSelf='center'
+                    color={colors.text}
+                >Scan a QR Code to start a machine</Text>
+            </YStack>
+            :
+            <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={true}
+                showsVerticalScrollIndicator={false}
+                width={'100%'}
+            >
+                {activeMachines.map((machine, index) =>
+                    <LargeMachineBentoBox
+                        key={machine.id}
+                        machine={machine}
+                        colors={colors}
+                        showDisableButton={true}
+                    />)}
+            </ScrollView>
+        }
+    </YStack>;
+
+const YourMachinesBento = ({ colors, machineMap, permissionGroupMap }: { colors: Colors, machineMap: Record<string, Machine[]>, permissionGroupMap:PermissionGroupMap}) =>
+    <YStack
+        aspectRatio={1.4} //Important!
+        alignSelf='center'
+        margin={'$3'}
+        width={'95%'}
+        padding={'$3'}
+
+        backgroundColor={colors.accent.light}
+        borderRadius={20}
+    >
+        <H2
+            marginLeft={'$2'}
+            marginBottom={'$1'}
+            color={colors.text}
+        >Your Machines</H2>
+        <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={true}
+            showsVerticalScrollIndicator={false}
+            width={'100%'}
+        >
+            {Object.keys(machineMap).map((groupId) =>
+                (machineMap[groupId].length > 0 ?
+                    <GridMachineBentoBox
+                        key={groupId}
+                        colors={colors}
+                        machines={machineMap[groupId]}
+                        groupName={groupId !== 'OTHER' ? permissionGroupMap[groupId]?.name : 'Other'}
+                    />
+                    :
+                    <></>))}
+        </ScrollView>
+    </YStack>;
+
 const LocationSwitcher = ({ active, dismiss }: { active: boolean, dismiss: () => void }) => {
     const makerspace = useSelector(currentServerSelector);
     const locations = useSelector(selectLocationGroups);
     const dispatch = useAppDispatch();
-    const colors = useColors();
+    const colors = useSelector(colorSelector);
     const opacity = useSharedValue(0);
     const backgroundOpacity = useSharedValue(0);
     useEffect(() => {
@@ -142,7 +200,6 @@ const LocationSwitcher = ({ active, dismiss }: { active: boolean, dismiss: () =>
                     right: 0,
                     bottom: 0,
                     backgroundColor: getTokens().color[colors.background as Color].val,
-                    //opacity is animated'
                     opacity:backgroundOpacity,
                 }}
                 pointerEvents={active ? 'auto' : 'none'}

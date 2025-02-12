@@ -4,22 +4,21 @@ import axios from 'axios';
 import { router } from 'expo-router';
 import { openBrowserAsync } from 'expo-web-browser';
 import { Alert, ImageSourcePropType } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Button, Image, Text, XStack } from 'tamagui';
 import BannerDark from '../../../assets/images/banner-dark.png';
 import Banner from '../../../assets/images/banner.png';
 import BlurHeader from '../../../components/BlurHeader';
-import { useColors } from '../../../constants/Colors';
-import { currentServerSelector } from '../../../state/slices/makerspacesSlice';
+import { colorSelector, currentServerSelector, removeServer } from '../../../state/slices/makerspacesSlice';
 import { getAuthHeaders } from '../../../util/authRoutes';
+import { goHome } from '../../../util/goHome';
 import { handleChangePassword } from '../../../util/handleChangePassword';
 import { clearImages } from '../../../util/machineImageCache';
-import { removeServer } from '../../../util/makerspaces';
 
 export default function Machines() {
-    const colors = useColors();
+    const colors = useSelector(colorSelector);
     const makerspace = useSelector(currentServerSelector);
-
+    const dispatch = useDispatch();
     const handleDeleteAccount = async () => {
         if (makerspace?.id){
             Alert.alert(
@@ -36,7 +35,7 @@ export default function Machines() {
                                 `${makerspace.serverAddress}:${makerspace.serverPort}/api/user/${makerspace.user?.userId}`,
                                 getAuthHeaders(makerspace),
                             ).then(async (response) => {
-                                await removeServer(makerspace.id);
+                                dispatch(removeServer(makerspace.id));
                                 router.replace('/');
                             }).catch((err) => {
                             });
@@ -64,9 +63,9 @@ export default function Machines() {
                 color={colors.text}
                 onPress={async() => {
                     if (makerspace?.id){
-                        await removeServer(makerspace?.id);
+                        dispatch(removeServer(makerspace.id));
                     }
-                    router.replace('/');
+                    goHome();
                 }}
             >Disconnect and Logout</Button>
 
@@ -79,7 +78,7 @@ export default function Machines() {
                 iconAfter={Key}
                 backgroundColor={colors.secondaryAccent.light}
                 color={colors.text}
-                onPress={() => handleChangePassword()}
+                onPress={() => handleChangePassword(makerspace)}
             >Change Password</Button>
             <Button
                 spaceFlex

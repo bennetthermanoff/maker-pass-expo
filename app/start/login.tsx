@@ -4,12 +4,10 @@ import { useState } from 'react';
 import { KeyboardAvoidingView } from 'react-native';
 import { useSelector } from 'react-redux';
 import { Button, H2, H4, Input, Spinner, Text, YStack, getTokens } from 'tamagui';
-import { useColors } from '../../constants/Colors';
-import { GLOBAL } from '../../global';
-import { currentServerSelector } from '../../state/slices/makerspacesSlice';
+import { addServerCredentials, colorSelector, currentServerSelector } from '../../state/slices/makerspacesSlice';
+import { useAppDispatch } from '../../state/store';
 import { Color } from '../../types/makerspaceServer';
 import { goHome } from '../../util/goHome';
-import { addServerCredentials } from '../../util/makerspaces';
 
 export default function LoginScreen() {
 
@@ -17,10 +15,11 @@ export default function LoginScreen() {
         email?: string;
         password?: string;
     }>({});
-    const colors = useColors();
+    const colors = useSelector(colorSelector);
     const makerspace = useSelector(currentServerSelector);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string>('');
+    const dispatch = useAppDispatch();
 
     const handleLogin = async () => {
         if (!formData.email || !formData.password) {
@@ -33,7 +32,7 @@ export default function LoginScreen() {
             axios.post(`${makerspace?.serverAddress}:${makerspace?.serverPort}/api/user/login`, { ...formData })
                 .then(async(res) => {
                     const { userId,token,userType } = res.data;
-                    await addServerCredentials({ serverId:makerspace.id, userId, userType, token });
+                    await dispatch(addServerCredentials({ serverId: makerspace.id, userId, userType, token }));
                     goHome();
                 }).catch((e) => {
                     setLoading(false);
@@ -87,7 +86,7 @@ export default function LoginScreen() {
                         <H2
                             color={colors.text}
                             padding={'$0'}
-                        >{GLOBAL.serverName}</H2>
+                        >{makerspace?.name}</H2>
                     </YStack>
                     <Input
                         placeholder={'Email'}

@@ -1,10 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { router } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
+import { Alert } from 'react-native';
+import { tanStackColors } from '../../constants/Colors';
 import { MakerspaceConfig, MakerspaceServers as MakerspaceServerIds, MakerspaceTheme } from '../../types/makerspaceServer';
 
 interface MakerspacesState {
-    serverMap:{[serverId:string]:MakerspaceConfig}
+    serverMap:{[serverId:string]:MakerspaceConfig};
     currentServerId: string|null;
     darkMode: boolean;
 }
@@ -50,9 +53,9 @@ export const makerspacesSlice = createSlice({
             AsyncStorage.setItem('currentServer', updatedServer.id);
             state.currentServerId = updatedServer.id;
         },
-        removeServer: (state, action: PayloadAction<string>) => {
+        removeServer:  (state, action: PayloadAction<string>) => {
             const serverId = action.payload;
-            state.serverMap = Object.fromEntries(Object.entries(state.serverMap).filter(([key]) => key !== serverId));
+            delete state.serverMap[serverId];
             SecureStore.deleteItemAsync(serverId);
             SecureStore.setItemAsync('servers', JSON.stringify(Object.keys(state.serverMap)));
             AsyncStorage.removeItem(`${serverId}-theme`);
@@ -92,6 +95,22 @@ export const makerspacesSlice = createSlice({
                 throw new Error('Server not found');
             }
         },
+        handleLoginError: (state) => {
+            const serverId = state.currentServerId;
+            if (!serverId) return;
+            const server = state.serverMap[serverId];
+            Alert.alert('Login Error', 'Your login has expired. Please log in again.', [
+                { text: 'Go Home', onPress: () => router.push('/start/login') },
+            ]);
+            if (server) {
+                delete server.user;
+                SecureStore.setItemAsync(serverId, JSON.stringify(server));
+                state.serverMap[serverId] = server;
+            } else {
+                throw new Error('Server not found');
+            }
+
+        },
         setTheme: (state, action: PayloadAction<{ theme: MakerspaceTheme, serverId?: string }>) => {
             const { theme, serverId } = action.payload;
             AsyncStorage.setItem(`${serverId}-theme`, JSON.stringify(theme));
@@ -117,6 +136,7 @@ export const {
     clearServers,
     addServerCredentials,
     removeServerCredentials,
+    handleLoginError,
     setTheme,
     setDarkMode,
 } = makerspacesSlice.actions;
@@ -135,3 +155,8 @@ export const currentThemeSelector = (state: { makerspaces: MakerspacesState }) =
 };
 
 export const darkModeSelector = (state: { makerspaces: MakerspacesState }) => state.makerspaces.darkMode;
+
+export const colorSelector = createSelector(
+    [currentThemeSelector, darkModeSelector],
+    (theme, isDarkMode) => tanStackColors(theme.primary, theme.secondary, isDarkMode),
+);

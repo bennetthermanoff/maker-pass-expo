@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { router } from 'expo-router';
 import { Alert } from 'react-native';
-import { handleUserLoginError } from './goHome';
 const handleError = (err: any) => {
     const scrubbedError = removeAttrDeep(err, 'accesstoken');
     //if 400, print message
@@ -27,7 +26,7 @@ const handleError = (err: any) => {
         }
     }
     else if (err.response?.status === 401) {
-        handleUserLoginError();
+        return Promise.reject(err);
     }
     else if (err.response?.status === 403) {
         Alert.alert('Oops, something went wrong', 'You do not have permission to perform this action.', [

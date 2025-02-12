@@ -8,14 +8,12 @@ import { KeyboardAvoidingView, Platform } from 'react-native';
 import DropdownSelect from 'react-native-input-select';
 import { useSelector } from 'react-redux';
 import { Button, H2, H4, Input, Label, ScrollView, Spinner, XStack, YStack, getTokens } from 'tamagui';
-import { useColors } from '../../constants/Colors';
-import { GLOBAL } from '../../global';
-import { currentServerSelector } from '../../state/slices/makerspacesSlice';
+import { colorSelector, currentServerSelector } from '../../state/slices/makerspacesSlice';
 import { AdditionalInfoField, Color } from '../../types/makerspaceServer';
 
 export default function Register(){
 
-    const colors = useColors();
+    const colors = useSelector(colorSelector);
     const makerspace = useSelector(currentServerSelector);
     const [loading, setLoading] = useState(false);
     const [additionalInfo, setAdditionalInfo] = useState<AdditionalInfoField[]>([]);
@@ -160,7 +158,7 @@ export default function Register(){
                         <H2
                             color={colors.text}
                             padding={'$0'}
-                        >{GLOBAL.serverName}</H2>
+                        >{makerspace?.name}</H2>
                     </YStack>
                     <Input
                         placeholder={'Email'}

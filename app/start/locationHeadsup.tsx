@@ -3,11 +3,10 @@ import { router } from 'expo-router';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Button, H2, Text, YStack } from 'tamagui';
-import { useColors } from '../../constants/Colors';
-import { currentServerSelector } from '../../state/slices/makerspacesSlice';
+import { colorSelector, currentServerSelector } from '../../state/slices/makerspacesSlice';
 
 export default function LocationHeadsup() {
-    const colors = useColors();
+    const colors = useSelector(colorSelector);
     const makerspace = useSelector(currentServerSelector);
 
     useEffect(() => {

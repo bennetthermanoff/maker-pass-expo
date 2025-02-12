@@ -7,7 +7,7 @@ import { Colors } from '../constants/Colors';
 import { Machine } from '../types/machine';
 import { getImage } from '../util/machineImageCache';
 
-export const LargeBentoBox = ({ machine, colors, showDisableButton = false }: {machine: Machine, colors: Colors, showDisableButton?: boolean}) => {
+export const LargeMachineBentoBox = ({ machine, colors, showDisableButton = false }: {machine: Machine, colors: Colors, showDisableButton?: boolean}) => {
     const [image, setImage] = useState<string | null>(null);
     useEffect(() => {
         if (machine.photoHash){
@@ -42,7 +42,7 @@ export const LargeBentoBox = ({ machine, colors, showDisableButton = false }: {m
                     color={colors.text}
                     fontSize={'20em'}
                     maxHeight={'55%'}
-                    lineHeight={'23em'}
+                    // lineHeight={'23em'}
                 >{machine?.name}</H3>
                 <Button
                     marginBottom={'$2'}

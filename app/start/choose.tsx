@@ -5,13 +5,13 @@ import { useSelector } from 'react-redux';
 import { Button, Image, Text, View, XStack, YStack } from 'tamagui';
 import BannerDark from '../../assets/images/banner-dark.png';
 import Banner from '../../assets/images/banner.png';
-import { useColors } from '../../constants/Colors';
-import { currentServerSelector } from '../../state/slices/makerspacesSlice';
-import { removeServer } from '../../util/makerspaces';
+import { colorSelector, currentServerSelector, removeServer } from '../../state/slices/makerspacesSlice';
+import { useAppDispatch } from '../../state/store';
 export default function LoginOrRegister() {
     const url = Linking.useURL();
-    const colors = useColors();
+    const colors = useSelector(colorSelector);
     const makerspace = useSelector(currentServerSelector);
+    const dispatch = useAppDispatch();
 
     return (
         <>
@@ -99,7 +99,7 @@ export default function LoginOrRegister() {
                         backgroundColor={colors.inverseText}
                         onPress={async() => {
                             if (makerspace){
-                                await removeServer(makerspace.id);
+                                dispatch(removeServer(makerspace.id));
                             }
                             while (router.canGoBack()){
                                 router.back();

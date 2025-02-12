@@ -2,8 +2,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Tabs } from 'expo-router';
 import { useSelector } from 'react-redux';
 import { getTokens } from 'tamagui';
-import { useColors } from '../../constants/Colors';
-import { currentServerSelector } from '../../state/slices/makerspacesSlice';
+import { colorSelector, currentServerSelector } from '../../state/slices/makerspacesSlice';
 import { Color } from '../../types/makerspaceServer';
 
 /**
@@ -17,7 +16,7 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
-    const colors = useColors();
+    const colors = useSelector(colorSelector);
 
     const makerspace = useSelector(currentServerSelector);
     return (

@@ -1,8 +1,4 @@
-import { useEffect, useState } from 'react';
-import { Appearance } from 'react-native';
-import { useSelector } from 'react-redux';
 import { getTokens } from 'tamagui';
-import { currentThemeSelector, darkModeSelector } from '../state/slices/makerspacesSlice';
 import { ColorName } from '../types/makerspaceServer';
 const tintColorLight = '#2f95dc';
 const tintColorDark = '#fff';
@@ -24,16 +20,6 @@ const styleSheetColors = {
         tabIconSelected: tintColorDark,
         blurTint:'dark',
     },
-};
-export const useColors = () => {
-
-    const makerSpaceTheme = useSelector(currentThemeSelector);
-    const isDarkMode = useSelector(darkModeSelector);
-    const [theme, setTheme] = useState(tanStackColors(makerSpaceTheme.primary,makerSpaceTheme.secondary, Appearance.getColorScheme() === 'dark'));
-    useEffect(() => {
-        setTheme(tanStackColors(makerSpaceTheme.primary, makerSpaceTheme.secondary, isDarkMode));
-    }, [makerSpaceTheme, isDarkMode]);
-    return theme as Colors;
 };
 
 export type Colors = {
@@ -81,6 +67,6 @@ export const tanStackColors = (themeBase: ColorName, secondary:ColorName, darkMo
         blurTintColor: `${darkMode ? 'dark' : 'light'}`,
 
     }
-);
+) as Colors;
 
 export default styleSheetColors;

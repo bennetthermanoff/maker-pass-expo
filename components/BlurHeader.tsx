@@ -8,13 +8,14 @@ import Animated, { Extrapolation, interpolate, useAnimatedProps } from 'react-na
 import { getTokens, H1, H3, Image, ScrollView, Text, XStack, YStack } from 'tamagui';
 import BannerDark from '../assets/images/banner-dark.png';
 import Banner from '../assets/images/banner.png';
-import { useColors } from '../constants/Colors';
 import { Color } from '../types/makerspaceServer';
 import { parseGroupName } from '../util/parseGroupName';
+import { colorSelector } from '../state/slices/makerspacesSlice';
+import { useSelector } from 'react-redux';
 
 export default function BlurHeader({ title, subtitle, isHero = false, hasBackButton = false, isTransparent = false, subtitleOnPress, pullToRefresh, refreshing, children }:
     { title: string, subtitle?: string, isHero?: boolean, hasBackButton?: boolean, isTransparent?:boolean, subtitleOnPress?:()=>void, children?: React.ReactNode, pullToRefresh?: () => void | Promise<void>, refreshing?: boolean }) {
-    const colors = useColors();
+    const colors = useSelector(colorSelector);
     const [scrollY, setScrollY] = useState(0);
     const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 

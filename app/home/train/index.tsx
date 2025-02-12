@@ -5,10 +5,11 @@ import { debounce } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { Alert, KeyboardAvoidingView, NativeSyntheticEvent, Platform, TextInputChangeEventData, ViewStyle } from 'react-native';
 import DropdownSelect from 'react-native-input-select';
+import { useSelector } from 'react-redux';
 import { Button, Input, Text, XStack, YStack, getTokens } from 'tamagui';
 import BlurHeader from '../../../components/BlurHeader';
-import { useColors } from '../../../constants/Colors';
 import { usePermissionGroups } from '../../../hooks/usePermissionGroups';
+import { colorSelector } from '../../../state/slices/makerspacesSlice';
 import { Color, MakerspaceConfig } from '../../../types/makerspaceServer';
 import { PermissionObject, User, UserType } from '../../../types/user';
 import { getAuthHeaders } from '../../../util/authRoutes';
@@ -16,7 +17,7 @@ import { getAuthHeaders } from '../../../util/authRoutes';
 export default function SearchUser() {
     const [users, setUsers] = useState<User[]>([]);
     const [closeModal, setCloseModal] = useState(false);
-    const colors = useColors();
+    const colors = useSelector(colorSelector);
     const { permissionGroups, machines, makerspace } = usePermissionGroups();
     const [permissions, setPermissions] = useState<{machines:Array<{id:string, name:string}>, permissionGroups:Array<{id:string, name:string}>}>({ machines:[], permissionGroups:[] });
 
@@ -287,7 +288,7 @@ export default function SearchUser() {
     );
 }
 
-export const UserCard = ({ user, colors, changeUserType, longPressUser, children }: { user:User, colors:ReturnType<typeof useColors>,longPressUser:(userid:string, userType:string)=>void, changeUserType:(userid:string)=>void, children?:React.ReactNode }) =>
+export const UserCard = ({ user, colors, changeUserType, longPressUser, children }: { user:User, colors:ReturnType<typeof colorSelector>,longPressUser:(userid:string, userType:string)=>void, changeUserType:(userid:string)=>void, children?:React.ReactNode }) =>
     <YStack
         backgroundColor={colors.accent.dark}
         padding={'$2'}

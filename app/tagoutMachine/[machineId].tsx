@@ -5,15 +5,15 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Button, H2, H4, Input, Spinner, Text, View, XStack, YStack } from 'tamagui';
 import BlurHeader from '../../components/BlurHeader';
-import { Colors, useColors } from '../../constants/Colors';
-import { currentServerSelector } from '../../state/slices/makerspacesSlice';
+import { Colors } from '../../constants/Colors';
+import { colorSelector, currentServerSelector } from '../../state/slices/makerspacesSlice';
 import { Machine, TagOutWithName } from '../../types/machine';
 import { getAuthHeaders } from '../../util/authRoutes';
 
 export default function TagOutMachine(){
 
     const local = useLocalSearchParams();
-    const colors = useColors();
+    const colors = useSelector(colorSelector);
     const makerspace = useSelector(currentServerSelector);
     const getMachineInitialData = () => {
         const machine = JSON.parse(local.machine as string);
