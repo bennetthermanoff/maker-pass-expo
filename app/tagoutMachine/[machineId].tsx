@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import { Button, H2, H4, Input, Spinner, Text, View, XStack, YStack } from 'tamagui';
 import BlurHeader from '../../components/BlurHeader';
 import { Colors } from '../../constants/Colors';
+import { selectMachines } from '../../state/slices/machinesSlice';
 import { colorSelector, currentServerSelector } from '../../state/slices/makerspacesSlice';
 import { Machine, TagOutWithName } from '../../types/machine';
 import { getAuthHeaders } from '../../util/authRoutes';
@@ -15,11 +16,13 @@ export default function TagOutMachine(){
     const local = useLocalSearchParams();
     const colors = useSelector(colorSelector);
     const makerspace = useSelector(currentServerSelector);
+    const machinesFromState = useSelector(selectMachines);
+
     const getMachineInitialData = () => {
-        const machine = JSON.parse(local.machine as string);
-        return machine as Machine&{lastUsedByName:string|null};
+        const machine = machinesFromState.find((machine) => machine.id === local.machineId);
+        return machine as Machine;
     };
-    const [machine, setMachine] = useState<Machine&{lastUsedByName:string|null}>(getMachineInitialData());
+    const [machine, setMachine] = useState<Machine>(getMachineInitialData());
     const [tagOuts, setTagOuts] = useState <Array<TagOutWithName>>([]);
     const [reason, setReason] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);

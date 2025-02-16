@@ -6,9 +6,11 @@ import { useSelector } from 'react-redux';
 import { Button, H1, Spinner, XStack, YStack } from 'tamagui';
 import { GLOBAL } from '../../global';
 import { colorSelector } from '../../state/slices/makerspacesSlice';
-import { goHomeOnBarAndCallFinished, handleURL } from '../../util/handleURL';
+import { goHomeOnBarAndCallFinished, handleTagOutURL, handleURL } from '../../util/handleURL';
 
-export default function Scanner() {
+type ScannerType = 'default'|'tagOut';
+
+export default function Scanner({ scannerType = 'default' }:{scannerType?:ScannerType}) {
     const [hasPermission, setHasPermission] = useState<null|Boolean>(null);
     const [header, setHeader] = useState('Scan QR');
     const [scanned, setScanned] = useState(false);
@@ -41,15 +43,22 @@ export default function Scanner() {
         getPermissions();
     }, []);
     const handleBarCodeScanned = async ({ type, data }:{type:string, data:string}) => {
-        GLOBAL.barRaceCondition = 0; //reset race condition
-        setScanned(true);
         if (data.startsWith('makerpass://')) {
-            const newText = handleURL(data);
-            if (newText){
-                setHeader(newText);
+            GLOBAL.barRaceCondition = 0; //reset race condition
+            setScanned(true);
+
+            if (scannerType === 'tagOut'){
+                handleTagOutURL(data);
             }
+            else {
+                const newText = handleURL(data);
+                if (newText){
+                    setHeader(newText);
+                }
+            }
+
         } else {
-            alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+            alert('Non-MakerPass code Scanned!');
         }
     };
     return (

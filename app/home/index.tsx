@@ -1,11 +1,11 @@
-import { QrCode } from '@tamagui/lucide-icons';
+import { AlertTriangle, QrCode } from '@tamagui/lucide-icons';
 import { router } from 'expo-router';
 import { debounce } from 'lodash';
 import { useEffect, useState } from 'react';
 import { AppState } from 'react-native';
 import Animated, { useSharedValue, withTiming } from 'react-native-reanimated';
 import { useSelector } from 'react-redux';
-import { Button, getTokens, H2, H3, ScrollView, Text, YStack } from 'tamagui';
+import { Button, getTokens, H2, H3, ScrollView, Text, XStack, YStack } from 'tamagui';
 import BlurHeader from '../../components/BlurHeader';
 import { GridMachineBentoBox } from '../../components/GridMachineBentoBox';
 import { LargeMachineBentoBox } from '../../components/LargeMachineBentoBox';
@@ -64,29 +64,45 @@ export default function Make() {
                     paddingBottom={150}
                 />
             </BlurHeader>
-            <YStack
+            <XStack
                 position='absolute'
                 bottom={0}
                 right={0}
                 width={'100%'}
                 backgroundColor={'transparent'}
             >
+                {makerspace?.user?.userType !== 'user' &&
+                    <Button
+                        icon={AlertTriangle}
+                        color={'black'}
+                        backgroundColor={'$yellow7'}
+                        margin={'$3'}
+                        marginBottom={'$3'}
+                        marginRight={0}
+                        aspectRatio={1}
+                        height={60}
+                        scaleIcon={2}
+                        onPress={() => {
+                            router.push('/scanner/tagOut');
+                        }}
+                    ></Button>
+                }
                 <Button
                     color={colors.text}
                     iconAfter={QrCode}
                     margin={'$3'}
                     marginBottom={'$3'}
-                    width={'95%'}
                     height={60}
                     scaleIcon={2}
                     alignSelf='center'
-                    // fontSize={'$7'}
+                    flexGrow={1}
+                    fontSize={'$6'}
                     backgroundColor={colors.accent.dark}
                     onPress={() => {
                         router.push('/scanner');
                     }}
                 >Scan QR</Button>
-            </YStack>
+            </XStack>
             <LocationSwitcher active={locationPickerActivated} dismiss={() => setLocationPickerActivated(!locationPickerActivated)} />
         </>
     );

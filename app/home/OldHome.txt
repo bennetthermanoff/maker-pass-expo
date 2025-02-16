@@ -10,9 +10,8 @@ import { useSelector } from 'react-redux';
 import { Button, Card, CardProps, Circle, H2, Image, Paragraph, Spacer, XStack, YStack } from 'tamagui';
 import defaultImage from '../../assets/images/icon.png';
 import BlurHeader from '../../components/BlurHeader';
-import { Colors, useColors } from '../../constants/Colors';
 import { disableMachine, fetchMachineGroups, fetchMachines, selectLoading, selectMachineGroups, selectMachines } from '../../state/slices/machinesSlice';
-import { currentServerSelector } from '../../state/slices/makerspacesSlice';
+import { colorSelector, currentServerSelector } from '../../state/slices/makerspacesSlice';
 import { useAppDispatch } from '../../state/store';
 import { Machine } from '../../types/machine';
 export type Page = {

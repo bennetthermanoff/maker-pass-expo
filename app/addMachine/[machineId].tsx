@@ -10,7 +10,7 @@ import { Button, H4, Input, Label, Switch, View, XStack, YStack, getTokens } fro
 import keyLogo from '../../assets/images/key.png';
 import BlurHeader from '../../components/BlurHeader';
 import { GLOBAL } from '../../global';
-import { selectMachineGroups } from '../../state/slices/machinesSlice';
+import { selectMachineGroups, selectMachines } from '../../state/slices/machinesSlice';
 import { colorSelector, currentServerSelector } from '../../state/slices/makerspacesSlice';
 import { Machine } from '../../types/machine';
 import { Color } from '../../types/makerspaceServer';
@@ -23,15 +23,16 @@ export default function AddMachine() {
     const colors = useSelector(colorSelector);
     const makerspace = useSelector(currentServerSelector);
     const groups = useSelector(selectMachineGroups);
+    const machinesFromState = useSelector(selectMachines);
 
     const getMachineInitialData = () => {
-        if (local.machineId === 'new'){
+        const machine = machinesFromState.find((machine) => machine.id === local.machineId);
+        if (local.machineId === 'new' || !machine){
             return { machine:{
                 solenoidMode: false,
             },
             requireEnableKey: true };}
         else {
-            const machine = JSON.parse(local.machine as string) as Omit<Machine, 'photo'>;
             return {
                 machine,
                 requireEnableKey: machine.enableKey ? true : false,

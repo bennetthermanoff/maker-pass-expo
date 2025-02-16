@@ -71,6 +71,16 @@ export const handleURL =  (url:string|null) => {
 
 };
 
+export const handleTagOutURL = (url:string) => {
+    const { path, queryParams, hostname } = Linking.parse(url);
+
+    if (path === 'makerspace/machine/enable'){
+        const { machineId } = queryParams ?? {} as {machineId:string};
+        router.push(`/tagoutMachine/${machineId}`);
+    }
+
+};
+
 export const handleConnect = async (url?:string, port?:string, registrationType?:string, registrationKey?:string) => {
     if (!url || !port || !registrationType || !registrationKey){
         alert('Invalid config');
