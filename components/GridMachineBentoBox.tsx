@@ -9,17 +9,20 @@ export const GridMachineBentoBox = ({ colors, machines, groupName }:{colors:Colo
     <YStack>
         <YStack
         //semi transparent background of following ystack
-            style={{ position: 'absolute', bottom: 0, left: 0 }}
+            style={{ position: 'absolute', top: 0, left: 0 }}
             width={'95%'}
-            height={'100%'}
+            height={'90%'}
             opacity={.1}
+            margin={0}
+            padding={0}
             borderRadius={20}
             backgroundColor={colors.accent.dark}
         />
         <YStack
             padding={'$2'}
             paddingTop={'$1'}
-            paddingBottom={'$1'}
+            paddingBottom={0}
+            height={'90%'}
             aspectRatio={.8}
             borderRadius={20}
             marginRight={'$3'}
@@ -30,6 +33,7 @@ export const GridMachineBentoBox = ({ colors, machines, groupName }:{colors:Colo
                     fontWeight: 'bold',
                     color: colors.text,
                     marginBottom: 5,
+                    marginLeft:5,
                 }}
                 loop
                 duration={7500}
@@ -58,6 +62,7 @@ export const GridMachineBentoBox = ({ colors, machines, groupName }:{colors:Colo
                 height={'38%'}
                 alignItems='flex-start'
                 justifyContent='space-between'
+                paddingBottom={0}
             >
                 {machines[2] && <SmallMachineBentoBox
                     machine={machines[2]}
@@ -86,4 +91,3 @@ export const GridMachineBentoBox = ({ colors, machines, groupName }:{colors:Colo
         </YStack>
 
     </YStack>;
-

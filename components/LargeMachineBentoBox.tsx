@@ -40,9 +40,9 @@ export const LargeMachineBentoBox = ({ machine, colors, showDisableButton = fals
                     marginLeft={'$3'}
                     marginRight={'$3'}
                     color={colors.text}
-                    fontSize={'20em'}
+                    fontSize={'20%'}
                     maxHeight={'55%'}
-                    // lineHeight={'23em'}
+                    lineHeight={'20%'}
                 >{machine?.name}</H3>
                 <Button
                     marginBottom={'$2'}
@@ -54,7 +54,7 @@ export const LargeMachineBentoBox = ({ machine, colors, showDisableButton = fals
                     opacity={.9}
                     borderRadius={20}
                     onPress={() => {
-                        console.log('Disabled');
+                        alert('disabled (not implemented)');
                     }}
                     display={showDisableButton ? 'flex' : 'none'}
                 >Disable</Button>

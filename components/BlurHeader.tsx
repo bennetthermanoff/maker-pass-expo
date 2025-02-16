@@ -5,13 +5,13 @@ import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { ImageSourcePropType, Platform, RefreshControl } from 'react-native';
 import Animated, { Extrapolation, interpolate, useAnimatedProps } from 'react-native-reanimated';
+import { useSelector } from 'react-redux';
 import { getTokens, H1, H3, Image, ScrollView, Text, XStack, YStack } from 'tamagui';
 import BannerDark from '../assets/images/banner-dark.png';
 import Banner from '../assets/images/banner.png';
+import { colorSelector } from '../state/slices/makerspacesSlice';
 import { Color } from '../types/makerspaceServer';
 import { parseGroupName } from '../util/parseGroupName';
-import { colorSelector } from '../state/slices/makerspacesSlice';
-import { useSelector } from 'react-redux';
 
 export default function BlurHeader({ title, subtitle, isHero = false, hasBackButton = false, isTransparent = false, subtitleOnPress, pullToRefresh, refreshing, children }:
     { title: string, subtitle?: string, isHero?: boolean, hasBackButton?: boolean, isTransparent?:boolean, subtitleOnPress?:()=>void, children?: React.ReactNode, pullToRefresh?: () => void | Promise<void>, refreshing?: boolean }) {
@@ -131,6 +131,7 @@ export default function BlurHeader({ title, subtitle, isHero = false, hasBackBut
                     {isHero ?
                         <Image
                             marginTop={'$0'}
+                            marginLeft={'$4'}
                             source={(colors.text === 'white' ? BannerDark : Banner) as ImageSourcePropType}
                             resizeMode='contain'
                             width={'90%'}
@@ -176,16 +177,15 @@ export default function BlurHeader({ title, subtitle, isHero = false, hasBackBut
                         }}
                     >{`@${parseGroupName(title)[1]}`}</Text>}
                     {subtitle && <Text
-                        color={colors.text}
-                        marginTop={isHero ? '$-3' : '$-2'}
+                        marginTop={isHero ? '$-4' : '$-2'}
+                        marginLeft={'$4'}
                         style={{
                             color: colors.text,
                             fontSize:15,
-                            marginLeft: '3%',
                             opacity: interpolate(
                                 scrollY,
                                 [0, 50, 70],
-                                [.8, 0, 0],
+                                [1, 0, 0],
                                 Extrapolation.EXTEND,
                             ),
                         }}

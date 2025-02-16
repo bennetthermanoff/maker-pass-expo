@@ -10,21 +10,24 @@ import BlurHeader from '../../components/BlurHeader';
 import { GridMachineBentoBox } from '../../components/GridMachineBentoBox';
 import { LargeMachineBentoBox } from '../../components/LargeMachineBentoBox';
 import { Colors } from '../../constants/Colors';
-import { fetchLocationGroups, fetchMachineGroups, fetchMachines, selectActiveMachinesForUserFactory, selectCurrentLocationGroup, selectLoading, selectLocationGroups, selectMachineGroups, selectYourMachinesForUser } from '../../state/slices/machinesSlice';
+import { fetchLocationGroups, fetchMachineGroups, fetchMachines, selectActiveMachinesForUserFactory, selectCurrentLocationGroup, selectFlatYourMachinesForUser, selectLoading, selectLocationGroups, selectMachines, selectMachinesForCatalog, selectYourMachinesForUser } from '../../state/slices/machinesSlice';
 import { addOrUpdateServer, colorSelector, currentServerSelector } from '../../state/slices/makerspacesSlice';
 import { fetchPermissionGroups, fetchPermissionsForUser } from '../../state/slices/permissionsSlice';
 import { useAppDispatch } from '../../state/store';
-import { Machine, PermissionGroupMap } from '../../types/machine';
+import { Machine, MachineGroupMap, PermissionGroupMap } from '../../types/machine';
 import { Color } from '../../types/makerspaceServer';
 export default function Make() {
     const colors = useSelector(colorSelector);
-    const machineGroupMap = useSelector(selectMachineGroups);
     const makerspace = useSelector(currentServerSelector);
-    const locationGroup = useSelector(selectCurrentLocationGroup);
     const loading = useSelector(selectLoading);
     const dispatch = useAppDispatch();
-    const yourMachinesForUser = useSelector(selectYourMachinesForUser);
 
+    const machines = useSelector(selectMachines);
+    const yourMachinesForUser = useSelector(selectYourMachinesForUser);
+    const activeMachines = useSelector(selectActiveMachinesForUserFactory(makerspace));
+    const flatYourMachinesForUser = useSelector(selectFlatYourMachinesForUser);
+
+    const locationGroup = useSelector(selectCurrentLocationGroup);
     const [locationPickerActivated, setLocationPickerActivated] = useState(false);
 
     const handleRefresh = debounce(() => {
@@ -45,12 +48,21 @@ export default function Make() {
         });
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+    useEffect(() => {
+        if (machines.length === 0 && !loading){
+            //catches edge cases where the user wasn't logged in when we get to the home screen (usually first fetch happens during splashscreen)
+            handleRefresh();
+        }
+    },[]);
     return (
         <>
-
             <BlurHeader title="MakerPass" subtitle={'@' + locationGroup?.name} isHero pullToRefresh={handleRefresh} subtitleOnPress={() => {setLocationPickerActivated(!locationPickerActivated);}} refreshing={loading}>
-                <ActiveMachineBento colors={colors} activeMachines={useSelector(selectActiveMachinesForUserFactory(makerspace))} />
-                <YourMachinesBento colors={colors} machineMap={yourMachinesForUser.machinesByGroupId} permissionGroupMap={yourMachinesForUser.permissionGroupMap} />
+                <ActiveMachineBento colors={colors} activeMachines={activeMachines} />
+                {flatYourMachinesForUser.length > 0 && <YourMachinesBento colors={colors} machineMap={yourMachinesForUser.machinesByGroupId} permissionGroupMap={yourMachinesForUser.permissionGroupMap} />}
+                <CatalogBento colors={colors} catalog={useSelector(selectMachinesForCatalog)} />
+                <YStack
+                    paddingBottom={150}
+                />
             </BlurHeader>
             <YStack
                 position='absolute'
@@ -78,14 +90,14 @@ export default function Make() {
             <LocationSwitcher active={locationPickerActivated} dismiss={() => setLocationPickerActivated(!locationPickerActivated)} />
         </>
     );
-
 }
 
 const ActiveMachineBento = ({ colors, activeMachines }: { colors: Colors, activeMachines: Machine[] }) =>
     <YStack
-        aspectRatio={1.9} //Important!
+        aspectRatio={2} //Important!
         alignSelf='center'
         margin={'$3'}
+        marginBottom={'$1'}
         width={'95%'}
         padding={'$3'}
         backgroundColor={colors.accent.light}
@@ -133,11 +145,14 @@ const ActiveMachineBento = ({ colors, activeMachines }: { colors: Colors, active
 
 const YourMachinesBento = ({ colors, machineMap, permissionGroupMap }: { colors: Colors, machineMap: Record<string, Machine[]>, permissionGroupMap:PermissionGroupMap}) =>
     <YStack
-        aspectRatio={1.4} //Important!
+        aspectRatio={1.6} //Important!
         alignSelf='center'
         margin={'$3'}
         width={'95%'}
         padding={'$3'}
+        paddingTop={'$1'}
+        marginBottom={'$1'}
+        paddingBottom={'$0'}
 
         backgroundColor={colors.accent.light}
         borderRadius={20}
@@ -244,3 +259,38 @@ const LocationSwitcher = ({ active, dismiss }: { active: boolean, dismiss: () =>
         </>
     );
 };
+
+const CatalogBento = ({ colors, catalog }:{colors:Colors, catalog:{ machineMapByGroupIds:Record<string,Machine[]>, machineGroups: MachineGroupMap}}) =>
+    <YStack
+        aspectRatio={1.6} //Important!
+        alignSelf='center'
+        margin={'$3'}
+        width={'95%'}
+        padding={'$3'}
+        paddingTop={'$1'}
+        marginBottom={'$1'}
+        paddingBottom={'$0'}
+
+        backgroundColor={colors.accent.light}
+        borderRadius={20}
+    >
+        <H2
+            marginLeft={'$2'}
+            marginBottom={'$1'}
+            color={colors.text}
+        >Catalog</H2>
+        <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={true}
+            showsVerticalScrollIndicator={false}
+            width={'100%'}
+        >
+            {Object.keys(catalog.machineMapByGroupIds).map((groupId) =>
+                <GridMachineBentoBox
+                    key={groupId}
+                    colors={colors}
+                    machines={catalog.machineMapByGroupIds[groupId]}
+                    groupName={catalog.machineGroups[groupId]?.name}
+                />)}
+        </ScrollView>
+    </YStack>;

@@ -12,7 +12,7 @@ module.exports = (config) => withGradleProperties(config, (config) => {
         config.modResults.push({
             type: 'property',
             key: 'AsyncStorage_db_size_in_MB',
-            value: '50',
+            value: '300',
         });
     }
 

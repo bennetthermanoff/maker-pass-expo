@@ -248,8 +248,6 @@ export const selectMachinesInCurrentLocation = createSelector(
 export const selectYourMachinesForUser = createSelector(
     [selectMachinesInCurrentLocation, selectCurrentUserPermissions, selectPermissionGroups],
     (machines, userPermissions, permissionGroupMap) => {
-        console.log('machines', machines.length);
-
         const machinesByGroupId = {} as Record<string,Machine[]>;
         userPermissions?.groups.forEach((group) => {
             if (group.permission){
@@ -261,11 +259,30 @@ export const selectYourMachinesForUser = createSelector(
         userPermissions?.machines.forEach((machine) => {
             otherMachineIds.push(machine.id);
         });
-        console.log('otherMachineIds', otherMachineIds);
-
         machinesByGroupId.OTHER = machines.filter((machine) => otherMachineIds.includes(machine.id));
-        console.log('machinesByGroupId', machinesByGroupId.OTHER.length);
-
         return { machinesByGroupId, permissionGroupMap };
+    },
+);
+export const selectFlatYourMachinesForUser = createSelector([selectYourMachinesForUser],({ machinesByGroupId }) => {
+    const machines: Machine[] = [];
+    const groupIds = Object.keys(machinesByGroupId);
+    groupIds.forEach((groupId) => {
+        machinesByGroupId[groupId].forEach((machine) => {
+            machines.push(machine);
+        });
+    });
+    return machines;
+});
+
+export const selectMachinesForCatalog = createSelector(
+    [selectMachines, selectMachineGroups, selectCurrentLocationGroup],
+    (machines, groups, location) => {
+        const machineMapByGroupIds:Record<string,Machine[]> = {};
+        const groupIds = location?.groups || Object.keys(groups);
+        groupIds.forEach((groupId) => {
+            machineMapByGroupIds[groupId] = machines.filter((machine) => groups[groupId]?.machineIds.includes(machine.id));
+        });
+
+        return { machineGroups:groups, machineMapByGroupIds };
     },
 );
