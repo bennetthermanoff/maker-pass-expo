@@ -1,9 +1,13 @@
 import { LinearGradient } from '@tamagui/linear-gradient';
 import { useEffect, useState } from 'react';
 import { ImageSourcePropType } from 'react-native';
+import { useSelector } from 'react-redux';
 import { Button, H3, Image, YStack } from 'tamagui';
 import defaultImage from '../assets/images/icon.png';
 import { Colors } from '../constants/Colors';
+import { disableMachine } from '../state/slices/machinesSlice';
+import { currentServerSelector } from '../state/slices/makerspacesSlice';
+import { useAppDispatch } from '../state/store';
 import { Machine } from '../types/machine';
 import { getImage } from '../util/machineImageCache';
 
@@ -14,6 +18,8 @@ export const LargeMachineBentoBox = ({ machine, colors, showDisableButton = fals
             getImage(machine.photoHash).then((image) => setImage(image));
         }
     }, [machine.photoHash]);
+    const dispatch = useAppDispatch();
+    const makerspace = useSelector(currentServerSelector);
 
     return (
         <YStack
@@ -54,7 +60,9 @@ export const LargeMachineBentoBox = ({ machine, colors, showDisableButton = fals
                     opacity={.9}
                     borderRadius={20}
                     onPress={() => {
-                        alert('disabled (not implemented)');
+                        if (makerspace){
+                            dispatch(disableMachine({ machineId:machine.id,makerspace }));
+                        }
                     }}
                     display={showDisableButton ? 'flex' : 'none'}
                 >Disable</Button>
