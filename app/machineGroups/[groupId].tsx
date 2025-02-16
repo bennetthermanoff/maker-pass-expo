@@ -220,7 +220,7 @@ export default function EditMachineGroup(){
                         }}
                         placeholder='Select an option'
                         options={machines.map((machine) => ({
-                            label:`${machine.name}`, value:machine.id,
+                            label:`${machine.name} #${machine.id.slice(0,5)}`, value:machine.id,
                         }))}
                         selectedValue={formData.machineIds}
                         onValueChange={(enabledIds:string[]) => {

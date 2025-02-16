@@ -1,14 +1,15 @@
-import { Check } from '@tamagui/lucide-icons';
 import axios from 'axios';
 import { router } from 'expo-router';
 import { debounce } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { Alert, KeyboardAvoidingView, NativeSyntheticEvent, Platform, TextInputChangeEventData, ViewStyle } from 'react-native';
 import DropdownSelect from 'react-native-input-select';
+import { TSectionList } from 'react-native-input-select/lib/typescript/types/index.types';
 import { useSelector } from 'react-redux';
-import { Button, Input, Text, XStack, YStack, getTokens } from 'tamagui';
+import { Input, Text, XStack, YStack, getTokens } from 'tamagui';
 import BlurHeader from '../../../components/BlurHeader';
 import { usePermissionGroups } from '../../../hooks/usePermissionGroups';
+import { selectMachinesForCatalog } from '../../../state/slices/machinesSlice';
 import { colorSelector } from '../../../state/slices/makerspacesSlice';
 import { Color, MakerspaceConfig } from '../../../types/makerspaceServer';
 import { PermissionObject, User, UserType } from '../../../types/user';
@@ -20,7 +21,7 @@ export default function SearchUser() {
     const colors = useSelector(colorSelector);
     const { permissionGroups, machines, makerspace } = usePermissionGroups();
     const [permissions, setPermissions] = useState<{machines:Array<{id:string, name:string}>, permissionGroups:Array<{id:string, name:string}>}>({ machines:[], permissionGroups:[] });
-
+    const { machineGroups, machineMapByGroupIds } = useSelector(selectMachinesForCatalog);
     useEffect(() => {
         if (permissionGroups && machines){
             setPermissions({ machines: machines.map((machine) => ({ id:machine.id, name:machine.name })), permissionGroups: permissionGroups.map((permissionGroup) => ({ id:permissionGroup.id, name:permissionGroup.name })) });
@@ -60,8 +61,6 @@ export default function SearchUser() {
         // alert(JSON.stringify(user.permissionObject));
         axios.post(`${makerspace?.serverAddress}:${makerspace?.serverPort}/api/userPermissions/${user.id}`, user.permissionObject, getAuthHeaders(makerspace))
             .then((response) => {
-                alert('Permissions updated successfully!');
-                setCloseModal(true);
             })
             .catch((e) => {
             });
@@ -172,6 +171,26 @@ export default function SearchUser() {
         );
     };
 
+    const getTrainingOptions: () => TSectionList = () => {
+        const sectionList:TSectionList = [];
+        sectionList.push({
+            title: 'Groups',
+            data: permissions.permissionGroups.map((permissionGroup) => ({ label:permissionGroup.name, value:permissionGroup.id })),
+        });
+        const machineGroupIdsInLocation = Object.keys(machineMapByGroupIds);
+        machineGroupIdsInLocation.forEach((groupId) => {
+            sectionList.push({
+                title:machineGroups[groupId].name,
+                data:machineMapByGroupIds[groupId].map((machine) => ({ label:machine.name, value:machine.id })),
+            });
+        });
+        sectionList.push({
+            title:'All Machines',
+            data: permissions.machines.map((machine) => ({ label:`${machine.name} #${machine.id.slice(0,5)}`, value:machine.id })),
+        });
+        return sectionList;
+    };
+
     return (
         <KeyboardAvoidingView
             style={{ backgroundColor:getTokens().color[colors.background as Color].val , minHeight:'100%' }}
@@ -236,32 +255,8 @@ export default function SearchUser() {
                                 },
                             }}
                             placeholder='Edit Trainings'
-                            options={[
-                                {
-                                    title: 'Groups',
-                                    data: permissions.permissionGroups.map((permissionGroup) => ({ label:permissionGroup.name, value:permissionGroup.id })),
-                                },
-                                {
-                                    title: 'Machines',
-                                    data: permissions.machines.map((machine) => ({ label:machine.name, value:machine.id })),
-                                },
-                            ]}
-                            listHeaderComponent={
-                                <Button
-                                    iconAfter={Check}
-                                    scaleIcon={1.5}
-                                    fontSize={'$5'}
-                                    textAlign="left"
-                                    color={colors.text}
-                                    backgroundColor={colors.accent.dark}
-                                    width={'95%'}
-                                    alignSelf='center'
-                                    margin={'$1'}
-                                    onPress={() => {
-                                        setCloseModal(true);
-                                        updatePermissions(user);
-                                    }}
-                                >Save</Button>
+                            options={
+                                getTrainingOptions()
                             }
                             listControls={{ hideSelectAll:true }}
                             selectedValue={user.permissionObject.groups.map((group) => group.id).concat(user.permissionObject.machines.map((machine) => machine.id))}
@@ -271,10 +266,12 @@ export default function SearchUser() {
                                 const permissionObject:PermissionObject = { machines:machineIds.map((id) => ({ id, permission:true })), groups:groupIds.map((id) => ({ id, permission:true })) };
                                 setUsers(users.map((user_) => {
                                     if (user_.id === user.id){
+                                        updatePermissions({ ...user, permissionObject });
                                         return { ...user, permissionObject };
                                     } else {
                                         return user_;
                                     }}));
+
                             }
                             }
                         />}

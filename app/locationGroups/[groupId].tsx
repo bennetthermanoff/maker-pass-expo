@@ -216,7 +216,7 @@ export default function EditLocationGroup(){
                         }}
                         placeholder='Select an option'
                         options={machineGroups.map((machineGroup) => ({
-                            label:`${machineGroup.name}`, value:machineGroup.id,
+                            label:`${machineGroup.name} #${machineGroup.id.slice(0,5)}`, value:machineGroup.id,
                         }))}
                         selectedValue={formData.groups}
                         onValueChange={(enabledIds:string[]) => {
