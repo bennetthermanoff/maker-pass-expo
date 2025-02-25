@@ -5,7 +5,7 @@ import { Colors } from '../constants/Colors';
 import { Machine } from '../types/machine';
 import { SmallMachineBentoBox } from './SmallMachineBentoBox';
 
-export const GridMachineBentoBox = ({ colors, machines, groupName }:{colors:Colors, machines:Machine[], groupName:string}) =>
+export const GridMachineBentoBox = ({ colors, machines, groupName, press }:{colors:Colors, machines:Machine[], groupName:string, press?:()=>void}) =>
     <YStack>
         <YStack
         //semi transparent background of following ystack
@@ -37,6 +37,7 @@ export const GridMachineBentoBox = ({ colors, machines, groupName }:{colors:Colo
                 }}
                 loop
                 duration={7500}
+                onPress={press}
             >{groupName}</TextTicker>
             {/* first row of 2 */}
             <XStack
@@ -82,7 +83,7 @@ export const GridMachineBentoBox = ({ colors, machines, groupName }:{colors:Colo
                         borderRadius={20}
                         margin={'$0'}
                         marginRight={'$3'}
-                    ><ArrowRight color={colors.text} size={'$3'} />
+                    ><ArrowRight color={colors.text} onPress={press} size={'$3'} />
                     </YStack>}
                 </>
                 }

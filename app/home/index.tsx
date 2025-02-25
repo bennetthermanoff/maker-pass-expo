@@ -177,6 +177,7 @@ const YourMachinesBento = ({ colors, machineMap, permissionGroupMap }: { colors:
             marginLeft={'$2'}
             marginBottom={'$1'}
             color={colors.text}
+            onPress={() => {router.push('/catalog/yourMachines');}}
         >Your Machines</H2>
         <ScrollView
             horizontal
@@ -191,6 +192,7 @@ const YourMachinesBento = ({ colors, machineMap, permissionGroupMap }: { colors:
                         colors={colors}
                         machines={machineMap[groupId]}
                         groupName={groupId !== 'OTHER' ? permissionGroupMap[groupId]?.name : 'Other'}
+                        press={() => {router.push('/catalog/yourMachines');}}
                     />
                     :
                     <></>))}
@@ -286,7 +288,6 @@ const CatalogBento = ({ colors, catalog }:{colors:Colors, catalog:{ machineMapBy
         paddingTop={'$1'}
         marginBottom={'$1'}
         paddingBottom={'$0'}
-
         backgroundColor={colors.accent.light}
         borderRadius={20}
     >
@@ -294,6 +295,7 @@ const CatalogBento = ({ colors, catalog }:{colors:Colors, catalog:{ machineMapBy
             marginLeft={'$2'}
             marginBottom={'$1'}
             color={colors.text}
+            onPress={() => {router.push('/catalog/catalog');}}
         >Catalog</H2>
         <ScrollView
             horizontal
@@ -307,6 +309,7 @@ const CatalogBento = ({ colors, catalog }:{colors:Colors, catalog:{ machineMapBy
                     colors={colors}
                     machines={catalog.machineMapByGroupIds[groupId]}
                     groupName={catalog.machineGroups[groupId]?.name}
+                    press={() => {router.push('/catalog/catalog');}}
                 />)}
         </ScrollView>
     </YStack>;

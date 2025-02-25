@@ -194,7 +194,7 @@ export default function AddMachine() {
                         flexWrap='wrap'
                         color={colors.text}
                         width={'95%'}
-                        lineHeight={'$2'}
+                        // lineHeight={'$2'}
                         pressStyle={{ color: colors.text }}
                     >A unique key will be generated for unlocking your machine and embedded in its QR code.</Label>
                     <XStack
@@ -221,7 +221,7 @@ export default function AddMachine() {
                         flexWrap='wrap'
                         color={colors.text}
                         pressStyle={{ color: colors.text }}
-                        lineHeight={'$2'}
+                        // lineHeight={'$2'}
                         width={'95%'}
                         marginBottom={'$8'}
                     >Solenoid mode will disable the machine after 5 seconds. Great for KeyBoxes, and logging machine use on uncontrolled machines.</Label>
@@ -260,7 +260,7 @@ export default function AddMachine() {
                             color={colors.text}
                             marginTop={'$4'}
                             marginBottom={'$2'}
-                            lineHeight={'$2'}
+                            // lineHeight={'$2'}
                             width={'95%'}
                             pressStyle={{ color: colors.text }}
                         >Note: QR will need to be replaced in the future if this machine's Machine Group changes to require a GeoFence. </Label>

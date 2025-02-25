@@ -11,7 +11,7 @@ import { useAppDispatch } from '../state/store';
 import { Machine } from '../types/machine';
 import { getImage } from '../util/machineImageCache';
 
-export const LargeMachineBentoBox = ({ machine, colors, showDisableButton = false }: {machine: Machine, colors: Colors, showDisableButton?: boolean}) => {
+export const LargeMachineBentoBox = ({ machine, colors, showDisableButton = false, onPress }: {machine: Machine, colors: Colors, showDisableButton?: boolean, onPress?:()=>void}) => {
     const [image, setImage] = useState<string | null>(null);
     useEffect(() => {
         if (machine.photoHash){
@@ -29,6 +29,7 @@ export const LargeMachineBentoBox = ({ machine, colors, showDisableButton = fals
             margin={'$0'}
             marginRight={'$3'}
             backgroundColor={colors.accent.light}
+            onPress={onPress}
         >
 
             <LinearGradient
@@ -46,9 +47,9 @@ export const LargeMachineBentoBox = ({ machine, colors, showDisableButton = fals
                     marginLeft={'$3'}
                     marginRight={'$3'}
                     color={colors.text}
-                    fontSize={'20%'}
-                    maxHeight={'55%'}
-                    lineHeight={'20%'}
+                    fontSize={22}
+                    maxHeight={showDisableButton ? '55%' : '100%'}
+                    lineHeight={22}
                 >{machine?.name}</H3>
                 <Button
                     marginBottom={'$2'}

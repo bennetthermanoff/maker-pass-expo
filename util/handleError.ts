@@ -42,7 +42,7 @@ const handleError = (err: any) => {
     }
     else if (err.response?.status === 500) {
         Alert.alert('Oops, something went wrong', 'The server encountered an error. Please try again later.', [
-            { text: 'Show Details', onPress: () => Alert.alert('Error Details', JSON.stringify(scrubbedError)) },
+            { text: 'Show Details', onPress: () => Alert.alert('Error Details', JSON.stringify(err.response?.data?.message) + JSON.stringify(scrubbedError)) },
             { text: 'Dismiss', onPress: () => {} },
         ]);
     }
