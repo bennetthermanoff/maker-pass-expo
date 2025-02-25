@@ -1,9 +1,9 @@
-import { Link, Stack } from 'expo-router';
+import { Stack } from 'expo-router';
 import { StyleSheet } from 'react-native';
 
+import { Button } from 'tamagui';
 import { Text, View } from '../components/Themed';
 import { goHome } from '../util/goHome';
-import { Button } from 'tamagui';
 
 export default function NotFoundScreen() {
     return (

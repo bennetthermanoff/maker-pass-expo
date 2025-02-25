@@ -1,12 +1,9 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Tabs } from 'expo-router';
-import { Pressable, View, useColorScheme } from 'react-native';
-
-import Colors, { useColors } from '../../constants/Colors';
-import { useMakerspace } from '../../hooks/useMakerspace';
-import { YStack, getTokens } from 'tamagui';
+import { Tabs } from 'expo-router';
+import { useSelector } from 'react-redux';
+import { getTokens } from 'tamagui';
+import { colorSelector, currentServerSelector } from '../../state/slices/makerspacesSlice';
 import { Color } from '../../types/makerspaceServer';
-import { BlurView } from 'expo-blur';
 
 /**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
@@ -19,9 +16,9 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
-    const colors = useColors();
+    const colors = useSelector(colorSelector);
 
-    const makerspace = useMakerspace();
+    const makerspace = useSelector(currentServerSelector);
     return (
 
         <Tabs
@@ -42,7 +39,7 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="index"
                 options={{
-                    title: 'Machines',
+                    title: 'Make',
                     tabBarIcon: ({ color }) => <TabBarIcon name='wrench' color={color} />,
                     headerShown: false,
 

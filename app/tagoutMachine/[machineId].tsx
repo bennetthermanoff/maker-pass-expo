@@ -1,25 +1,28 @@
-import { router, useLocalSearchParams } from 'expo-router';
-import { Colors, useColors } from '../../constants/Colors';
-import { useMakerspace } from '../../hooks/useMakerspace';
-import { Machine, TagOutWithName } from '../../types/machine';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { getAuthHeaders } from '../../util/authRoutes';
-import BlurHeader from '../../components/BlurHeader';
-import { Button, H2, H3, H4, H5, Input, Spinner, Text, View, XStack, YStack } from 'tamagui';
 import { LinearGradient } from '@tamagui/linear-gradient';
-import { CancelButton } from '../../components/CancelButton';
+import axios from 'axios';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { Button, H2, H4, Input, Spinner, Text, View, XStack, YStack } from 'tamagui';
+import BlurHeader from '../../components/BlurHeader';
+import { Colors } from '../../constants/Colors';
+import { selectMachines } from '../../state/slices/machinesSlice';
+import { colorSelector, currentServerSelector } from '../../state/slices/makerspacesSlice';
+import { Machine, TagOutWithName } from '../../types/machine';
+import { getAuthHeaders } from '../../util/authRoutes';
 
 export default function TagOutMachine(){
 
     const local = useLocalSearchParams();
-    const colors = useColors();
-    const makerspace = useMakerspace();
+    const colors = useSelector(colorSelector);
+    const makerspace = useSelector(currentServerSelector);
+    const machinesFromState = useSelector(selectMachines);
+
     const getMachineInitialData = () => {
-        const machine = JSON.parse(local.machine as string);
-        return machine as Machine&{lastUsedByName:string|null};
+        const machine = machinesFromState.find((machine) => machine.id === local.machineId);
+        return machine as Machine;
     };
-    const [machine, setMachine] = useState<Machine&{lastUsedByName:string|null}>(getMachineInitialData());
+    const [machine, setMachine] = useState<Machine>(getMachineInitialData());
     const [tagOuts, setTagOuts] = useState <Array<TagOutWithName>>([]);
     const [reason, setReason] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
@@ -71,6 +74,7 @@ export default function TagOutMachine(){
     return (
         <>
             <BlurHeader
+                hasBackButton
                 title={machine.name}
                 subtitle={machine.lastUsedByName ? `Last Used By: ${machine.lastUsedByName}` : undefined}
                 pullToRefresh={() => getTagOuts(10)}
@@ -129,7 +133,6 @@ export default function TagOutMachine(){
                     null
                 }
             </BlurHeader>
-            <CancelButton colors={colors} />
         </>
     );
 

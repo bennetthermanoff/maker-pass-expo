@@ -1,15 +1,21 @@
 
-import { Circle, H1, H3, ScrollView, YStack, getTokens, Text } from 'tamagui';
-import { Color } from '../types/makerspaceServer';
+import { ChevronLeft } from '@tamagui/lucide-icons';
 import { BlurView } from 'expo-blur';
-import React, { useEffect, useState } from 'react';
-import Animated,{ useAnimatedProps, interpolate, Extrapolation } from 'react-native-reanimated';
-import { useColors } from '../constants/Colors';
-import { Platform, RefreshControl } from 'react-native';
+import { router } from 'expo-router';
+import React, { useState } from 'react';
+import { ImageSourcePropType, Platform, RefreshControl } from 'react-native';
+import Animated, { Extrapolation, interpolate, useAnimatedProps } from 'react-native-reanimated';
+import { useSelector } from 'react-redux';
+import { getTokens, H1, H3, Image, ScrollView, Text, XStack, YStack } from 'tamagui';
+import BannerDark from '../assets/images/banner-dark.png';
+import Banner from '../assets/images/banner.png';
+import { colorSelector } from '../state/slices/makerspacesSlice';
+import { Color } from '../types/makerspaceServer';
 import { parseGroupName } from '../util/parseGroupName';
 
-export default function BlurHeader({ title, subtitle, children, pullToRefresh, refreshing }: { title: string, subtitle?:string, children?: React.ReactNode, pullToRefresh?: () => void| Promise<void> , refreshing?: boolean}) {
-    const colors = useColors();
+export default function BlurHeader({ title, subtitle, isHero = false, hasBackButton = false, isTransparent = false, subtitleOnPress, pullToRefresh, refreshing, children }:
+    { title: string, subtitle?: string, isHero?: boolean, hasBackButton?: boolean, isTransparent?:boolean, subtitleOnPress?:()=>void, children?: React.ReactNode, pullToRefresh?: () => void | Promise<void>, refreshing?: boolean }) {
+    const colors = useSelector(colorSelector);
     const [scrollY, setScrollY] = useState(0);
     const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
@@ -32,6 +38,25 @@ export default function BlurHeader({ title, subtitle, children, pullToRefresh, r
 
     return (
         <>
+            {hasBackButton &&
+            <XStack
+                onPress={() => {
+                    router.back();
+                }}
+                style={{
+                    position: 'absolute',
+                    top: 55,
+                    left: 0,
+                    zIndex: 2,
+                }}
+                width={50}
+            >
+                <ChevronLeft
+                    size={40}
+                    color={colors.text}
+                />
+            </XStack>
+            }
             <AnimatedBlurView
                 animatedProps={animatedProps}
                 style={{
@@ -70,7 +95,7 @@ export default function BlurHeader({ title, subtitle, children, pullToRefresh, r
             </AnimatedBlurView>
 
             <ScrollView
-                backgroundColor={colors.background}
+                backgroundColor={isTransparent ? 'transparent' : colors.background}
                 onScroll={(event) => {
                     if (event.nativeEvent.contentOffset.y < 80){
                         setScrollY(event.nativeEvent.contentOffset.y);
@@ -92,7 +117,7 @@ export default function BlurHeader({ title, subtitle, children, pullToRefresh, r
             >
 
                 <YStack
-                    backgroundColor={colors.background}
+                    backgroundColor={isTransparent ? 'transparent' : colors.background}
                     style={
                         {
                             flex: 1,
@@ -103,21 +128,39 @@ export default function BlurHeader({ title, subtitle, children, pullToRefresh, r
                         }
                     }
                 >
-                    <H1
-                        style={{
-                            color: colors.text,
-                            marginLeft: '3%',
-                            fontSize: 40,
-                            fontWeight: '900',
-                            opacity: interpolate(
-                                scrollY,
-                                [0, 50, 70],
-                                [1, 0, 0],
-                                Extrapolation.EXTEND,
-                            ),
+                    {isHero ?
+                        <Image
+                            marginTop={'$0'}
+                            marginLeft={'$4'}
+                            source={(colors.text === 'white' ? BannerDark : Banner) as ImageSourcePropType}
+                            resizeMode='contain'
+                            width={'90%'}
+                            maxHeight={'8%'}
+                            style={{
+                                opacity: interpolate(
+                                    scrollY,
+                                    [0, 50, 70],
+                                    [1, 0, 0],
+                                    Extrapolation.EXTEND,
+                                ),
+                            }}
+                        />
+                        :
+                        <H1
+                            style={{
+                                color: colors.text,
+                                marginLeft: '3%',
+                                fontSize: 40,
+                                fontWeight: '900',
+                                opacity: interpolate(
+                                    scrollY,
+                                    [0, 50, 70],
+                                    [1, 0, 0],
+                                    Extrapolation.EXTEND,
+                                ),
 
-                        }}
-                    >{parseGroupName(title)[0]}</H1>
+                            }}
+                        >{parseGroupName(title)[0]}</H1>}
                     {parseGroupName(title)[1] && <Text
                         color={colors.text}
                         marginTop={'$-2'}
@@ -134,19 +177,19 @@ export default function BlurHeader({ title, subtitle, children, pullToRefresh, r
                         }}
                     >{`@${parseGroupName(title)[1]}`}</Text>}
                     {subtitle && <Text
-                        color={colors.text}
-                        marginTop={'$-2'}
+                        marginTop={isHero ? '$-4' : '$-2'}
+                        marginLeft={'$4'}
                         style={{
                             color: colors.text,
-                            marginLeft: '3%',
+                            fontSize:15,
                             opacity: interpolate(
                                 scrollY,
                                 [0, 50, 70],
-                                [.8, 0, 0],
+                                [1, 0, 0],
                                 Extrapolation.EXTEND,
                             ),
-
                         }}
+                        onPress={subtitleOnPress}
                     >{subtitle}</Text>}
                     {children}
                 </YStack>

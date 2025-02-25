@@ -8,28 +8,33 @@ import DropdownSelect from 'react-native-input-select';
 import { useSelector } from 'react-redux';
 import { Button, H3, H4, Input, Section, Switch, Text, XStack, YStack, getTokens } from 'tamagui';
 import BlurHeader from '../../components/BlurHeader';
-import { GLOBAL } from '../../global';
-import { selectMachines } from '../../state/slices/machinesSlice';
+import { fetchLocationGroups, selectLocationGroups, selectMachineGroupAsArray } from '../../state/slices/machinesSlice';
 import { colorSelector, currentServerSelector } from '../../state/slices/makerspacesSlice';
-import { MachineGroupBody } from '../../types/machine';
+import { useAppDispatch } from '../../state/store';
+import { LocationGroupBody } from '../../types/machine';
 import { Color } from '../../types/makerspaceServer';
 import { getAuthHeaders } from '../../util/authRoutes';
 
-export default function EditMachineGroup(){
+export default function EditLocationGroup(){
     const local = useLocalSearchParams();
     const colors = useSelector(colorSelector);
-    const machines = useSelector(selectMachines);
+    const machineGroups = useSelector(selectMachineGroupAsArray);
     const makerspace = useSelector(currentServerSelector);
-    const getMachineGroupInitialData = () => {
-        if (local.groupId === 'new'){
-            return { name:'',machineIds:[],geoFences:[] };
+    const locationGroup = useSelector(selectLocationGroups)[local.groupId as string];
+    const dispatch = useAppDispatch();
+    const getLocationGroupInitialData = () => {
+        if (local.groupId !== 'new'){
+            return locationGroup;
         } else {
-            const machineGroup = JSON.parse(local.machineGroup as string) as MachineGroupBody;
-            return machineGroup;
+            return {
+                name:'',
+                groups:[],
+                geoFences:[],
+            };
         }
     };
 
-    const [formData, setFormData] = useState<Partial<MachineGroupBody>>(getMachineGroupInitialData());
+    const [formData, setFormData] = useState<Partial<LocationGroupBody>>(getLocationGroupInitialData());
 
     const [enableGeoFence, setEnableGeoFence] = useState<boolean>(() => {
         const geoFences = formData.geoFences;
@@ -52,84 +57,75 @@ export default function EditMachineGroup(){
         setFormData({ ...formData, geoFences });
     };
 
-    const machineDropDownSelectedText = () => {
-        if (formData.machineIds?.length === 0){
+    const groupDropDownSelectedText = () => {
+        if (formData.groups?.length === 0){
             return 'Select an option';
-        } else if (formData.machineIds?.length === 1){
-            return `${formData.machineIds[0]}`;
+        } else if (formData.groups?.length === 1){
+            return `${formData.groups[0]}`;
         } else {
-            return `${formData.machineIds?.length} machines selected`;
+            return `${formData.groups?.length} groups selected`;
         }
     };
 
     const handleSubmit = async () => {
         if (local.groupId === 'new'){
-            handleNewMachineGroup();
+            handleNewLocationGroup();
         }
         else {
-            handleEditMachineGroup();
+            handleEditLocationGroup();
         }
     };
-    const handleNewMachineGroup = async () => {
+    const handleNewLocationGroup = async () => {
         if (!formData.name){
-            return alert('Please enter a machine name.');
+            return alert('Please enter a location group name.');
         }
         if (!makerspace?.serverAddress || !makerspace?.serverPort){
             return alert('Unknown Makerspace.');
         }
-        try {
-            const response = await axios.post(
-                `${makerspace?.serverAddress}:${makerspace?.serverPort}/api/machineGroup/single/`,
-                {
-                    name:formData.name,
-                    machineIds:formData.machineIds,
-                    geoFences:formData.geoFences,
-                },
-                getAuthHeaders(makerspace),
-            );
-            router.back();
-            alert('Machine group added successfully!');
-            GLOBAL.getMachines();
-        } catch (e:any) {
-        }
+        const response = await axios.post(
+            `${makerspace?.serverAddress}:${makerspace?.serverPort}/api/locationGroups/single/`,
+            {
+                name:formData.name,
+                groups:formData.groups,
+                geoFences:formData.geoFences,
+            },
+            getAuthHeaders(makerspace),
+        );
+        router.back();
+        alert('Location group added successfully!');
+        dispatch(fetchLocationGroups(makerspace));
     };
-    const handleEditMachineGroup = async () => {
+    const handleEditLocationGroup = async () => {
         if (formData.name && formData.name === ''){
-            return alert('Please enter a machine name.');
+            return alert('Please enter a location group name.');
         }
         if (!makerspace?.serverAddress || !makerspace?.serverPort){
             return alert('Unknown Makerspace.');
         }
-        try {
-            const response = await axios.patch(
-                `${makerspace?.serverAddress}:${makerspace?.serverPort}/api/machineGroup/single/${local.groupId}`,
-                {
-                    name:formData.name,
-                    machineIds:formData.machineIds,
-                    geoFences:formData.geoFences,
-                },
-                getAuthHeaders(makerspace),
-            );
-            router.back();
-            alert('Machine group updated successfully!');
-            GLOBAL.getMachines();
-        } catch (e:any) {
-        }
+        const response = await axios.patch(
+            `${makerspace?.serverAddress}:${makerspace?.serverPort}/api/locationGroups/single/${local.groupId}`,
+            {
+                name:formData.name,
+                groups:formData.groups,
+                geoFences:formData.geoFences,
+            },
+            getAuthHeaders(makerspace),
+        );
+        router.back();
+        alert('Location group updated successfully!');
+        dispatch(fetchLocationGroups(makerspace));
     };
-    const deleteMachineGroup = async () => {
+    const deleteLocationGroup = async () => {
         if (!makerspace?.serverAddress || !makerspace?.serverPort){
             return alert('Unknown Makerspace.');
         }
-        try {
-            const response = await axios.delete(
-                `${makerspace?.serverAddress}:${makerspace?.serverPort}/api/machineGroup/single/${local.groupId}`,
-                getAuthHeaders(makerspace),
-            );
-            router.back();
-            alert('Machine group deleted successfully!');
-            GLOBAL.getMachines();
-        } catch (e:any) {
-        }
+        const response = await axios.delete(
+            `${makerspace?.serverAddress}:${makerspace?.serverPort}/api/locationGroups/single/${local.groupId}`,
+            getAuthHeaders(makerspace),
+        );
+        router.back();
+        alert('Location group deleted successfully!');
+        dispatch(fetchLocationGroups(makerspace));
     };
     const handleDeleteGeoFence = (index:number) => {
         Alert.alert('Delete GeoFence','Are you sure you want to delete this GeoFence?',[
@@ -155,7 +151,7 @@ export default function EditMachineGroup(){
             style={{ backgroundColor:getTokens().color[colors.background as Color].val , minHeight:'100%' }}
             behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}
         >
-            <BlurHeader hasBackButton title={local.groupId === 'new' ? 'Add Machine Group' : 'Edit Machine Group'}>
+            <BlurHeader hasBackButton title={local.groupId === 'new' ? 'Add Location Group' : 'Edit Location Group'}>
                 <YStack
                     width={'100%'}
                     alignItems='center'
@@ -180,9 +176,9 @@ export default function EditMachineGroup(){
                         fontSize={'$2'}
                         flexWrap='wrap'
                         width={'90%'}
-                    >Tip: add a location for your machine groups with parenthesis</Text>
+                    >Tip: add a location for your location groups with parenthesis</Text>
                     <DropdownSelect
-                        label={'Machines'}
+                        label={'Groups'}
                         isMultiple
                         isSearchable
                         labelStyle={{ color: colors.text, margin: 12, marginBottom:3 }}
@@ -219,12 +215,12 @@ export default function EditMachineGroup(){
                             },
                         }}
                         placeholder='Select an option'
-                        options={machines.map((machine) => ({
-                            label:`${machine.name} #${machine.id.slice(0,5)}`, value:machine.id,
+                        options={machineGroups.map((machineGroup) => ({
+                            label:`${machineGroup.name} #${machineGroup.id.slice(0,5)}`, value:machineGroup.id,
                         }))}
-                        selectedValue={formData.machineIds}
+                        selectedValue={formData.groups}
                         onValueChange={(enabledIds:string[]) => {
-                            setFormData({ ...formData, machineIds: enabledIds });
+                            setFormData({ ...formData, groups: enabledIds });
                         }}
                     />
                     <Text
@@ -233,7 +229,7 @@ export default function EditMachineGroup(){
                         marginTop={'$-4'}
                         flexWrap='wrap'
                         width={'90%'}
-                    >*Selecting a machine already in a group will remove that machine from other groups.</Text>
+                    >*Selecting a group already in a location group will remove that group from other location groups.</Text>
                     <YStack
                         backgroundColor={colors.inputBackground}
                         width={'95%'}
@@ -266,7 +262,7 @@ export default function EditMachineGroup(){
                             marginBottom={'$2'}
                             flexWrap='wrap'
                             width={'95%'}
-                        >*GeoFences prevent machine use from outside a certain location. Requires users to give location permission. User's locations are never stored.</Text>
+                        >*GeoFences prevent group use from outside a certain location. Requires users to give location permission. User's locations are never stored.</Text>
                         {enableGeoFence ?
                             <>
                                 <Button
@@ -383,7 +379,7 @@ export default function EditMachineGroup(){
                         marginTop={'$3'}
                         marginBottom={local.groupId === 'new' ? 100 : 20}
                         onPress={handleSubmit}
-                    >{local.groupId === 'new' ? 'Add Machine Group' : 'Update Machine Group'}</Button>
+                    >{local.groupId === 'new' ? 'Add Location Group' : 'Update Location Group'}</Button>
                     {local.groupId !== 'new' ?
                         <Button
                             color={colors.text}
@@ -391,8 +387,8 @@ export default function EditMachineGroup(){
                             width={'auto'}
                             marginTop={'$3'}
                             marginBottom={100}
-                            onPress={deleteMachineGroup}
-                        >Delete Machine Group</Button>
+                            onPress={deleteLocationGroup}
+                        >Delete Location Group</Button>
                         : null}
                 </YStack>
 

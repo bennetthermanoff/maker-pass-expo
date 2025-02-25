@@ -1,11 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Appearance } from 'react-native';
-import { ColorName, ColorResponse, MakerspaceTheme } from '../types/makerspaceServer';
-import { getCurrentTheme } from '../util/makerspaces';
 import { getTokens } from 'tamagui';
-import { router, useGlobalSearchParams, useRootNavigationState } from 'expo-router';
-import  { GLOBAL } from '../global';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { ColorName } from '../types/makerspaceServer';
 const tintColorLight = '#2f95dc';
 const tintColorDark = '#fff';
 
@@ -27,39 +21,7 @@ const styleSheetColors = {
         blurTint:'dark',
     },
 };
-export const useColors = () => {
 
-    const [makerSpaceTheme, setMakerSpaceTheme] = useState<MakerspaceTheme>(GLOBAL.theme as MakerspaceTheme);
-    const [theme, setTheme] = useState(tanStackColors(makerSpaceTheme.primary,makerSpaceTheme.secondary, Appearance.getColorScheme() === 'dark'));
-    Appearance.addChangeListener(({ colorScheme }) => {
-        setTheme(tanStackColors(makerSpaceTheme.primary, makerSpaceTheme.secondary, colorScheme === 'dark'));
-    });
-    useEffect(() => {
-        setTheme(tanStackColors(makerSpaceTheme.primary, makerSpaceTheme.secondary, Appearance.getColorScheme() === 'dark'));
-        GLOBAL.theme = makerSpaceTheme;
-    }, [makerSpaceTheme]);
-    useEffect(() => {
-        getCurrentTheme().then((theme) => {
-            if (theme){
-                setMakerSpaceTheme(theme);
-            }
-        });
-    }, []);
-
-    return theme as Colors;
-};
-
-export const useAsyncColors = () => {
-    const [colors, setColors] = useState<null|Colors>(null);
-    useEffect(() => {
-        const theme = getCurrentTheme().then((theme) => {
-            if (theme){
-                setColors(tanStackColors(theme.primary, theme.secondary, Appearance.getColorScheme() === 'dark') as Colors);
-            }
-        });
-    }, []);
-    return colors;
-};
 export type Colors = {
     background: string,
     text: string,
@@ -105,6 +67,6 @@ export const tanStackColors = (themeBase: ColorName, secondary:ColorName, darkMo
         blurTintColor: `${darkMode ? 'dark' : 'light'}`,
 
     }
-);
+) as Colors;
 
 export default styleSheetColors;

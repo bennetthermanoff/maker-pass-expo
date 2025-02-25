@@ -1,25 +1,24 @@
 import { useLocalSearchParams } from 'expo-router';
-import { useMakerspace } from '../../hooks/useMakerspace';
-import { Label, View, YStack, getTokens } from 'tamagui';
-import { useColors } from '../../constants/Colors';
-import QRCode from 'react-native-qrcode-svg';
-import { Color } from '../../types/makerspaceServer';
 import { ImageSourcePropType } from 'react-native';
+import QRCode from 'react-native-qrcode-svg';
+import { useSelector } from 'react-redux';
+import { Label, View, YStack, getTokens } from 'tamagui';
 import keyLogo from '../../assets/images/key.png';
 import BlurHeader from '../../components/BlurHeader';
-import { CancelButton } from '../../components/CancelButton';
+import { colorSelector, currentServerSelector } from '../../state/slices/makerspacesSlice';
+import { Color } from '../../types/makerspaceServer';
 
 export default function OneTimeLogin() {
     const local = useLocalSearchParams();
     const loginToken = local.loginToken as string;
     const userId = local.userId as string;
     const userType = local.userType as string;
-    const makerspace = useMakerspace();
-    const colors = useColors();
+    const makerspace = useSelector(currentServerSelector);
+    const colors = useSelector(colorSelector);
 
     const getQR = () => `makerpass://--/makerspace/login?token=${loginToken}&userId=${userId}&userType=${userType}&serverId=${makerspace?.id}`;
     return <>
-        <BlurHeader title='One Time Login'>
+        <BlurHeader hasBackButton title='One Time Login'>
             <YStack
                 style={{ flex: 1, alignItems: 'center' }}
             >
@@ -48,7 +47,6 @@ export default function OneTimeLogin() {
                 </View>
             </YStack>
         </BlurHeader>
-        <CancelButton colors={colors} />
     </>
     ;
 }

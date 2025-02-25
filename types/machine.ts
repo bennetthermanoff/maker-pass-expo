@@ -12,6 +12,16 @@ export type Machine = {
     latestTagOutId: string|null;
 }
 
+export type LocationGroupMap = {
+    [key: string]: LocationGroupBody
+}
+export type LocationGroupArray = Array<LocationGroupBody & {id:string}>
+export type LocationGroupBody = {
+    name: string;
+    groups: string[];
+    geoFences: GeoFence[];
+}
+
 export type MachineGroupMap={
     [key: string]: MachineGroupBody
 }
@@ -43,7 +53,7 @@ export type PermissionGroup = {
     name: string;
     machineIds: string[];
 };
-export type PermissionGroupObject = {
+export type PermissionGroupMap = {
     [groupId:string]:{
         name:string;
         machineIds:string[];

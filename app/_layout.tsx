@@ -1,19 +1,15 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { SplashScreen, Stack, router } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { useColorScheme } from 'react-native';
+import { SplashScreen, Stack } from 'expo-router';
+import { useEffect } from 'react';
+import { Appearance } from 'react-native';
+import { Provider, useSelector } from 'react-redux';
 import { TamaguiProvider } from 'tamagui';
+import { darkModeSelector, fetchCurrentServerId, fetchServers, setDarkMode } from '../state/slices/makerspacesSlice';
+import { store, useAppDispatch } from '../state/store';
 import config from '../tamagui.config';
-import { useLoadFonts } from './fontLoader';
-import { MakerspaceConfig } from '../types/makerspaceServer';
-import { getCurrentServer } from '../util/makerspaces';
-import { useColors } from '../constants/Colors';
-import { View } from '../components/Themed';
 import { configAxiosInterceptors } from '../util/handleError';
-import { Provider } from 'react-redux';
-import { store } from '../state/store';
 
 export {
     // Catch any errors thrown by the Layout component.
@@ -56,12 +52,7 @@ export default function RootLayout() {
         if (error) throw error;
     }, [error]);
 
-    useEffect(() => {
-        configAxiosInterceptors();
-    }, []);
-
     if (!loaded) {
-
         return;
     }
 
@@ -73,10 +64,26 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
-    const colorScheme = useColorScheme();
+
+    const dispatch = useAppDispatch();
+    // this loads server data from secure store, from here on we can use redux
+    // all actions to redux store also update secure store, see makerspacesSlice.ts
+    useEffect(() => {
+        dispatch(fetchCurrentServerId());
+        dispatch(fetchServers());
+        configAxiosInterceptors();
+        //listen for dark mode changes
+        Appearance.getColorScheme() === 'dark' ? dispatch(setDarkMode(true)) : dispatch(setDarkMode(false));
+        Appearance.addChangeListener(({ colorScheme }) => {
+            dispatch(setDarkMode(colorScheme === 'dark'));
+        });
+
+    }, []);
+
+    const isDarkMode = useSelector(darkModeSelector);
     return (
         <TamaguiProvider config={config}>
-            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+            <ThemeProvider value={isDarkMode ? DarkTheme : DefaultTheme}>
                 <Stack
                     screenOptions={{
                         headerShown: false,

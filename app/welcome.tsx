@@ -1,26 +1,15 @@
-import { Button, H2, Text, YStack, Image, View } from 'tamagui';
-import { ImageSourcePropType, StyleSheet } from 'react-native';
 import * as Linking from 'expo-linking';
-import { useColors } from '../constants/Colors';
-import { SplashScreen, Stack, router } from 'expo-router';
-import { MakerspaceConfig } from '../types/makerspaceServer';
-import { useEffect, useState } from 'react';
-import { getCurrentServer } from '../util/makerspaces';
-import { goHome } from '../util/goHome';
-import Banner from '../assets/images/banner.png';
+import { router } from 'expo-router';
+import { ImageSourcePropType, StyleSheet } from 'react-native';
+import { Button, Image, Text, View, YStack } from 'tamagui';
 import BannerDark from '../assets/images/banner-dark.png';
+import Banner from '../assets/images/banner.png';
+import { colorSelector } from '../state/slices/makerspacesSlice';
+import { useSelector } from 'react-redux';
 
 export default function ConnectToMakerSpace() {
-    const [makerspace, setMakerspace] = useState<MakerspaceConfig|null|undefined>(undefined); // TODO: type this
-    useEffect(() => {
-        const getMakerspace = async () => {
-            const makerspace = await getCurrentServer();
-            setMakerspace(makerspace);
-        };
-        getMakerspace();
-    },[]);
 
-    const colors = useColors();
+    const colors = useSelector(colorSelector);
     const url = Linking.useURL();
 
     return (

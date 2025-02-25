@@ -5,28 +5,28 @@ import { useSelector } from 'react-redux';
 import { Button, H2, Spacer, Text, YStack } from 'tamagui';
 import BlurHeader from '../../components/BlurHeader';
 import { Colors } from '../../constants/Colors';
-import { fetchMachineGroups, selectLoading, selectMachineGroupAsArray, selectMachines } from '../../state/slices/machinesSlice';
+import { fetchLocationGroups, selectLoading, selectLocationGroupsAsArray, selectMachineGroupAsArray } from '../../state/slices/machinesSlice';
 import { colorSelector, currentServerSelector } from '../../state/slices/makerspacesSlice';
 import { useAppDispatch } from '../../state/store';
-import { Machine, MachineGroupBody } from '../../types/machine';
+import { LocationGroupBody, MachineGroupArray } from '../../types/machine';
 import { parseGroupName } from '../../util/parseGroupName';
 
-export default function ManageMachineGroups(){
+export default function ManageLocationGroups(){
+    const locationGroups = useSelector(selectLocationGroupsAsArray);
     const machineGroups = useSelector(selectMachineGroupAsArray);
-    const machines = useSelector(selectMachines);
     const loading = useSelector(selectLoading);
     const makerspace = useSelector(currentServerSelector);
     const dispatch = useAppDispatch();
     const colors = useSelector(colorSelector);
-    const getMachineGroups = async () => {
+    const getLocationGroups = async () => {
         if (makerspace?.user){
-            dispatch(fetchMachineGroups(makerspace));
+            dispatch(fetchLocationGroups(makerspace));
         }
     };
 
     return (
         <>
-            <BlurHeader title="Machine Groups" hasBackButton pullToRefresh={getMachineGroups} refreshing={loading}>
+            <BlurHeader title="Location Groups" hasBackButton pullToRefresh={getLocationGroups} refreshing={loading}>
                 <Button
                     iconAfter={Plus}
                     scaleIcon={1.5}
@@ -39,27 +39,26 @@ export default function ManageMachineGroups(){
                     margin={'$4'}
                     marginBottom={'$-2'}
                     onPress={() => {
-                        router.push({ pathname: '/machineGroups/[groupId]', params: { groupId:'new' } });
+                        router.push({ pathname: '/locationGroups/[groupId]', params: { groupId:'new' } });
                     }}
                 >Group</Button>
-                {machineGroups?.map((machineGroup) => <MachineGroupCard
-                    key={machineGroup.id}
-                    childProps={{ key:machineGroup.id,
-                        onLongPress:() => router.push({ pathname: '/machineGroups/[groupId]', params: { groupId:machineGroup.id, machineGroup:JSON.stringify(machineGroup) } }) }}
-                    machineGroup={machineGroup}
+                {locationGroups?.map((locationgroup) => <LocationgroupCard
+                    key={locationgroup.id}
+                    childProps={{ key:locationgroup.id,
+                        onLongPress:() => router.push({ pathname: '/locationGroups/[groupId]', params: { groupId:locationgroup.id } }) }}
+                    locationGroup={locationgroup}
                     colors={colors}
-                    machines={machines}
+                    machineGroups={machineGroups}
                 />)}
                 <Spacer size={'$12'} />
 
             </BlurHeader>
-
         </>
     );
 
 }
 
-const MachineGroupCard = (props:{machineGroup:MachineGroupBody & {id:string},colors:Colors, machines:Machine[], childProps:any}) =>
+const LocationgroupCard = (props:{locationGroup:LocationGroupBody & {id:string},colors:Colors, machineGroups:MachineGroupArray, childProps:any}) =>
     <YStack
         marginTop={'$4'}
         minHeight={150}
@@ -67,7 +66,7 @@ const MachineGroupCard = (props:{machineGroup:MachineGroupBody & {id:string},col
         backgroundColor={props.colors.secondaryAccent.light}
         borderRadius={7}
         alignSelf='center'
-        key={props.machineGroup.id}
+        key={props.locationGroup.id}
         {...props.childProps}
     >
         <LinearGradient
@@ -83,24 +82,24 @@ const MachineGroupCard = (props:{machineGroup:MachineGroupBody & {id:string},col
             marginTop={'$2'}
             marginLeft={'$2'}
             color={props.colors.text}
-        >{parseGroupName(props.machineGroup.name)[0]}</H2>
-        {parseGroupName(props.machineGroup.name)[1] && <Text
+        >{parseGroupName(props.locationGroup.name)[0]}</H2>
+        {parseGroupName(props.locationGroup.name)[1] && <Text
             color={props.colors.text}
             opacity={.8}
             marginTop={'$-2'}
             marginLeft={'$2'}
-        >{`@${parseGroupName(props.machineGroup.name)[1]}`}</Text>}
-        {props.machineGroup.machineIds.map((machineId,index) => <>
+        >{`@${parseGroupName(props.locationGroup.name)[1]}`}</Text>}
+        {props.locationGroup.groups.map((groupId,index) => <>
             {index < 3 && <Text
                 color={props.colors.subText}
-                key={machineId}
+                key={groupId}
                 fontSize={'$7'}
                 margin={'$1'}
                 marginLeft={'$3'}
-            >{props.machines.find((machine) => machine.id === machineId)?.name || 'Unknown Machine'} </Text>
+            >{props.machineGroups.find((machineGroup) => machineGroup.id === groupId)?.name || 'unknown group'}</Text>
             }
         </>)}
-        {props.machineGroup.machineIds.length >= 3 && <Text
+        {props.locationGroup.groups.length >= 3 && <Text
             color={props.colors.subText}
             fontSize={'$9'}
             marginLeft={'$3.5'}

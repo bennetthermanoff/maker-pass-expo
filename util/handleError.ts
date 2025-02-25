@@ -1,8 +1,6 @@
 import axios from 'axios';
-import { Alert } from 'react-native';
-import { getCurrentServerId, removeServerCredentials } from './makerspaces';
-import { goHome, handleUserLoginError } from './goHome';
 import { router } from 'expo-router';
+import { Alert } from 'react-native';
 const handleError = (err: any) => {
     const scrubbedError = removeAttrDeep(err, 'accesstoken');
     //if 400, print message
@@ -28,7 +26,7 @@ const handleError = (err: any) => {
         }
     }
     else if (err.response?.status === 401) {
-        handleUserLoginError();
+        return Promise.reject(err);
     }
     else if (err.response?.status === 403) {
         Alert.alert('Oops, something went wrong', 'You do not have permission to perform this action.', [
@@ -44,7 +42,7 @@ const handleError = (err: any) => {
     }
     else if (err.response?.status === 500) {
         Alert.alert('Oops, something went wrong', 'The server encountered an error. Please try again later.', [
-            { text: 'Show Details', onPress: () => Alert.alert('Error Details', JSON.stringify(scrubbedError)) },
+            { text: 'Show Details', onPress: () => Alert.alert('Error Details', JSON.stringify(err.response?.data?.message) + JSON.stringify(scrubbedError)) },
             { text: 'Dismiss', onPress: () => {} },
         ]);
     }

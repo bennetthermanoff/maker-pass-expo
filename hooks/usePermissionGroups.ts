@@ -1,34 +1,33 @@
-import { useEffect, useState } from 'react';
-import { useMakerspace } from './useMakerspace';
-import { Machine, MachineGroupArray, MachineGroupMap, PermissionGroup, PermissionGroupArray } from '../types/machine';
-import { getMachinesFromServer } from './useMachines';
-import { debounce } from 'lodash';
-import { GLOBAL } from '../global';
-import { MakerspaceConfig } from '../types/makerspaceServer';
 import axios from 'axios';
+import { debounce } from 'lodash';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { GLOBAL } from '../global';
+import { selectMachines } from '../state/slices/machinesSlice';
+import { currentServerSelector } from '../state/slices/makerspacesSlice';
+import { MachineGroupMap, PermissionGroupArray } from '../types/machine';
+import { MakerspaceConfig } from '../types/makerspaceServer';
 import { getAuthHeaders } from '../util/authRoutes';
 
 export const usePermissionGroups = () => {
-    const [permissionGroups,setMachineGroups] = useState<PermissionGroupArray>([]);
-    const [machines,setMachines] = useState<Machine[]>([]);
+    const [permissionGroups,setPermissiongroups] = useState<PermissionGroupArray>([]);
+    const machines = useSelector(selectMachines);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<null|string>(null);
-    const makerspace = useMakerspace();
+    const makerspace = useSelector(currentServerSelector);
 
-    const getMachineGroups = async () => {
+    const getPermissiongroups = async () => {
         setLoading(true);
         try {
             if (makerspace?.user){
-                getMachineGroupsFromServer(makerspace).then((permissionGroups) => {
+                getPermissiongroupsFromServer(makerspace).then((permissionGroups) => {
                     const permissionGroupArray = [];
                     for (const id in permissionGroups ){
                         permissionGroupArray.push({ ...permissionGroups[id], id });
                     }
-                    setMachineGroups(permissionGroupArray);
+                    setPermissiongroups(permissionGroupArray);
                 });
-                getMachinesFromServer(makerspace,false).then((machines) => {
-                    setMachines(machines);
-                });
+
             }
         }
         catch (err){
@@ -38,17 +37,17 @@ export const usePermissionGroups = () => {
             setLoading(false);
         }
     };
-    const debouncedGetPermissionGroups = debounce(getMachineGroups,200);
+    const debouncedGetPermissionGroups = debounce(getPermissiongroups,200);
 
     useEffect(() => {
-        getMachineGroups();
-        GLOBAL.getMachineGroups = getMachineGroups;
+        getPermissiongroups();
+        GLOBAL.getMachineGroups = getPermissiongroups;
     // eslint-disable-next-line react-hooks/exhaustive-deps
     },[makerspace]);
     return { permissionGroups, loading, error,  debouncedGetPermissionGroups, machines, makerspace };
 };
 
-export const getMachineGroupsFromServer = async (makerspace:MakerspaceConfig) => {
+export const getPermissiongroupsFromServer = async (makerspace:MakerspaceConfig) => {
     const response = await axios.get(
         `${makerspace.serverAddress}:${makerspace.serverPort}/api/permissionGroup/all`,
         getAuthHeaders(makerspace),

@@ -1,18 +1,18 @@
-import * as Linking from 'expo-linking';
-import { router } from 'expo-router';
 import axios from 'axios';
-import { MakerspaceConfig, MakerspaceServers, PingResponse } from '../types/makerspaceServer';
-import { addOrUpdateServer, addServerCredentials, getCurrentServer, getServer, getServers, setCurrentServer } from './makerspaces';
+import { setStringAsync } from 'expo-clipboard';
+import * as Haptics from 'expo-haptics';
+import * as Linking from 'expo-linking';
+import * as Location from 'expo-location';
+import { router } from 'expo-router';
+import { Alert } from 'react-native';
+import { GLOBAL } from '../global';
+import { addOrUpdateServer, addServerCredentials, setCurrentServer } from '../state/slices/makerspacesSlice';
+import { store } from '../state/store';
 import { Machine } from '../types/machine';
 import { getAuthHeaders } from './authRoutes';
-import { goHome, handleUserLoginError } from './goHome';
-import * as Location from 'expo-location';
-import * as Haptics from 'expo-haptics';
-import { GLOBAL } from '../global';
-import { Alert } from 'react-native';
-import { clearLocationCache, getLocation } from './locationCache';
+import { goHome } from './goHome';
 import { handleChangePassword } from './handleChangePassword';
-import { setStringAsync } from 'expo-clipboard';
+import { getLocation } from './locationCache';
 
 export const handleURL =  (url:string|null) => {
     if (url === null) {
@@ -49,21 +49,34 @@ export const handleURL =  (url:string|null) => {
             if (!token || !userId || !userType || !serverId){
                 throw new Error('Invalid Login Parameters');
             }
-            addServerCredentials({ serverId:serverId as string, userId:userId as string, userType:userType as string, token:token as string }).then(async () => {
-                await new Promise((resolve) => setTimeout(resolve, 1000));
+            store.dispatch(addServerCredentials({ serverId:serverId as string, userId:userId as string, userType:userType as string, token:token as string }));
+            new Promise((resolve) => setTimeout(resolve, 1000)).then(() => {
+                const makerspaceId = serverId as string;
+                const makerspace = store.getState().makerspaces.serverMap[makerspaceId];
                 goHome();
                 Alert.alert(
                     'Logged In', 'Please reset your password',
-                    [{ text: 'Reset Password', onPress: () => handleChangePassword() }],
+                    [{ text: 'Reset Password', onPress: () =>
+                        handleChangePassword(makerspace),
+                    }],
                 );
-            }).catch((err) => {
-                alert('Error: ' + err);
             });
+
             return 'Logging In...';
         }
         catch (err){
             alert('Error: ' + err);
         }
+    }
+
+};
+
+export const handleTagOutURL = (url:string) => {
+    const { path, queryParams, hostname } = Linking.parse(url);
+
+    if (path === 'makerspace/machine/enable'){
+        const { machineId } = queryParams ?? {} as {machineId:string};
+        router.push(`/tagoutMachine/${machineId}`);
     }
 
 };
@@ -84,7 +97,7 @@ export const handleConnect = async (url?:string, port?:string, registrationType?
     }
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     delete ping.data.server.additionalInfoFields;
-    await addOrUpdateServer({ ...ping.data.server, registrationKey:registrationKey as string, registrationType: registrationType as string });
+    store.dispatch(addOrUpdateServer({ ...ping.data.server, registrationKey:registrationKey as string, registrationType: registrationType as string }));
 
     while (router.canGoBack()) { // Pop from stack until one element is left, resets the stack
         router.back();
@@ -98,16 +111,15 @@ export const handleConnect = async (url?:string, port?:string, registrationType?
     }
 };
 const handleEnableMachine = async ({ serverId, machineId, enableKey, locationRequired }:{ serverId: string, machineId:string, enableKey?:string, locationRequired:string}) => {
-    const makerspaces = await getServers();
-    if (!makerspaces.find((makerspaceId) => makerspaceId === serverId)){
+    const makerspaces = store.getState().makerspaces.serverMap;
+    if (!makerspaces[serverId]){
         throw new Error('Not Signed Into This Makerspace!');
-
     }
-    const makerspace = await getServer(serverId);
+    const makerspace = makerspaces[serverId];
     if (!makerspace){
         throw new Error( 'Makerspace Not Found!');
     }
-    await setCurrentServer(serverId);
+    store.dispatch(setCurrentServer(serverId));
 
     let location:{lat:number, lng:number}|undefined = undefined;
     if (locationRequired === 'true'){

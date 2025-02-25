@@ -1,21 +1,20 @@
+import { LinearGradient } from '@tamagui/linear-gradient';
+import { Plus } from '@tamagui/lucide-icons';
+import { router } from 'expo-router';
 import { Button, H2, Spacer, Text, YStack } from 'tamagui';
 import BlurHeader from '../../components/BlurHeader';
-import { Colors, useColors } from '../../constants/Colors';
-import { useMachineGroups } from '../../hooks/useMachineGroups';
-import { Machine, MachineGroupArray, MachineGroupBody, PermissionGroup } from '../../types/machine';
-import { LinearGradient } from '@tamagui/linear-gradient';
-import { router } from 'expo-router';
-import { Plus } from '@tamagui/lucide-icons';
-import { CancelButton } from '../../components/CancelButton';
-import { ViewProps } from '../../components/Themed';
+import { Colors } from '../../constants/Colors';
 import { usePermissionGroups } from '../../hooks/usePermissionGroups';
+import { Machine, PermissionGroup } from '../../types/machine';
+import { colorSelector } from '../../state/slices/makerspacesSlice';
+import { useSelector } from 'react-redux';
 
 export default function ManageMachineGroups(){
-    const colors = useColors();
+    const colors = useSelector(colorSelector);
     const { permissionGroups, loading, error, debouncedGetPermissionGroups, machines } = usePermissionGroups();
     return (
         <>
-            <BlurHeader title="Permisison Groups" pullToRefresh={debouncedGetPermissionGroups} refreshing={loading}>
+            <BlurHeader hasBackButton title="Permisison Groups" pullToRefresh={debouncedGetPermissionGroups} refreshing={loading}>
                 <Button
                     iconAfter={Plus}
                     scaleIcon={1.5}
@@ -43,7 +42,6 @@ export default function ManageMachineGroups(){
                 <Spacer size={'$12'} />
 
             </BlurHeader>
-            <CancelButton colors={colors} />
 
         </>
     );

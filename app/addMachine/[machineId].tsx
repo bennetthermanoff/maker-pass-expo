@@ -1,39 +1,38 @@
-import { useMemo, useState } from 'react';
-import { useColors } from '../../constants/Colors';
-import { Machine } from '../../types/machine';
-import { useMakerspace } from '../../hooks/useMakerspace';
-import { Button, H4, Input, Label, Switch, View, XStack, YStack, getTokens } from 'tamagui';
 import { Image, Plus, Trash } from '@tamagui/lucide-icons';
-import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
+import * as ImagePicker from 'expo-image-picker';
 import { router, useLocalSearchParams } from 'expo-router';
-import BlurHeader from '../../components/BlurHeader';
-import { getAuthHeaders } from '../../util/authRoutes';
-import { GLOBAL } from '../../global';
-import QRCode from 'react-native-qrcode-svg';
-import { CancelButton } from '../../components/CancelButton';
+import { useState } from 'react';
 import { Alert, ImageSourcePropType } from 'react-native';
-import { goHome } from '../../util/goHome';
-import { useMachineGroups } from '../../hooks/useMachineGroups';
-import { Color } from '../../types/makerspaceServer';
-import { setStringAsync } from 'expo-clipboard';
+import QRCode from 'react-native-qrcode-svg';
+import { useSelector } from 'react-redux';
+import { Button, H4, Input, Label, Switch, View, XStack, YStack, getTokens } from 'tamagui';
 import keyLogo from '../../assets/images/key.png';
+import BlurHeader from '../../components/BlurHeader';
+import { GLOBAL } from '../../global';
+import { selectMachineGroups, selectMachines } from '../../state/slices/machinesSlice';
+import { colorSelector, currentServerSelector } from '../../state/slices/makerspacesSlice';
+import { Machine } from '../../types/machine';
+import { Color } from '../../types/makerspaceServer';
+import { getAuthHeaders } from '../../util/authRoutes';
+import { goHome } from '../../util/goHome';
 import { copyQR } from '../../util/handleURL';
 
 export default function AddMachine() {
     const local = useLocalSearchParams();
-    const colors = useColors();
-    const makerspace = useMakerspace();
-    const groups = useMachineGroups();
+    const colors = useSelector(colorSelector);
+    const makerspace = useSelector(currentServerSelector);
+    const groups = useSelector(selectMachineGroups);
+    const machinesFromState = useSelector(selectMachines);
 
     const getMachineInitialData = () => {
-        if (local.machineId === 'new'){
+        const machine = machinesFromState.find((machine) => machine.id === local.machineId);
+        if (local.machineId === 'new' || !machine){
             return { machine:{
                 solenoidMode: false,
             },
             requireEnableKey: true };}
         else {
-            const machine = JSON.parse(local.machine as string) as Omit<Machine, 'photo'>;
             return {
                 machine,
                 requireEnableKey: machine.enableKey ? true : false,
@@ -135,12 +134,13 @@ export default function AddMachine() {
         }
 
     };
-
-    const getQR = () => `makerpass://--/makerspace/machine/enable?serverId=${makerspace?.id}&machineId=${local.machineId}&enableKey=${formData.machine.enableKey}&locationRequired=${groups.machineGroups.find((group) => group.machineIds.includes(local.machineId as string))?.geoFences.length !== 0}`;
+    //TODO: FIX THIS CALL (NEED TO HAVE IS MACHINE IN GEOFENCE FUNCTION)
+    // const getQR = () => `makerpass://--/makerspace/machine/enable?serverId=${makerspace?.id}&machineId=${local.machineId}&enableKey=${formData.machine.enableKey}&locationRequired=${groups.machineGroups.find((group) => group.machineIds.includes(local.machineId as string))?.geoFences.length !== 0}`;
+    const getQR = () => 'makerpass://--/maker';
 
     return (
         <>
-            <BlurHeader title={local.machineId === 'new' ? 'Add Machine' : 'Edit Machine'}>
+            <BlurHeader hasBackButton title={local.machineId === 'new' ? 'Add Machine' : 'Edit Machine'}>
                 <YStack
                     width={'100%'}
                     alignItems='center'
@@ -194,7 +194,7 @@ export default function AddMachine() {
                         flexWrap='wrap'
                         color={colors.text}
                         width={'95%'}
-                        lineHeight={'$2'}
+                        // lineHeight={'$2'}
                         pressStyle={{ color: colors.text }}
                     >A unique key will be generated for unlocking your machine and embedded in its QR code.</Label>
                     <XStack
@@ -221,7 +221,7 @@ export default function AddMachine() {
                         flexWrap='wrap'
                         color={colors.text}
                         pressStyle={{ color: colors.text }}
-                        lineHeight={'$2'}
+                        // lineHeight={'$2'}
                         width={'95%'}
                         marginBottom={'$8'}
                     >Solenoid mode will disable the machine after 5 seconds. Great for KeyBoxes, and logging machine use on uncontrolled machines.</Label>
@@ -260,7 +260,7 @@ export default function AddMachine() {
                             color={colors.text}
                             marginTop={'$4'}
                             marginBottom={'$2'}
-                            lineHeight={'$2'}
+                            // lineHeight={'$2'}
                             width={'95%'}
                             pressStyle={{ color: colors.text }}
                         >Note: QR will need to be replaced in the future if this machine's Machine Group changes to require a GeoFence. </Label>
@@ -285,7 +285,6 @@ export default function AddMachine() {
 
                 </YStack>
             </BlurHeader>
-            <CancelButton colors={colors} />
         </>
     );
 }

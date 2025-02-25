@@ -1,11 +1,9 @@
+import axios from 'axios';
 import { Alert } from 'react-native';
 import { MakerspaceConfig } from '../types/makerspaceServer';
-import axios from 'axios';
 import { getAuthHeaders } from './authRoutes';
-import { getCurrentServer } from './makerspaces';
 
-export const handleChangePassword = async () => {
-    const makerspace = await getCurrentServer();
+export const handleChangePassword = async (makerspace:MakerspaceConfig|null) => {
     if (!makerspace){
         return;
     }

@@ -1,25 +1,24 @@
 
-import { Button, Text, XStack, Image } from 'tamagui';
-import { useColors } from '../../../constants/Colors';
-import { removeServer } from '../../../util/makerspaces';
-import { useMakerspace } from '../../../hooks/useMakerspace';
-import { router } from 'expo-router';
-import BlurHeader from '../../../components/BlurHeader';
-import { clearImages } from '../../../util/machineImageCache';
-import { Alert, ImageSourcePropType } from 'react-native';
-import Banner from '../../../assets/images/banner.png';
-import BannerDark from '../../../assets/images/banner-dark.png';
 import { FileImage, Key, Link, Trash2, Unlink } from '@tamagui/lucide-icons';
-import { openBrowserAsync } from 'expo-web-browser';
 import axios from 'axios';
+import { router } from 'expo-router';
+import { openBrowserAsync } from 'expo-web-browser';
+import { Alert, ImageSourcePropType } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { Button, Image, Text, XStack } from 'tamagui';
+import BannerDark from '../../../assets/images/banner-dark.png';
+import Banner from '../../../assets/images/banner.png';
+import BlurHeader from '../../../components/BlurHeader';
+import { colorSelector, currentServerSelector, removeServer } from '../../../state/slices/makerspacesSlice';
 import { getAuthHeaders } from '../../../util/authRoutes';
-import { MakerspaceConfig } from '../../../types/makerspaceServer';
+import { goHome } from '../../../util/goHome';
 import { handleChangePassword } from '../../../util/handleChangePassword';
+import { clearImages } from '../../../util/machineImageCache';
 
 export default function Machines() {
-    const colors = useColors();
-    const makerspace = useMakerspace();
-
+    const colors = useSelector(colorSelector);
+    const makerspace = useSelector(currentServerSelector);
+    const dispatch = useDispatch();
     const handleDeleteAccount = async () => {
         if (makerspace?.id){
             Alert.alert(
@@ -36,7 +35,7 @@ export default function Machines() {
                                 `${makerspace.serverAddress}:${makerspace.serverPort}/api/user/${makerspace.user?.userId}`,
                                 getAuthHeaders(makerspace),
                             ).then(async (response) => {
-                                await removeServer(makerspace.id);
+                                dispatch(removeServer(makerspace.id));
                                 router.replace('/');
                             }).catch((err) => {
                             });
@@ -64,9 +63,9 @@ export default function Machines() {
                 color={colors.text}
                 onPress={async() => {
                     if (makerspace?.id){
-                        await removeServer(makerspace?.id);
+                        dispatch(removeServer(makerspace.id));
                     }
-                    router.replace('/');
+                    goHome();
                 }}
             >Disconnect and Logout</Button>
 
@@ -79,7 +78,7 @@ export default function Machines() {
                 iconAfter={Key}
                 backgroundColor={colors.secondaryAccent.light}
                 color={colors.text}
-                onPress={() => handleChangePassword()}
+                onPress={() => handleChangePassword(makerspace)}
             >Change Password</Button>
             <Button
                 spaceFlex

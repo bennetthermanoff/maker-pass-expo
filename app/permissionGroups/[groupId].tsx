@@ -1,22 +1,20 @@
-import { router, useLocalSearchParams } from 'expo-router';
-import { useColors } from '../../constants/Colors';
-import { MachineGroupBody, PermissionGroup } from '../../types/machine';
-import { useState } from 'react';
-import BlurHeader from '../../components/BlurHeader';
-import { Button, H3, H4, Input, Label, Section, Spacer, Switch, Text, XStack, YStack, getTokens } from 'tamagui';
-import DropdownSelect from 'react-native-input-select';
-import { Color } from '../../types/makerspaceServer';
-import { useMachines } from '../../hooks/useMachines';
-import { CancelButton } from '../../components/CancelButton';
-import { Minus, Plus } from '@tamagui/lucide-icons';
-import { KeyboardAvoidingView, Platform, ViewStyle } from 'react-native';
 import axios from 'axios';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useState } from 'react';
+import { KeyboardAvoidingView, Platform, ViewStyle } from 'react-native';
+import DropdownSelect from 'react-native-input-select';
+import { useSelector } from 'react-redux';
+import { Button, Input, Section, YStack, getTokens } from 'tamagui';
+import BlurHeader from '../../components/BlurHeader';
+import { useMachines } from '../../hooks/useMachines';
+import { colorSelector } from '../../state/slices/makerspacesSlice';
+import { PermissionGroup } from '../../types/machine';
+import { Color } from '../../types/makerspaceServer';
 import { getAuthHeaders } from '../../util/authRoutes';
-import { GLOBAL } from '../../global';
 
 export default function EditPermissionGroup(){
     const local = useLocalSearchParams();
-    const colors = useColors();
+    const colors = useSelector(colorSelector);
     const { machines, loading, makerspace } = useMachines();
     const getPermissionGroupInitialData = () => {
         if (local.groupId === 'new'){
@@ -111,7 +109,7 @@ export default function EditPermissionGroup(){
             style={{ backgroundColor:getTokens().color[colors.background as Color].val , minHeight:'100%' }}
             behavior={Platform.OS === 'ios' ? 'padding' : 'padding'}
         >
-            <BlurHeader title={local.groupId === 'new' ? 'Add Permission Group' : 'Edit Permission Group'}>
+            <BlurHeader hasBackButton title={local.groupId === 'new' ? 'Add Permission Group' : 'Edit Permission Group'}>
                 <YStack
                     width={'100%'}
                     alignItems='center'
@@ -168,7 +166,7 @@ export default function EditPermissionGroup(){
                         }}
                         placeholder='Select an option'
                         options={machines.map((machine) => ({
-                            label:`${machine.name}`, value:machine.id,
+                            label:`${machine.name} #${machine.id.slice(0,5)}`, value:machine.id,
                         }))}
                         selectedValue={formData.machineIds}
                         onValueChange={(enabledIds:string[]) => {
@@ -203,7 +201,6 @@ export default function EditPermissionGroup(){
                         : null}
                 </YStack>
             </BlurHeader>
-            <CancelButton colors={colors} />
         </KeyboardAvoidingView>
     );
 }

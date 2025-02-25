@@ -1,32 +1,20 @@
-import { router } from 'expo-router';
+import { store } from '../state/store';
 import { clearStackGoTo } from './clearStackGoTo';
-import { getCurrentServer, removeServerCredentials } from './makerspaces';
-import { GLOBAL } from '../global';
 
-export const goHome = async() => {
+export const goHome = async () => {
     //if no makerspace, root
     //if not logged in, login/register
     //if logged in, dashboard
-    const currentMakerspace = await getCurrentServer();
-    if (currentMakerspace === null){
+    const makerspaceId = store.getState().makerspaces.currentServerId;
+    if (makerspaceId === null){
         clearStackGoTo('/welcome');
+        return;
     }
-    else if (currentMakerspace.user === undefined){
+    const makerspace = store.getState().makerspaces.serverMap[makerspaceId];
+    if (makerspace?.user === undefined){
         clearStackGoTo('/start/choose');
     }
     else {
         clearStackGoTo('/home/');
     }
-};
-
-export const handleUserLoginError = async () => {
-    const currentMakerspace = await getCurrentServer();
-    if (currentMakerspace?.user){
-        alert('Session expired. Please log in again.');
-        GLOBAL.getMachines = async () => {};
-        removeServerCredentials(currentMakerspace?.id);
-        clearStackGoTo('/start/choose');
-        router.push('/start/login');
-    }
-
 };
