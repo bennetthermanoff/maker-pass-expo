@@ -135,7 +135,7 @@ export default function BlurHeader({ title, subtitle, isHero = false, hasBackBut
                             source={(colors.text === 'white' ? BannerDark : Banner) as ImageSourcePropType}
                             resizeMode='contain'
                             width={'90%'}
-                            height={'10%'}
+                            maxHeight={'8%'}
                             style={{
                                 opacity: interpolate(
                                     scrollY,
