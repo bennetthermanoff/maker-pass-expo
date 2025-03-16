@@ -191,29 +191,6 @@ export const selectCurrentLocationGroup = createSelector(
     },
 );
 
-export const selectActiveMachinesForUserFactory = (makerspace: MakerspaceConfig | null) =>
-    createSelector(
-        [selectMachines, selectLocationGroups, selectMachineGroups, (state: any) => makerspace ],
-        (machines, locationGroups, machineGroups, makerspace) => {
-            if (!makerspace?.user) {
-                return [];
-            }
-
-            if (makerspace.user.userType === 'user') {
-            // only show machines that the user activated
-                return machines.filter((machine) => machine.lastUsedBy === makerspace.user?.userId);
-            } else {
-                // show all active machines in current location
-                if (!makerspace.currentLocation){
-                    return machines.filter((machine) => machine.enabled);
-                }
-                const currentLocationId = makerspace.currentLocation;
-                const machinesInLocation = findMachineIdsInLocationGroups({ currentLocationId, locationGroups, machineGroups });
-                return machines.filter((machine) => machine.enabled && machinesInLocation.includes(machine.id));
-            }
-        },
-    );
-
 export const findMachineIdsInLocationGroups = ({ currentLocationId, locationGroups, machineGroups }:
         { currentLocationId:string, locationGroups:LocationGroupMap, machineGroups:MachineGroupMap }) => {
     const machineIds:string[] = [];
@@ -244,6 +221,24 @@ export const selectMachinesInCurrentLocation = createSelector(
         return machines.filter((machine) => machineIds.includes(machine.id));
     },
 );
+
+export const selectActiveMachinesForUser =
+    createSelector(
+        [selectMachines, selectMachinesInCurrentLocation, currentServerSelector ],
+        (machines, machinesInCurrentLocation, makerspace) => {
+            if (!makerspace?.user) {
+                return [];
+            }
+
+            if (makerspace.user.userType === 'user') {
+            // only show machines that the user activated
+                return machines.filter((machine) => machine.lastUsedBy === makerspace.user?.userId);
+            } else {
+                // show all active machines in current location
+                return machinesInCurrentLocation.filter((machine) => machine.enabled);
+            }
+        },
+    );
 
 export const selectYourMachinesForUser = createSelector(
     [selectMachinesInCurrentLocation, selectCurrentUserPermissions, selectPermissionGroups],
