@@ -11,7 +11,7 @@ import BlurHeader from '../../components/BlurHeader';
 import { GridMachineBentoBox } from '../../components/GridMachineBentoBox';
 import { LargeMachineBentoBox } from '../../components/LargeMachineBentoBox';
 import { Colors } from '../../constants/Colors';
-import { fetchLocationGroups, fetchMachineGroups, fetchMachines, selectActiveMachinesForUserFactory, selectCurrentLocationGroup, selectFlatYourMachinesForUser, selectLoading, selectLocationGroups, selectMachines, selectMachinesForCatalog, selectYourMachinesForUser } from '../../state/slices/machinesSlice';
+import { fetchLocationGroups, fetchMachineGroups, fetchMachines, selectActiveMachinesForUser, selectCurrentLocationGroup, selectFlatYourMachinesForUser, selectLoading, selectLocationGroups, selectMachines, selectMachinesForCatalog, selectYourMachinesForUser } from '../../state/slices/machinesSlice';
 import { addOrUpdateServer, colorSelector, currentServerSelector } from '../../state/slices/makerspacesSlice';
 import { fetchPermissionGroups, fetchPermissionsForUser } from '../../state/slices/permissionsSlice';
 import { useAppDispatch } from '../../state/store';
@@ -25,7 +25,7 @@ export default function Make() {
 
     const machines = useSelector(selectMachines);
     const yourMachinesForUser = useSelector(selectYourMachinesForUser);
-    const activeMachines = useSelector(selectActiveMachinesForUserFactory(makerspace));
+    const activeMachines = useSelector(selectActiveMachinesForUser);
     const flatYourMachinesForUser = useSelector(selectFlatYourMachinesForUser);
 
     const locationGroup = useSelector(selectCurrentLocationGroup);
