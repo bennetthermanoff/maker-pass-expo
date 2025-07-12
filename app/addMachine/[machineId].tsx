@@ -2,7 +2,7 @@ import { Image, Plus, Trash } from '@tamagui/lucide-icons';
 import axios from 'axios';
 import * as ImagePicker from 'expo-image-picker';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert, ImageSourcePropType } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import { useSelector } from 'react-redux';
@@ -24,6 +24,7 @@ export default function AddMachine() {
     const makerspace = useSelector(currentServerSelector);
     const groups = useSelector(selectMachineGroups);
     const machinesFromState = useSelector(selectMachines);
+    const [machineRequiresGeoFence, setMachineRequiresGeoFence] = useState<boolean>(false);
 
     const getMachineInitialData = () => {
         const machine = machinesFromState.find((machine) => machine.id === local.machineId);
@@ -39,6 +40,20 @@ export default function AddMachine() {
             };
         }
     };
+
+    useEffect(() => {
+        if (!makerspace || local.machineId === 'new' || !local.machineId){
+            return;
+        }
+        axios.get(`${makerspace?.serverAddress}:${makerspace?.serverPort}/api/machine/geofences/${local.machineId}`, getAuthHeaders(makerspace)).then((response) => {
+            //get body json.ingeofence bool
+            const body = response.data as { inGeoFence:boolean, geoFences:Array<{type:'geofence',sk:string, data:string}> };
+            if (body.inGeoFence){
+                setMachineRequiresGeoFence(true);
+            }
+        });
+
+    },[makerspace, local.machineId]);
 
     const [formData, setFormData] = useState<{machine:Partial<Machine>, requireEnableKey:boolean}>(getMachineInitialData());
 
@@ -136,7 +151,7 @@ export default function AddMachine() {
     };
     //TODO: FIX THIS CALL (NEED TO HAVE IS MACHINE IN GEOFENCE FUNCTION)
     // const getQR = () => `makerpass://--/makerspace/machine/enable?serverId=${makerspace?.id}&machineId=${local.machineId}&enableKey=${formData.machine.enableKey}&locationRequired=${groups.machineGroups.find((group) => group.machineIds.includes(local.machineId as string))?.geoFences.length !== 0}`;
-    const getQR = () => 'makerpass://--/maker';
+    const getQR = () => `makerpass://--/makerspace/machine/enable?serverId=${makerspace?.id}&machineId=${local.machineId}&enableKey=${formData.machine.enableKey}&locationRequired=${machineRequiresGeoFence}`;
 
     return (
         <>
