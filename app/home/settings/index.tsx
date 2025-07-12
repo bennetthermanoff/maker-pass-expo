@@ -20,7 +20,7 @@ export default function Machines() {
     const makerspace = useSelector(currentServerSelector);
     const dispatch = useDispatch();
     const handleDeleteAccount = async () => {
-        if (makerspace?.id){
+        if (makerspace?.id) {
             Alert.alert(
                 'Delete Account', 'Are you sure you want to delete your account? This action is irreversible.',
                 [
@@ -61,8 +61,8 @@ export default function Machines() {
                 iconAfter={Unlink}
                 backgroundColor={colors.secondaryAccent.light}
                 color={colors.text}
-                onPress={async() => {
-                    if (makerspace?.id){
+                onPress={async () => {
+                    if (makerspace?.id) {
                         dispatch(removeServer(makerspace.id));
                     }
                     goHome();
@@ -89,7 +89,7 @@ export default function Machines() {
                 iconAfter={FileImage}
                 backgroundColor={colors.secondaryAccent.light}
                 color={colors.text}
-                onPress={() => {clearImages();}}
+                onPress={() => { clearImages(); }}
             >Clear Image Cache</Button>
             <Button
                 spaceFlex
@@ -112,7 +112,7 @@ export default function Machines() {
                 iconAfter={Link}
                 backgroundColor={colors.secondaryAccent.light}
                 color={colors.text}
-                onPress={() => {openBrowserAsync('https://github.com/bennetthermanoff/maker-pass-server');}}
+                onPress={() => { openBrowserAsync('https://github.com/bennetthermanoff/maker-pass-server'); }}
             >
                 <Image
                     marginTop={'$2'}

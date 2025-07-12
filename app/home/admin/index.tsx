@@ -21,12 +21,13 @@ export default function Admin() {
 
     const getQR = () => `makerpass://--/makerspace/config?url=${makerspace?.serverAddress}&port=${makerspace?.serverPort}&registrationType=user&registrationKey=${registrationKey}`;
     useEffect(() => {
-        if (makerspace){
+        if (makerspace) {
             axios.get(`${makerspace.serverAddress}:${makerspace.serverPort}/api/ping/registrationKey`, getAuthHeaders(makerspace))
                 .then((res) => {
                     setRegistrationKey(res.data.registrationKey);
                 });
-        }}, [makerspace]);
+        }
+    }, [makerspace]);
 
     return (
         <BlurHeader title='Admin Settings'>
@@ -40,7 +41,7 @@ export default function Admin() {
                 iconAfter={Wrench}
                 backgroundColor={colors.secondaryAccent.light}
                 color={colors.text}
-                onPress={() => {router.push('/machineGroups/');}}
+                onPress={() => { router.push('/machineGroups/'); }}
             >Manage Machine Groups</Button>
             <Button
                 spaceFlex
@@ -51,7 +52,7 @@ export default function Admin() {
                 iconAfter={Wrench}
                 backgroundColor={colors.secondaryAccent.light}
                 color={colors.text}
-                onPress={() => {router.push('/permissionGroups/');}}
+                onPress={() => { router.push('/permissionGroups/'); }}
             >Manage Permission Groups</Button>
             <Button
                 spaceFlex
@@ -62,7 +63,7 @@ export default function Admin() {
                 iconAfter={Wrench}
                 backgroundColor={colors.secondaryAccent.light}
                 color={colors.text}
-                onPress={() => {router.push('/locationGroups/');}}
+                onPress={() => { router.push('/locationGroups/'); }}
             >Manage Location Groups</Button>
             <Button
                 spaceFlex
@@ -73,7 +74,7 @@ export default function Admin() {
                 iconAfter={Wrench}
                 backgroundColor={colors.secondaryAccent.light}
                 color={colors.text}
-                onPress={() => {router.push('/addMachine/new');}}
+                onPress={() => { router.push('/addMachine/new'); }}
             >Add Machine</Button>
 
             <YStack
@@ -95,7 +96,7 @@ export default function Admin() {
                 >
                     <QRCode
                         value={getQR()}
-                        color={getTokens().color[ colors.accent.dark as Color].val}
+                        color={getTokens().color[colors.accent.dark as Color].val}
                         size={250}
                         logo={keyLogo as ImageSourcePropType}
                         logoSize={85}
