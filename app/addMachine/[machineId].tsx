@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { Alert, ImageSourcePropType } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import { useSelector } from 'react-redux';
-import { Button, H4, Input, Label, Switch, View, XStack, YStack, getTokens } from 'tamagui';
+import { Button, H4, Input, Label, Switch, Text, View, XStack, YStack, getTokens } from 'tamagui';
 import keyLogo from '../../assets/images/key.png';
 import BlurHeader from '../../components/BlurHeader';
 import { GLOBAL } from '../../global';
@@ -205,13 +205,12 @@ export default function AddMachine() {
                         </Switch>
 
                     </XStack>
-                    <Label
+                    <Text
                         flexWrap='wrap'
                         color={colors.text}
                         width={'95%'}
-                        // lineHeight={'$2'}
                         pressStyle={{ color: colors.text }}
-                    >A unique key will be generated for unlocking your machine and embedded in its QR code.</Label>
+                    >A unique key will be generated for unlocking your machine and embedded in its QR code.</Text>
                     <XStack
                         width={'95%'}
 
@@ -232,14 +231,13 @@ export default function AddMachine() {
                             <Switch.Thumb animation="bouncy" />
                         </Switch>
                     </XStack>
-                    <Label
+                    <Text
                         flexWrap='wrap'
                         color={colors.text}
                         pressStyle={{ color: colors.text }}
-                        // lineHeight={'$2'}
                         width={'95%'}
-                        marginBottom={'$8'}
-                    >Solenoid mode will disable the machine after 5 seconds. Great for KeyBoxes, and logging machine use on uncontrolled machines.</Label>
+                        marginBottom={'$2'}
+                    >Solenoid mode will disable the machine after 5 seconds. Great for KeyBoxes, and logging machine use on uncontrolled machines.</Text>
 
                     <Button
                         iconAfter={formData.machine?.photo ? Image : Plus}
@@ -271,14 +269,13 @@ export default function AddMachine() {
                     >Delete Machine</Button>
                     {local.machineId !== 'new' && makerspace && !groups.loading &&
                     <>
-                        <Label
+                        <Text
                             color={colors.text}
                             marginTop={'$4'}
-                            marginBottom={'$2'}
-                            // lineHeight={'$2'}
+                            marginBottom={'$4'}
                             width={'95%'}
                             pressStyle={{ color: colors.text }}
-                        >Note: QR will need to be replaced in the future if this machine's Machine Group changes to require a GeoFence. </Label>
+                        >Note: QR will need to be replaced in the future if this machine's Machine Group changes to require a GeoFence. </Text>
                         <View
                             marginBottom={'$15'}
                             padding={'$2'}
@@ -291,9 +288,6 @@ export default function AddMachine() {
                                 value={getQR()}
                                 color={getTokens().color[ colors.accent.dark as Color].val}
                                 size={250}
-                                logo={keyLogo as ImageSourcePropType}
-                                logoSize={85}
-                                logoBackgroundColor='transparent'
                             />
                         </View>
                     </>}

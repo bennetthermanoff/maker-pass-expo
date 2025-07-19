@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { router } from 'expo-router';
+import { router, useNavigation } from 'expo-router';
 import { useState } from 'react';
 import { KeyboardAvoidingView } from 'react-native';
 import { useSelector } from 'react-redux';
@@ -8,6 +8,7 @@ import { addServerCredentials, colorSelector, currentServerSelector } from '../.
 import { useAppDispatch } from '../../state/store';
 import { Color } from '../../types/makerspaceServer';
 import { goHome } from '../../util/goHome';
+import { CommonActions } from '@react-navigation/native';
 
 export default function LoginScreen() {
 
@@ -20,6 +21,7 @@ export default function LoginScreen() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string>('');
     const dispatch = useAppDispatch();
+    const navigation = useNavigation();
 
     const handleLogin = async () => {
         if (!formData.email || !formData.password) {
@@ -33,7 +35,9 @@ export default function LoginScreen() {
                 .then(async(res) => {
                     const { userId,token,userType } = res.data;
                     await dispatch(addServerCredentials({ serverId: makerspace.id, userId, userType, token }));
-                    goHome();
+                    navigation.dispatch(CommonActions.reset({
+                        routes: [{ name: 'home' }],
+                    }));
                 }).catch((e) => {
                     setLoading(false);
                 });

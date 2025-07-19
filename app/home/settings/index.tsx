@@ -61,10 +61,15 @@ export default function Machines() {
                 iconAfter={Unlink}
                 backgroundColor={colors.secondaryAccent.light}
                 color={colors.text}
+                aspectRatio={7}
+                alignSelf='center'
+                width={'95%'}
+                marginTop={'$3'}
                 onPress={async () => {
                     if (makerspace?.id) {
                         dispatch(removeServer(makerspace.id));
                     }
+                    console.log('Logging out');
                     goHome();
                 }}
             >Disconnect and Logout</Button>
@@ -78,6 +83,10 @@ export default function Machines() {
                 iconAfter={Key}
                 backgroundColor={colors.secondaryAccent.light}
                 color={colors.text}
+                aspectRatio={7}
+                alignSelf='center'
+                width={'95%'}
+                marginTop={'$3'}
                 onPress={() => handleChangePassword(makerspace)}
             >Change Password</Button>
             <Button
@@ -89,6 +98,10 @@ export default function Machines() {
                 iconAfter={FileImage}
                 backgroundColor={colors.secondaryAccent.light}
                 color={colors.text}
+                aspectRatio={7}
+                alignSelf='center'
+                width={'95%'}
+                marginTop={'$3'}
                 onPress={() => { clearImages(); }}
             >Clear Image Cache</Button>
             <Button
@@ -100,6 +113,10 @@ export default function Machines() {
                 iconAfter={Trash2}
                 backgroundColor={colors.secondaryAccent.light}
                 color={colors.text}
+                aspectRatio={7}
+                alignSelf='center'
+                width={'95%'}
+                marginTop={'$3'}
                 onPress={() => handleDeleteAccount()}
             >Delete Account</Button>
             <Button
@@ -112,6 +129,10 @@ export default function Machines() {
                 iconAfter={Link}
                 backgroundColor={colors.secondaryAccent.light}
                 color={colors.text}
+                aspectRatio={7}
+                alignSelf='center'
+                width={'95%'}
+                marginTop={'$3'}
                 onPress={() => { openBrowserAsync('https://github.com/bennetthermanoff/maker-pass-server'); }}
             >
                 <Image
@@ -126,9 +147,11 @@ export default function Machines() {
             <Text
                 color={colors.text}
                 padding={'$0'}
-                paddingBottom={'$5'}
-                marginTop={'$-2'}
                 paddingLeft={'$4'}
+                aspectRatio={7}
+                alignSelf='center'
+                width={'95%'}
+                marginTop={'$2'}
             >MakerPass is free. Learn more about hosting your own instance at our github</Text>
 
             <Text

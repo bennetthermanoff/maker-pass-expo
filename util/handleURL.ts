@@ -99,9 +99,7 @@ export const handleConnect = async (url?:string, port?:string, registrationType?
     delete ping.data.server.additionalInfoFields;
     store.dispatch(addOrUpdateServer({ ...ping.data.server, registrationKey:registrationKey as string, registrationType: registrationType as string }));
 
-    while (router.canGoBack()) { // Pop from stack until one element is left, resets the stack
-        router.back();
-    }
+    router.replace('/');
     const { status } = await Location.getForegroundPermissionsAsync();
 
     if (ping.data.server.hasGeoFences && status !== 'granted'){

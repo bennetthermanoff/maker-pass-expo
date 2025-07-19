@@ -16,6 +16,7 @@ import { fetchPermissionGroups, fetchPermissionsForUser } from '../../state/slic
 import { useAppDispatch } from '../../state/store';
 import { Machine, MachineGroupMap, PermissionGroupMap } from '../../types/machine';
 import { Color } from '../../types/makerspaceServer';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 export default function Make() {
     const colors = useSelector(colorSelector);
     const makerspace = useSelector(currentServerSelector);
@@ -29,6 +30,7 @@ export default function Make() {
 
     const locationGroup = useSelector(selectCurrentLocationGroup);
     const [locationPickerActivated, setLocationPickerActivated] = useState(false);
+    const tabBarHeight = useBottomTabBarHeight();
 
     const handleRefresh = debounce(() => {
         if (makerspace){
@@ -66,7 +68,7 @@ export default function Make() {
             </BlurHeader>
             <XStack
                 position='absolute'
-                bottom={0}
+                bottom={tabBarHeight}
                 right={0}
                 width={'100%'}
                 backgroundColor={'transparent'}

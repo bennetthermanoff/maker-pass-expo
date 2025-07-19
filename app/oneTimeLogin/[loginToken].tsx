@@ -40,9 +40,6 @@ export default function OneTimeLogin() {
                         value={getQR()}
                         color={getTokens().color[ colors.accent.dark as Color].val}
                         size={250}
-                        logo={keyLogo as ImageSourcePropType}
-                        logoSize={85}
-                        logoBackgroundColor='transparent'
                     />
                 </View>
             </YStack>

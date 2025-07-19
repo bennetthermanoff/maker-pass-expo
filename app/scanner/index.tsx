@@ -1,4 +1,4 @@
-import { BarCodeScanner } from 'expo-barcode-scanner';
+import { CameraView, useCameraPermissions } from 'expo-camera';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { interpolate } from 'react-native-reanimated';
@@ -11,7 +11,7 @@ import { goHomeOnBarAndCallFinished, handleTagOutURL, handleURL } from '../../ut
 type ScannerType = 'default'|'tagOut';
 
 export default function Scanner({ scannerType = 'default' }:{scannerType?:ScannerType}) {
-    const [hasPermission, setHasPermission] = useState<null|Boolean>(null);
+    const [permission, requestPermission] = useCameraPermissions();
     const [header, setHeader] = useState('Scan QR');
     const [scanned, setScanned] = useState(false);
     const colors = useSelector(colorSelector);
@@ -36,12 +36,10 @@ export default function Scanner({ scannerType = 'default' }:{scannerType?:Scanne
     },[animateTime, scanned]);
 
     useEffect(() => {
-        const getPermissions = async () => {
-            const { status } = await BarCodeScanner.requestPermissionsAsync();
-            setHasPermission(status === 'granted');
-        };
-        getPermissions();
-    }, []);
+        if (permission && !permission.granted) {
+            requestPermission();
+        }
+    }, [permission]);
     const handleBarCodeScanned = async ({ type, data }:{type:string, data:string}) => {
         if (data.startsWith('makerpass://')) {
             GLOBAL.barRaceCondition = 0; //reset race condition
@@ -86,10 +84,13 @@ export default function Scanner({ scannerType = 'default' }:{scannerType?:Scanne
                 borderWidth={scanned ? 5 : 0}
             />
             <YStack>
-                {hasPermission ?
-                    <BarCodeScanner
-                        onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-                        style={{ height:'90%' }}
+                {permission && permission.granted ?
+                    <CameraView
+                        onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+                        style={{ height: '90%' }}
+                        barcodeScannerSettings={{
+                            barcodeTypes: ['qr'],
+                        }}
                     /> :
                     <Spinner backgroundColor={colors.background} color={colors.text} width="100%" height="90%" />
                 }
@@ -107,7 +108,7 @@ export default function Scanner({ scannerType = 'default' }:{scannerType?:Scanne
                         minWidth={'40%'}
                         color={colors.text}
                         backgroundColor={colors.secondaryAccent.light}
-                        onPress={() => {setHasPermission(null);router.back();}}
+                        onPress={() => {router.back();}}
                     >Cancel</Button>
 
                 </XStack>

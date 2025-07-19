@@ -101,10 +101,7 @@ export default function LoginOrRegister() {
                             if (makerspace){
                                 dispatch(removeServer(makerspace.id));
                             }
-                            while (router.canGoBack()){
-                                router.back();
-                            }
-                            router.replace('/');
+                            router.dismissTo('/');
                         }
                         }
                     >Change Makerspace</Button>

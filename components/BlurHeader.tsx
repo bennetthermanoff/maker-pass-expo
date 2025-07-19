@@ -4,7 +4,7 @@ import { BlurView } from 'expo-blur';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { ImageSourcePropType, Platform, RefreshControl } from 'react-native';
-import Animated, { Extrapolation, interpolate, useAnimatedProps } from 'react-native-reanimated';
+import Animated, { Extrapolation, interpolate, useAnimatedProps, useFrameCallback, useSharedValue } from 'react-native-reanimated';
 import { useSelector } from 'react-redux';
 import { getTokens, H1, H3, Image, ScrollView, Text, XStack, YStack } from 'tamagui';
 import BannerDark from '../assets/images/banner-dark.png';
@@ -18,6 +18,17 @@ export default function BlurHeader({ title, subtitle, isHero = false, hasBackBut
     const colors = useSelector(colorSelector);
     const [scrollY, setScrollY] = useState(0);
     const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
+
+    const showBlur = useSharedValue(false);
+
+    useFrameCallback(() => {
+        if (scrollY < 50){
+            showBlur.value = false;
+        }
+        else {
+            showBlur.value = true;
+        }
+    });
 
     const animatedProps = useAnimatedProps(() => {
         const intensity = interpolate(
@@ -71,8 +82,8 @@ export default function BlurHeader({ title, subtitle, isHero = false, hasBackBut
                     flexDirection: 'row',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    opacity: scrollY <= 0 ? 0 : 1,
-                    backgroundColor: scrollY < 50 ? getTokens().color[colors[ Platform.OS === 'android' ? 'blurBackground' : 'background'] as Color].val  : 'transparent',
+                    opacity: scrollY <= 10 ? 0 : 1,
+                    backgroundColor: showBlur ? getTokens().color[colors[ Platform.OS === 'android' ? 'blurBackground' : 'background'] as Color].val  : 'transparent',
                 }}
                 tint={colors.blurTintColor as 'light' | 'dark'}
                 blurReductionFactor={1}
@@ -133,17 +144,15 @@ export default function BlurHeader({ title, subtitle, isHero = false, hasBackBut
                             marginTop={'$0'}
                             marginLeft={'$4'}
                             source={(colors.text === 'white' ? BannerDark : Banner) as ImageSourcePropType}
-                            resizeMode='contain'
+                            objectFit='contain'
                             width={'90%'}
                             maxHeight={'8%'}
-                            style={{
-                                opacity: interpolate(
-                                    scrollY,
-                                    [0, 50, 70],
-                                    [1, 0, 0],
-                                    Extrapolation.EXTEND,
-                                ),
-                            }}
+                            opacity={interpolate(
+                                scrollY,
+                                [0, 30, 130],
+                                [1, 0, 0],
+                                Extrapolation.EXTEND,
+                            )}
                         />
                         :
                         <H1

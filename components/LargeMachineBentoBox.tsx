@@ -17,7 +17,7 @@ export const LargeMachineBentoBox = ({ machine, colors, showDisableButton = fals
         if (machine.photoHash){
             getImage(machine.photoHash).then((image) => setImage(image));
         }
-    }, [machine.photoHash]);
+    }, [machine.photoHash, machine.photo]);
     const dispatch = useAppDispatch();
     const makerspace = useSelector(currentServerSelector);
 
@@ -31,7 +31,17 @@ export const LargeMachineBentoBox = ({ machine, colors, showDisableButton = fals
             backgroundColor={colors.accent.light}
             onPress={onPress}
         >
-
+            <Image
+                resizeMode="cover"
+                alignSelf="center"
+                style={{
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: 20,
+                }}
+                zIndex={-1}
+                source={image ? { uri:'data:image/png;base64,' + image } : defaultImage as ImageSourcePropType}
+            />
             <LinearGradient
                 width={'100%'}
                 borderRadius={20}
@@ -68,17 +78,6 @@ export const LargeMachineBentoBox = ({ machine, colors, showDisableButton = fals
                     display={showDisableButton ? 'flex' : 'none'}
                 >Disable</Button>
             </LinearGradient>
-            <Image
-                resizeMode="cover"
-                alignSelf="center"
-                style={{
-                    width: '100%',
-                    height: '100%',
-                    borderRadius: 20,
-                }}
-                zIndex={-1}
-                source={image ? { uri:'data:image/png;base64,' + image } : defaultImage as ImageSourcePropType}
-            />
 
         </YStack>
 

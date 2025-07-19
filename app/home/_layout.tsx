@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { getTokens } from 'tamagui';
 import { colorSelector, currentServerSelector } from '../../state/slices/makerspacesSlice';
 import { Color } from '../../types/makerspaceServer';
+import { BlurView } from 'expo-blur';
 
 /**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
@@ -23,17 +24,31 @@ export default function TabLayout() {
 
         <Tabs
             screenOptions={{
-                tabBarActiveBackgroundColor:getTokens().color[colors.inputBackground as Color].val,
-                tabBarInactiveBackgroundColor:getTokens().color[colors.inputBackground as Color].val,
                 tabBarActiveTintColor: getTokens().color[colors.secondaryAccent.dark as Color].val,
                 tabBarInactiveTintColor: getTokens().color[colors.accent.dark as Color].val,
+                animation:'fade',
                 tabBarLabelStyle: {
                     fontSize: 15,
                 },
                 tabBarStyle: {
-                    backgroundColor: getTokens().color[colors.inputBackground as Color].val,
-                    height: 90,
+                    height: '7%',
+                    minHeight: 50,
+                    backgroundColor:'transparent',
+                    position: 'absolute',
                 },
+                tabBarBackground: () =>
+                    <BlurView
+                        tint={colors.text === 'white' ? 'dark' : 'light'}
+                        intensity={100}
+                        style={{
+                            top: 0,
+                            left: 0,
+                            bottom: 0,
+                            right: 0,
+                            position: 'absolute',
+                        }}
+                    />,
+
             }}
         >
             <Tabs.Screen

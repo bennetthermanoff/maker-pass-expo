@@ -2,21 +2,11 @@
   "expo": {
     "name": "MakerPass",
     "slug": "maker-pass-expo",
-    "version": "1.1.5",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "maker-pass",
     "userInterfaceStyle": "automatic",
-    "splash": {
-      "image": "./assets/images/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff",
-      "dark": {
-        "image": "./assets/images/splash-dark.png",
-        "resizeMode": "contain",
-        "backgroundColor": "#000000"
-      }
-    },
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -24,20 +14,11 @@
       "supportsTablet": true,
       "infoPlist": {
         "NSCameraUsageDescription": "This app uses the camera to scan QR codes around your MakerSpace.",
-        "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone"
+        "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to access your microphone",
+        "ITSAppUsesNonExemptEncryption": false
       },
       "bundleIdentifier": "com.bennetthermanoff.makerpass",
-      "buildNumber": "14",
-      "splash": {
-        "image": "./assets/images/splash.png",
-        "resizeMode": "contain",
-        "backgroundColor": "#ffffff",
-        "dark": {
-          "image": "./assets/images/splash-dark.png",
-          "resizeMode": "contain",
-          "backgroundColor": "#000000"
-        }
-      }
+      "buildNumber": "15"
     },
     "android": {
       "softwareKeyboardLayoutMode": "pan",
@@ -49,7 +30,7 @@
         "android.permission.RECORD_AUDIO"
       ],
       "package": "com.bennetthermanoff.makerpass",
-      "versionCode": 12
+      "versionCode": 15
     },
     "web": {
       "bundler": "metro",
@@ -57,7 +38,7 @@
     },
     "plugins": [
       "expo-router",
-      "expo-barcode-scanner",
+      "expo-camera",
       [
         "expo-location",
         {
@@ -79,7 +60,21 @@
           ]
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash-icon.png",
+          "backgroundColor": "#232323",
+          "imageResizeMode": "contain",
+          "imageWidth": 200,
+          "dark": {
+            "image": "./assets/images/splash-icon-dark.png",
+            "backgroundColor": "#000000"
+          }
+        }
+      ],
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true
@@ -92,7 +87,7 @@
         "projectId": "3899c4fa-3b7d-4bb4-84f7-99ecb448e6c8"
       }
     },
-    "runtimeVersion": "1.0.1",
+    "runtimeVersion": "1.1.0",
     "updates": {
       "url": "https://u.expo.dev/3899c4fa-3b7d-4bb4-84f7-99ecb448e6c8"
     }

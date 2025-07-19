@@ -12,7 +12,7 @@ export const SmallMachineBentoBox = ({ machine, colors, showDisableButton = fals
         if (machine.photoHash){
             getImage(machine.photoHash).then((image) => setImage(image));
         }
-    }, [machine.photoHash]);
+    }, [machine.photoHash, machine.photo]);
 
     return (
         <YStack

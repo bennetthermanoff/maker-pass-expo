@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { ImageSourcePropType } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import { useSelector } from 'react-redux';
-import { Button, H3, View, YStack, getTokens } from 'tamagui';
+import { Button, H3, Text, View, YStack, getTokens } from 'tamagui';
 import keyLogo from '../../../assets/images/key.png';
 import BlurHeader from '../../../components/BlurHeader';
 import { colorSelector, currentServerSelector } from '../../../state/slices/makerspacesSlice';
@@ -38,6 +38,9 @@ export default function Admin() {
                 fontSize={'$6'}
                 textAlign="left"
                 style={buttonStyle}
+                aspectRatio={7}
+                alignSelf='center'
+                width={'95%'}
                 iconAfter={Wrench}
                 backgroundColor={colors.secondaryAccent.light}
                 color={colors.text}
@@ -47,6 +50,10 @@ export default function Admin() {
                 spaceFlex
                 scaleIcon={2}
                 fontSize={'$6'}
+                aspectRatio={7}
+                alignSelf='center'
+                width={'95%'}
+                marginTop={'$3'}
                 textAlign="left"
                 style={buttonStyle}
                 iconAfter={Wrench}
@@ -63,6 +70,10 @@ export default function Admin() {
                 iconAfter={Wrench}
                 backgroundColor={colors.secondaryAccent.light}
                 color={colors.text}
+                aspectRatio={7}
+                alignSelf='center'
+                width={'95%'}
+                marginTop={'$3'}
                 onPress={() => { router.push('/locationGroups/'); }}
             >Manage Location Groups</Button>
             <Button
@@ -74,6 +85,10 @@ export default function Admin() {
                 iconAfter={Wrench}
                 backgroundColor={colors.secondaryAccent.light}
                 color={colors.text}
+                aspectRatio={7}
+                alignSelf='center'
+                width={'95%'}
+                marginTop={'$3'}
                 onPress={() => { router.push('/addMachine/new'); }}
             >Add Machine</Button>
 
@@ -98,9 +113,6 @@ export default function Admin() {
                         value={getQR()}
                         color={getTokens().color[colors.accent.dark as Color].val}
                         size={250}
-                        logo={keyLogo as ImageSourcePropType}
-                        logoSize={85}
-                        logoBackgroundColor='transparent'
                     />
                 </View>
             </YStack>
