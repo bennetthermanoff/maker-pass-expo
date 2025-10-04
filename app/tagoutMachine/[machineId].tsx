@@ -3,7 +3,7 @@ import axios from 'axios';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Button, H2, H4, Input, Spinner, Text, View, XStack, YStack } from 'tamagui';
+import { Button, H2, Input, Spinner, Text, View, XStack, YStack } from 'tamagui';
 import BlurHeader from '../../components/BlurHeader';
 import { Colors } from '../../constants/Colors';
 import { selectMachines } from '../../state/slices/machinesSlice';
@@ -161,6 +161,7 @@ const TagOutCard = (props:{TagOut:TagOutWithName, colors:Colors}) =>
             <Text
 
                 marginLeft={'$2'}
+                fontWeight={'bold'}
                 color={props.colors.text}
             >{`${props.TagOut.userName} Tagged Out`}</Text>
             <Text
@@ -169,16 +170,18 @@ const TagOutCard = (props:{TagOut:TagOutWithName, colors:Colors}) =>
                 color={props.colors.text}
             >{new Date(props.TagOut.createdAt).toDateString()}</Text>
         </XStack>
-        <H4
+        <Text
+            margin={'$2'}
             marginLeft={'$2'}
             color={props.colors.text}
-        >{props.TagOut.reason}</H4>
+        >{props.TagOut.reason}</Text>
         {props.TagOut.removedBy &&
         <>
             <XStack>
                 <Text
                     marginLeft={'$2'}
                     color={props.colors.text}
+                    fontWeight={'bold'}
                 >{`${props.TagOut.removedByName} Tagged In`}</Text>
                 <Text
                     marginLeft={'auto'}
@@ -186,10 +189,12 @@ const TagOutCard = (props:{TagOut:TagOutWithName, colors:Colors}) =>
                     color={props.colors.text}
                 >{props.TagOut.removedDate ? new Date(props.TagOut.removedDate).toDateString() : 'Not Tagged In'}</Text>
             </XStack>
-            <H4
+            <Text
+                margin={'$2'}
                 marginLeft={'$2'}
                 color={props.colors.text}
-            >{props.TagOut.removedReason}</H4>
+            >{props.TagOut.removedReason}
+            </Text>
         </>
         }
 
