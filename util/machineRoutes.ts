@@ -29,3 +29,16 @@ export const disableMachineRoute = async (machineId:string, makerspace:Makerspac
         return { message: '', machine: {} as Machine };
     }
 };
+
+export const getMachineBlameList = async (machineId: string, makerspace: MakerspaceConfig, limit?: number) => {
+    try {
+        const response = await axios.get(
+            `${makerspace.serverAddress}:${makerspace.serverPort}/api/machine/blame/${machineId}${limit ? `?limit=${limit}` : ''}`,
+            getAuthHeaders(makerspace),
+        );
+        return response.data;
+    }
+    catch (e) {
+        throw e;
+    }
+};
