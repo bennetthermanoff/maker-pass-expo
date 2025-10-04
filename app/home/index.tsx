@@ -1,3 +1,4 @@
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 import { AlertTriangle, QrCode } from '@tamagui/lucide-icons';
 import { router } from 'expo-router';
 import { debounce } from 'lodash';
@@ -16,7 +17,6 @@ import { fetchPermissionGroups, fetchPermissionsForUser } from '../../state/slic
 import { useAppDispatch } from '../../state/store';
 import { Machine, MachineGroupMap, PermissionGroupMap } from '../../types/machine';
 import { Color } from '../../types/makerspaceServer';
-import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 export default function Make() {
     const colors = useSelector(colorSelector);
     const makerspace = useSelector(currentServerSelector);
@@ -59,7 +59,7 @@ export default function Make() {
     return (
         <>
             <BlurHeader title="MakerPass" subtitle={'@' + locationGroup?.name} isHero pullToRefresh={handleRefresh} subtitleOnPress={() => {setLocationPickerActivated(!locationPickerActivated);}} refreshing={loading}>
-                <ActiveMachineBento colors={colors} activeMachines={activeMachines} />
+                <ActiveMachineBento colors={colors} activeMachines={activeMachines} canEdit={makerspace?.user?.userType !== 'user'} />
                 {flatYourMachinesForUser.length > 0 && <YourMachinesBento colors={colors} machineMap={yourMachinesForUser.machinesByGroupId} permissionGroupMap={yourMachinesForUser.permissionGroupMap} />}
                 <CatalogBento colors={colors} catalog={useSelector(selectMachinesForCatalog)} />
                 <YStack
@@ -110,7 +110,7 @@ export default function Make() {
     );
 }
 
-const ActiveMachineBento = ({ colors, activeMachines }: { colors: Colors, activeMachines: Machine[] }) =>
+const ActiveMachineBento = ({ colors, activeMachines, canEdit }: { colors: Colors, activeMachines: Machine[], canEdit: boolean }) =>
     <YStack
         aspectRatio={2} //Important!
         alignSelf='center'
@@ -156,6 +156,12 @@ const ActiveMachineBento = ({ colors, activeMachines }: { colors: Colors, active
                         machine={machine}
                         colors={colors}
                         showDisableButton={true}
+                        onPress={() => {
+                            if (canEdit){
+                                router.push({ pathname:'/tagoutMachine/[machineId]', params:{ machineId:machine.id } });
+                            }}
+                        }
+
                     />)}
             </ScrollView>
         }

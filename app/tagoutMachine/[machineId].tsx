@@ -76,7 +76,26 @@ export default function TagOutMachine(){
             <BlurHeader
                 hasBackButton
                 title={machine.name}
-                subtitle={machine.lastUsedByName ? `Last Used By: ${machine.lastUsedByName}` : undefined}
+                subtitle={(
+                    <XStack>
+                        <Text
+                            marginTop={'$-2'}
+                            marginLeft={'3.5%'}
+                            color={colors.text}
+                        >
+                            {machine.lastUsedByName ? `Last Used By: ${machine.lastUsedByName}` : undefined}
+                        </Text>
+                        <Text
+                            marginTop={'$-2'}
+                            marginLeft={machine.lastUsedByName ? '$1' : '$0'}
+                            color={colors.accent.dark}
+                            style={{ textDecorationLine: 'underline' }}
+                            onPress={() => router.push({ pathname:`./blame/${machine.id}`   })}
+                        >
+                            (more)
+                        </Text>
+                    </XStack>
+                )}
                 pullToRefresh={() => getTagOuts(10)}
                 refreshing={false}
             >

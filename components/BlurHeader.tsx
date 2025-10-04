@@ -2,7 +2,7 @@
 import { ChevronLeft } from '@tamagui/lucide-icons';
 import { BlurView } from 'expo-blur';
 import { router } from 'expo-router';
-import React, { useState } from 'react';
+import React, { JSX, useState } from 'react';
 import { ImageSourcePropType, Platform, RefreshControl } from 'react-native';
 import Animated, { Extrapolation, interpolate, useAnimatedProps, useFrameCallback, useSharedValue } from 'react-native-reanimated';
 import { useSelector } from 'react-redux';
@@ -14,7 +14,7 @@ import { Color } from '../types/makerspaceServer';
 import { parseGroupName } from '../util/parseGroupName';
 
 export default function BlurHeader({ title, subtitle, isHero = false, hasBackButton = false, isTransparent = false, subtitleOnPress, pullToRefresh, refreshing, children }:
-    { title: string, subtitle?: string, isHero?: boolean, hasBackButton?: boolean, isTransparent?:boolean, subtitleOnPress?:()=>void, children?: React.ReactNode, pullToRefresh?: () => void | Promise<void>, refreshing?: boolean }) {
+    { title: string, subtitle?: string | JSX.Element, isHero?: boolean, hasBackButton?: boolean, isTransparent?:boolean, subtitleOnPress?:()=>void, children?: React.ReactNode, pullToRefresh?: () => void | Promise<void>, refreshing?: boolean }) {
     const colors = useSelector(colorSelector);
     const [scrollY, setScrollY] = useState(0);
     const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
@@ -185,9 +185,9 @@ export default function BlurHeader({ title, subtitle, isHero = false, hasBackBut
 
                         }}
                     >{`@${parseGroupName(title)[1]}`}</Text>}
-                    {subtitle && <Text
+                    {subtitle && (typeof subtitle === 'string' ? <Text
                         marginTop={isHero ? '$-4' : '$-2'}
-                        marginLeft={'$4'}
+                        marginLeft={'3.5%'}
                         style={{
                             color: colors.text,
                             fontSize:15,
@@ -199,7 +199,19 @@ export default function BlurHeader({ title, subtitle, isHero = false, hasBackBut
                             ),
                         }}
                         onPress={subtitleOnPress}
-                    >{subtitle}</Text>}
+                    >{subtitle}</Text> : <YStack
+                        style={{
+                            opacity: interpolate(
+                                scrollY,
+                                [0, 50, 70],
+                                [1, 0, 0],
+                                Extrapolation.EXTEND,
+                            ),
+                        }}
+                        onPress={subtitleOnPress}
+                    >
+                        {subtitle}
+                    </YStack>)}
                     {children}
                 </YStack>
             </ScrollView>

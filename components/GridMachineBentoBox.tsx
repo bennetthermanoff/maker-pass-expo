@@ -26,6 +26,7 @@ export const GridMachineBentoBox = ({ colors, machines, groupName, press }:{colo
             aspectRatio={.8}
             borderRadius={20}
             marginRight={'$3'}
+            onPress={press}
         >
             <TextTicker
                 style={{
