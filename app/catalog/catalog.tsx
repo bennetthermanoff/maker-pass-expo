@@ -46,7 +46,7 @@ export const Catalog = ({ type } : {type:'catalog'|'yourMachines'}) => {
                 Object.keys(state.machineGroupMap).map((groupId) =>
                     <MachineGroup
                         key={groupId}
-                        groupName={state.machineGroupMap[groupId].name}
+                        groupName={state.machineGroupMap[groupId].name.replace(/\s*\(.*?\)\s*/g, '')}
                         colors={colors}
                         machines={state.machinesByGroupId[groupId]}
                         canEdit={makerspace?.user?.userType !== 'user'}
@@ -82,6 +82,8 @@ const MachineGroup = ({ groupName, colors, machines, canEdit }: { groupName: str
             <H2
                 marginLeft={'$2'}
                 marginBottom={'$1'}
+                numberOfLines={1}
+                ellipsizeMode='tail'
                 color={colors.text}
             >{groupName}</H2>
             {machines?.length == 0 ?

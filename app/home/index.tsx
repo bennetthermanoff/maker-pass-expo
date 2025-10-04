@@ -193,7 +193,7 @@ const YourMachinesBento = ({ colors, machineMap, permissionGroupMap }: { colors:
                         key={groupId}
                         colors={colors}
                         machines={machineMap[groupId]}
-                        groupName={groupId !== 'OTHER' ? permissionGroupMap[groupId]?.name : 'Other'}
+                        groupName={groupId !== 'OTHER' ? permissionGroupMap[groupId]?.name.replace(/\s*\(.*?\)\s*/g, '') : 'Other'}
                         press={() => {router.push('/catalog/yourMachines');}}
                     />
                     :
@@ -310,7 +310,7 @@ const CatalogBento = ({ colors, catalog }:{colors:Colors, catalog:{ machineMapBy
                     key={groupId}
                     colors={colors}
                     machines={catalog.machineMapByGroupIds[groupId]}
-                    groupName={catalog.machineGroups[groupId]?.name}
+                    groupName={catalog.machineGroups[groupId]?.name.replace(/\s*\(.*?\)\s*/g, '')}
                     press={() => {router.push('/catalog/catalog');}}
                 />)}
         </ScrollView>
