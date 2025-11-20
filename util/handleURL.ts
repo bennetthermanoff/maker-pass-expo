@@ -123,7 +123,9 @@ const handleEnableMachine = async ({ serverId, machineId, enableKey, locationReq
     if (locationRequired === 'true'){
         const newLocation = await getLocation();
         if (!newLocation){
-            throw new Error('Location Permission Required');
+            alert('Location permission is required to enable this machine');
+            goHomeOnBarAndCallFinished();
+            return;
         } else {
             location = newLocation;
         }
