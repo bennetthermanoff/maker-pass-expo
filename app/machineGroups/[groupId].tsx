@@ -1,6 +1,5 @@
 import { Minus, Plus } from '@tamagui/lucide-icons';
 import axios from 'axios';
-import * as Location from 'expo-location';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, ViewStyle } from 'react-native';
@@ -13,6 +12,7 @@ import { selectMachines } from '../../state/slices/machinesSlice';
 import { colorSelector, currentServerSelector } from '../../state/slices/makerspacesSlice';
 import { MachineGroupBody } from '../../types/machine';
 import { Color } from '../../types/makerspaceServer';
+import { getRawLocation } from '../../util/getRawLocation';
 import { getAuthHeaders } from '../../util/authRoutes';
 
 export default function EditMachineGroup(){
@@ -42,12 +42,10 @@ export default function EditMachineGroup(){
 
     const handleAddLocation = async () => {
         const geoFences = formData.geoFences ? formData.geoFences : [];
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== 'granted'){
-            alert('Permission to access location was denied');
+        const location = await getRawLocation();
+        if (!location) {
             return;
         }
-        const location = await Location.getCurrentPositionAsync({});
         geoFences.push({ lat:location.coords.latitude,lng:location.coords.longitude,radius:0 });
         setFormData({ ...formData, geoFences });
     };

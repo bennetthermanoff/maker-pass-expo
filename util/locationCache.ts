@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getCurrentPositionAsync, requestForegroundPermissionsAsync } from 'expo-location';
+import { getRawLocation } from './getRawLocation';
 
 const LOCATION_STALE_TIME = 1000 * 60 * .5; // 30 seconds
 const LOCATION_EXPIRE_TIME = 1000 * 60 * 2; // 2 minutes
@@ -25,12 +25,13 @@ export const getLocation: () => Promise<{lat:number,lng:number} | null> = async 
     if (cachedLocation && Date.now() - cachedLocation.timestamp < LOCATION_EXPIRE_TIME){
         return { lat: cachedLocation.lat, lng: cachedLocation.lng };
     }
-    const { status } = await requestForegroundPermissionsAsync();
-    if (status !== 'granted'){
-        alert('Location permission required');
+
+    const locationRaw = await getRawLocation();
+
+    if (!locationRaw) {
         return null;
     }
-    const locationRaw = await getCurrentPositionAsync({});
+
     const location = { lat: locationRaw.coords.latitude, lng: locationRaw.coords.longitude };
     setLocation(location);
     return location;
@@ -41,12 +42,13 @@ export const cacheCurrentLocation = async () => {
     if (cachedLocation && Date.now() - cachedLocation.timestamp < LOCATION_STALE_TIME){
         return;
     }
-    const { status } = await requestForegroundPermissionsAsync();
-    if (status !== 'granted'){
-        alert('Location permission required');
+
+    const locationRaw = await getRawLocation();
+
+    if (!locationRaw) {
         return;
     }
-    const locationRaw = await getCurrentPositionAsync({});
+
     const location = { lat: locationRaw.coords.latitude, lng: locationRaw.coords.longitude };
     setLocation(location);
 };
