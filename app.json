@@ -2,7 +2,7 @@
   "expo": {
     "name": "MakerPass",
     "slug": "maker-pass-expo",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "maker-pass",
@@ -18,7 +18,7 @@
         "ITSAppUsesNonExemptEncryption": false
       },
       "bundleIdentifier": "com.bennetthermanoff.makerpass",
-      "buildNumber": "15"
+      "buildNumber": "16"
     },
     "android": {
       "softwareKeyboardLayoutMode": "pan",
@@ -30,7 +30,12 @@
         "android.permission.RECORD_AUDIO"
       ],
       "package": "com.bennetthermanoff.makerpass",
-      "versionCode": 15
+      "versionCode": 16,
+      "config": {
+        "asyncStorage": {
+          "maxSize": 50
+        }
+      }
     },
     "web": {
       "bundler": "metro",

@@ -53,14 +53,25 @@ export const { addMachine, removeMachine, updateMachine, updateMachines, setLoad
 
 // REDUX THUNKS
 export const fetchMachines = (makerspace:MakerspaceConfig) => async (dispatch:Dispatch) => {
+    const startTime = Date.now();
+    console.log('Starting machine fetch...');
+    
     dispatch(setLoading(true));
     if (makerspace?.user){
+        console.log('Fetching machines (without images)...');
         let machines = await getMachinesFromServer(makerspace,false).catch((err) => {
             if (err.response.status === 401){
+                console.log('Authentication error during machine fetch');
                 dispatch(handleLoginError());
                 return [];
             }}).then((machines) => machines as Array<Machine>);
+        console.log(`Fetched ${machines.length} machines in ${Date.now() - startTime}ms`);
+        
         const cachedImageIds = await getImageIDs();
+        console.log(`Found ${cachedImageIds.length} cached images`);
+        
+        console.log('Loading cached images for machines...');
+        const imageLoadStart = Date.now();
         machines = await Promise.all(machines.map(async (machine) => {
             if (machine.photoHash){
                 const image = await getImage(machine.photoHash);
@@ -68,22 +79,36 @@ export const fetchMachines = (makerspace:MakerspaceConfig) => async (dispatch:Di
             }
             return machine;
         }));
+        console.log(`Loaded cached images in ${Date.now() - imageLoadStart}ms`);
+        
         dispatch(updateMachines(machines));
         if (makerspace.hasGeoFences){
             cacheCurrentLocation();
         }
+        
+        const machinesNeedingImages = machines.filter((machine) => machine.photoHash && !cachedImageIds.includes(machine.photoHash));
+        console.log(`${machinesNeedingImages.length} machines need fresh images`);
+        
         const allMachinesHaveImages = machines.every((machine) => !machine.photoHash || cachedImageIds.includes(machine.photoHash));
         if (!allMachinesHaveImages){
+            console.log('Fetching machines with images...');
+            const imageDownloadStart = Date.now();
             machines = await getMachinesFromServer(makerspace,true);
+            console.log(`Downloaded machine images in ${Date.now() - imageDownloadStart}ms`);
+            
             dispatch(updateMachines(machines));
+            let cachedCount = 0;
             for (const machine of machines){
                 if (machine.photo && machine.photoHash){
                     await setImage(machine.photoHash, machine.photo);
+                    cachedCount++;
                 }
             }
+            console.log(`Cached ${cachedCount} new images`);
         }
     }
-    console.log('FINISHED FETCHING MACHINES');
+    const totalTime = Date.now() - startTime;
+    console.log(`FINISHED FETCHING MACHINES in ${totalTime}ms`);
 
     dispatch(setLoading(false));
 };
