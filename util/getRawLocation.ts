@@ -1,11 +1,18 @@
-import { getCurrentPositionAsync, requestForegroundPermissionsAsync } from 'expo-location';
+import { getCurrentPositionAsync, getForegroundPermissionsAsync, requestForegroundPermissionsAsync } from 'expo-location';
 
 export const getRawLocation = async () => {
     // Request permissions first
-    const { status } = await requestForegroundPermissionsAsync();
+    let { status } = await getForegroundPermissionsAsync();
+
     if (status !== 'granted') {
         console.warn('Location permission denied');
-        alert('Location permission required');
+        await requestForegroundPermissionsAsync();
+        status = (await getForegroundPermissionsAsync()).status;
+    }
+
+    if (status !== 'granted') {
+        console.warn('Location permission still denied after request');
+        alert('Location permission is required to enable this machine.');
         return null;
     }
 

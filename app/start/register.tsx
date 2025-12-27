@@ -1,7 +1,6 @@
 import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import axios from 'axios';
 import Checkbox from 'expo-checkbox';
-import * as Location from 'expo-location';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { KeyboardAvoidingView, Platform } from 'react-native';
@@ -10,6 +9,7 @@ import { useSelector } from 'react-redux';
 import { Button, H2, H4, Input, Label, ScrollView, Spinner, XStack, YStack, getTokens } from 'tamagui';
 import { colorSelector, currentServerSelector } from '../../state/slices/makerspacesSlice';
 import { AdditionalInfoField, Color } from '../../types/makerspaceServer';
+import { getRawLocation } from '../../util/getRawLocation';
 
 export default function Register(){
 
@@ -77,18 +77,12 @@ export default function Register(){
         setLoading(true);
         const { name, email, password } = formData;
         const additionalFilteredInfo = Object.keys(formData).filter((key) => key !== 'name' && key !== 'email' && key !== 'password' && key !== 'confirmPassword').map((key) => ({ name: key, value: formData[key] }));
-        let location = undefined;
+        let location;
         if (makerspace?.hasGeoFences){
-            const { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
-                alert('Location permission required');
-                setLoading(false);
-                return;
-            }
-            const position = await Location.getCurrentPositionAsync({});
+            const locationRaw = await getRawLocation();
             location = {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude,
+                lat: locationRaw?.coords.latitude,
+                lng: locationRaw?.coords.longitude,
             };
         }
 
